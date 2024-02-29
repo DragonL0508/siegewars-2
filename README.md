@@ -1,2 +1,2 @@
-# fairy-bukkit-template
-The bukkit project template with fairy framework
+# Siegewars 2
+A minecraft 1.8 competition game
