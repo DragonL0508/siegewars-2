@@ -6,5 +6,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "fairy-bukkit-template"
+rootProject.name = "siegewars"
 
