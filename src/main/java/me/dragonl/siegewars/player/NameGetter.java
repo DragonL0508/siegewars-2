@@ -21,4 +21,12 @@ public class NameGetter {
         }
         return "NoTeam " + player.getName();
     }
+
+    public String getNameWithTeamColor(Player player){
+        if(teamManager.isInTeam(player)){
+            Team team = teamManager.getPlayerTeam(player);
+            return team.getColor() + player.getName() + ChatColor.RESET;
+        }
+        return player.getName();
+    }
 }

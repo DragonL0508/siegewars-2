@@ -8,14 +8,25 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.Kit;
+import me.dragonl.siegewars.game.kit.KitSelectLogic;
+import me.dragonl.siegewars.team.SiegeWarsTeam;
+import me.dragonl.siegewars.team.Team;
+import me.dragonl.siegewars.team.TeamManager;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @Command(value = "admin")
 @InjectableComponent
-public class LobbyAdminMenuCommand extends BaseCommand {
+public class LobbyAdminCommand extends BaseCommand {
     private final GameStateManager gameStateManager;
+    private final KitSelectLogic kitSelectLogic;
+    private final TeamManager teamManager;
 
-    public LobbyAdminMenuCommand(GameStateManager gameStateManager) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager) {
         this.gameStateManager = gameStateManager;
+        this.kitSelectLogic = kitSelectLogic;
+        this.teamManager = teamManager;
     }
 
     @Command("menu")
@@ -23,14 +34,18 @@ public class LobbyAdminMenuCommand extends BaseCommand {
         new LobbyAdminMenu().open(ctx.getPlayer());
     }
 
-    @Command("kit")
+    @Command("setKit")
     public void setKit(BukkitCommandContext ctx, @Arg("kit") Kit kit) {
-        if (kit == Kit.ATTACKER)
-            ctx.getPlayer().sendMessage("ATTACKER!");
+        kitSelectLogic.kitSelect(ctx.getPlayer(), kit);
     }
 
     @Command("setGameState")
     public void setGameState(BukkitCommandContext ctx, @Arg("gameState") GameState gameState) {
         gameStateManager.setCurrentState(gameState);
+    }
+
+    @Command("joinTeam")
+    public void joinTeam(BukkitCommandContext ctx, @Arg("team") SiegeWarsTeam team, @Arg("player") Player player) {
+        teamManager.joinTeam(player, team);
     }
 }

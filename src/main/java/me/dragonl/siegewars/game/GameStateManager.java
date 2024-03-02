@@ -5,12 +5,36 @@ import io.fairyproject.container.InjectableComponent;
 @InjectableComponent
 public class GameStateManager {
     private GameState currentState = GameState.IN_LOBBY;
-    public void setCurrentState(GameState state){
-        currentState = state;
+    private Integer round = 0;
+    private Integer ScoreA = 0;
+    private Integer ScoreB = 0;
+
+    public Integer getRound() {
+        return round;
     }
 
-    public GameState getCurrentState(){
-        return this.currentState;
+    public void setRound(Integer round) {
+        this.round = round;
+    }
+
+    public Integer getScoreA() {
+        return ScoreA;
+    }
+
+    public void setScoreA(Integer scoreA) {
+        ScoreA = scoreA;
+    }
+
+    public Integer getScoreB() {
+        return ScoreB;
+    }
+
+    public void setScoreB(Integer scoreB) {
+        ScoreB = scoreB;
+    }
+
+    public void setCurrentState(GameState state){
+        currentState = state;
     }
 
     public boolean isCurrentState(GameState state){

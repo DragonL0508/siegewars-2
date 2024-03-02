@@ -36,6 +36,17 @@ public class TeamManager {
         player.sendMessage(ChatColor.GREEN + "You joined the team : " + team.getColor() + team.getDisplayName());
     }
 
+    public void joinTeam(Player player, SiegeWarsTeam team){
+        if(team.equals(SiegeWarsTeam.TeamA))
+            joinTeam(player, getTeam("A"));
+        else if(team.equals(SiegeWarsTeam.TeamB))
+            joinTeam(player, getTeam("B"));
+        else if(team.equals(SiegeWarsTeam.Lobby))
+            joinTeam(player, getTeam("lobby"));
+        else if(team.equals(SiegeWarsTeam.Spectator))
+            joinTeam(player, getTeam("spectator"));
+    }
+
     public void leaveTeam(Player player){
         Team team = getPlayerTeam(player);
         team.removePlayer(player);

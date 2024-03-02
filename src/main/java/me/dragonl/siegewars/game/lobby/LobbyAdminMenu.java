@@ -11,20 +11,21 @@ import org.bukkit.inventory.ItemStack;
 public class LobbyAdminMenu extends Menu {
     @Override
     public void draw(boolean firstInitial) {
-        this.set(0, new testButton());
+        this.set(8, new gameStartButton());
     }
 
     @Override
     public String getTitle() {
-        return ChatColor.GOLD + "Lobby Admin GUI";
+        return ChatColor.GOLD + "Admin GUI";
     }
 
-    private class testButton extends Button {
+    private class gameStartButton extends Button {
         @Override
         public ItemStack getButtonItem(Player player) {
-            return ItemBuilder.of(Material.DIRT)
-                    .name("Button")
-                    .lore("Line 1", "Line 2", "Line 3")
+            return ItemBuilder.of(Material.INK_SACK)
+                    .name("¡±aGame Start!")
+                    .lore("¡±7click to start the game")
+                    .data(10)
                     .build();
         }
     }

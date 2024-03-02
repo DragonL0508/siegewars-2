@@ -14,6 +14,9 @@ public class PlayerKitManager {
 
     public void setPlayerKit(Player player, Kit kit) {
         playerKitMap.put(player.getUniqueId(), kit);
-        player.sendMessage("Your kit is now : " + kit.toString());
+    }
+
+    public Kit getPlayerKit(Player player){
+        return playerKitMap.getOrDefault(player.getUniqueId(), Kit.NONE);
     }
 }
