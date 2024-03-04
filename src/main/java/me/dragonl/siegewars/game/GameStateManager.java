@@ -36,6 +36,9 @@ public class GameStateManager {
     public void setCurrentState(GameState state){
         currentState = state;
     }
+    public GameState getCurrentState(){
+        return this.currentState;
+    }
 
     public boolean isCurrentState(GameState state){
         return this.currentState == state;

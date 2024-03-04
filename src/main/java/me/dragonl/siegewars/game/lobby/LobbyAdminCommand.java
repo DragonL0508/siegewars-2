@@ -9,6 +9,7 @@ import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.Kit;
 import me.dragonl.siegewars.game.kit.KitSelectLogic;
+import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.Team;
 import me.dragonl.siegewars.team.TeamManager;
@@ -22,16 +23,18 @@ public class LobbyAdminCommand extends BaseCommand {
     private final GameStateManager gameStateManager;
     private final KitSelectLogic kitSelectLogic;
     private final TeamManager teamManager;
+    private final PlayerPreparingManager playerPreparingManager;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager) {
         this.gameStateManager = gameStateManager;
         this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
+        this.playerPreparingManager = playerPreparingManager;
     }
 
     @Command("menu")
     public void openMenu(BukkitCommandContext ctx) {
-        new LobbyAdminMenu().open(ctx.getPlayer());
+        new LobbyAdminMenu(gameStateManager,playerPreparingManager).open(ctx.getPlayer());
     }
 
     @Command("setKit")

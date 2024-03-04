@@ -40,14 +40,14 @@ public class Sidebar implements SidebarAdapter {
     public List<Component> getLines(MCPlayer player) {
         Player bukkitPlayer = player.as(Player.class);
         PlayerData playerData = playerDataManager.getPlayerData(bukkitPlayer);
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             return Arrays.asList(
                     LegacyAdventureUtil.decode("¡±7¡±m--------------------"),
                     LegacyAdventureUtil.decode("¡±7Player: ¡±6" + player.getName()),
                     LegacyAdventureUtil.decode("¡±7Team: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
                     LegacyAdventureUtil.decode("¡±7Ping: ¡±6" + player.getPing() + "¡±6ms"),
                     LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("¡±7Game State: ¡±6In Lobby"),
+                    LegacyAdventureUtil.decode("¡±7Game State: ¡±6" + gameStateManager.getCurrentState().toString()),
                     LegacyAdventureUtil.decode("¡±7¡±m--------------------")
             );
         } else if (gameStateManager.isCurrentState(GameState.IN_GAME)) {

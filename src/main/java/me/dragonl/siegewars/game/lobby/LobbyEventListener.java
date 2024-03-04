@@ -35,7 +35,7 @@ public class LobbyEventListener implements Listener {
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         MCPlayer mcPlayer = MCPlayer.from(event.getPlayer());
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + "joined the lobby ! ¡±8(MC " + mcPlayer.getVersion().getFormatted() + "¡±8)");
             //Join lobby Team
             teamManager.joinTeam(event.getPlayer(), teamManager.getTeam("lobby"));
@@ -46,35 +46,35 @@ public class LobbyEventListener implements Listener {
 
     @EventHandler
     public void playerHurt(PlayerDamageEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void playerInteract(PlayerDropItemEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onHunger(FoodLevelChangeEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void inventoryChanged(InventoryClickEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY))
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING))
             if(event.getClickedInventory() == event.getWhoClicked().getInventory())
                 event.setCancelled(true);
     }

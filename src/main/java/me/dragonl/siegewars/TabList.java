@@ -10,6 +10,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.mc.tablist.util.TabSlot;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.team.TeamManager;
 import net.kyori.adventure.text.Component;
@@ -25,11 +26,13 @@ public class TabList implements TablistAdapter {
     private final TeamManager teamManager;
     private final NameGetter nameGetter;
     private final GameStateManager gameStateManager;
+    private final PlayerPreparingManager playerPreparingManager;
 
-    public TabList(TeamManager teamManager, NameGetter nameGetter, GameStateManager gameStateManager) {
+    public TabList(TeamManager teamManager, NameGetter nameGetter, GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager) {
         this.teamManager = teamManager;
         this.nameGetter = nameGetter;
         this.gameStateManager = gameStateManager;
+        this.playerPreparingManager = playerPreparingManager;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class TabList implements TablistAdapter {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         String formattedDate = dateFormat.format(currentDate);
         //Lobby Tab List
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY)){
+        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
             //default texts
             TabSlot headBorder = new TabSlot().column(TabColumn.LEFT).slot(1).text(LegacyAdventureUtil.decode("¡±7¡±m----------------------------------------------------------------------------------------------------------------------------"));
             TabSlot footBorder = new TabSlot().column(TabColumn.LEFT).slot(20).text(LegacyAdventureUtil.decode("¡±7¡±m---------------------------------------------------------------------------------------------------------------------------"));
@@ -60,7 +63,10 @@ public class TabList implements TablistAdapter {
             lobbyPlayersList.addAll(teamManager.getTeam("B").getPlayers());
             lobbyPlayersList.forEach(uuid -> {
                 Player p = Bukkit.getPlayer(uuid);
-                tabSlots.add(new TabSlot().column(TabColumn.MIDDLE).slot(lobbyPlayersList.indexOf(uuid) + 3).text(LegacyAdventureUtil.decode(nameGetter.getNameWithTeamColor(p))).skin(Skin.load(uuid)));
+                String nameTag = nameGetter.getNameWithTeamColor(p);
+                if(gameStateManager.isCurrentState(GameState.PREPARING) && playerPreparingManager.isPlayerPrepared(p))
+                    nameTag += " ¡±a¡±l¤w·Ç³Æ";
+                tabSlots.add(new TabSlot().column(TabColumn.MIDDLE).slot(lobbyPlayersList.indexOf(uuid) + 3).text(LegacyAdventureUtil.decode(nameTag)).skin(Skin.load(uuid)));
             });
             //spectators list
             teamManager.getTeam("spectator").getPlayers().forEach(uuid -> {
