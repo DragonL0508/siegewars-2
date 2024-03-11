@@ -35,15 +35,15 @@ public class TeamSelectMenu extends Menu {
 
     @Override
     public String getTitle() {
-        return ChatColor.YELLOW + "Select Your Team";
+        return ChatColor.YELLOW + "選擇隊伍:";
     }
 
     private class AteamButton extends Button{
         @Override
         public ItemStack getButtonItem(Player player) {
             return ItemBuilder.of(Material.WOOL)
-                    .name("��6Join team A")
-                    .lore("��7click to join team A")
+                    .name("§6加入隊伍A")
+                    .lore("§7點擊加入")
                     .data(1)
                     .build();
         }
@@ -58,8 +58,8 @@ public class TeamSelectMenu extends Menu {
         @Override
         public ItemStack getButtonItem(Player player) {
             return ItemBuilder.of(Material.WOOL)
-                    .name("��bJoin team B")
-                    .lore("��7click to join team B")
+                    .name("§b加入隊伍B")
+                    .lore("§7點擊加入")
                     .data(3)
                     .build();
         }
@@ -74,8 +74,8 @@ public class TeamSelectMenu extends Menu {
         @Override
         public ItemStack getButtonItem(Player player) {
             return ItemBuilder.of(Material.WOOL)
-                    .name("��7Join spectator")
-                    .lore("��7click to join spectator")
+                    .name("§8加入觀戰者")
+                    .lore("§7點擊加入")
                     .data(8)
                     .build();
         }

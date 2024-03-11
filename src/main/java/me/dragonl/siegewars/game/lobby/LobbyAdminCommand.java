@@ -10,31 +10,31 @@ import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.Kit;
 import me.dragonl.siegewars.game.kit.KitSelectLogic;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
+import me.dragonl.siegewars.itemStack.items.PlayerPrepareItem;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
-import me.dragonl.siegewars.team.Team;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-@Command(value = "admin")
+@Command(value = "admin",permissionNode = "siegewars.admin")
 @InjectableComponent
 public class LobbyAdminCommand extends BaseCommand {
     private final GameStateManager gameStateManager;
     private final KitSelectLogic kitSelectLogic;
     private final TeamManager teamManager;
     private final PlayerPreparingManager playerPreparingManager;
+    private final PlayerPrepareItem playerPrepareItem;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem) {
         this.gameStateManager = gameStateManager;
         this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
         this.playerPreparingManager = playerPreparingManager;
+        this.playerPrepareItem = playerPrepareItem;
     }
 
     @Command("menu")
     public void openMenu(BukkitCommandContext ctx) {
-        new LobbyAdminMenu(gameStateManager,playerPreparingManager).open(ctx.getPlayer());
+        new LobbyAdminMenu(gameStateManager,playerPreparingManager, teamManager, playerPrepareItem).open(ctx.getPlayer());
     }
 
     @Command("setKit")
@@ -44,7 +44,7 @@ public class LobbyAdminCommand extends BaseCommand {
 
     @Command("setGameState")
     public void setGameState(BukkitCommandContext ctx, @Arg("gameState") GameState gameState) {
-        gameStateManager.setCurrentState(gameState);
+        gameStateManager.setCurrentGameState(gameState);
     }
 
     @Command("joinTeam")

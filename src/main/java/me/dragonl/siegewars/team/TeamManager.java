@@ -3,6 +3,7 @@ package me.dragonl.siegewars.team;
 import io.fairyproject.container.InjectableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -27,6 +28,10 @@ public class TeamManager {
         return false;
     }
 
+    public boolean isInTeam(Player player, Team team){
+        return team.getPlayers().contains(player.getUniqueId());
+    }
+
     public void joinTeam(Player player, Team team){
         if(isInTeam(player))
             leaveTeam(player);
@@ -34,6 +39,7 @@ public class TeamManager {
 
         //message
         player.sendMessage(ChatColor.GREEN + "You joined the team : " + team.getColor() + team.getDisplayName());
+        player.playSound(player.getLocation(), Sound.VILLAGER_YES,1,1.3f);
     }
 
     public void joinTeam(Player player, SiegeWarsTeam team){
@@ -70,5 +76,16 @@ public class TeamManager {
                 return team;
         }
         return null;
+    }
+
+    public void swTeamSplits(List<Player> players){
+        Team teamA = getTeam("A");
+        Team teamB = getTeam("B");
+        players.forEach(player -> {
+            if(teamA.getPlayers().size() <= teamB.getPlayers().size())
+                joinTeam(player,teamA);
+            else
+                joinTeam(player,teamB);
+        });
     }
 }

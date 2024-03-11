@@ -24,23 +24,23 @@ public class TeamSetup extends BukkitRunnable {
         Team lobby = teamManager.createTeam("lobby");
 
         teamA.setColor(ChatColor.GOLD);
-        teamA.setPrefix(ChatColor.GOLD + "[TeamA] ");
+        teamA.setPrefix(ChatColor.GOLD + "[隊伍A] ");
         teamA.setFriendlyFire(false);
         teamA.setNametagVisibility(NametagVisibility.hideForOtherTeams);
         teamA.setPrivateChat(true);
 
         teamB.setColor(ChatColor.AQUA);
-        teamB.setPrefix(ChatColor.AQUA + "[TeamB] ");
+        teamB.setPrefix(ChatColor.AQUA + "[隊伍B] ");
         teamB.setFriendlyFire(false);
         teamB.setNametagVisibility(NametagVisibility.hideForOtherTeams);
         teamB.setPrivateChat(true);
 
         spectator.setColor(ChatColor.DARK_GRAY);
-        spectator.setPrefix(ChatColor.DARK_GRAY + "[Spec] ");
+        spectator.setPrefix(ChatColor.DARK_GRAY + "[觀戰者] ");
         spectator.setPrivateChat(true);
 
         lobby.setColor(ChatColor.GRAY);
-        lobby.setPrefix(ChatColor.GRAY + "[Lobby] ");
+        lobby.setPrefix(ChatColor.GRAY + "[大廳玩家] ");
     }
 
     @PostInitialize

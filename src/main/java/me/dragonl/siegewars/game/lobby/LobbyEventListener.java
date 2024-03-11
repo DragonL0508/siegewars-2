@@ -35,46 +35,50 @@ public class LobbyEventListener implements Listener {
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         MCPlayer mcPlayer = MCPlayer.from(event.getPlayer());
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
-            event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + "joined the lobby ! ¡±8(MC " + mcPlayer.getVersion().getFormatted() + "¡±8)");
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY)){
+            event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + "é€²å…¥äº†å¤§å»³ ! Â§8(MC " + mcPlayer.getVersion().getFormatted() + "Â§8)");
             //Join lobby Team
             teamManager.joinTeam(event.getPlayer(), teamManager.getTeam("lobby"));
             //Set lobby items
             player.getInventory().setItem(0,selectTeamItem.get(player));
         }
+        if(gameStateManager.isCurrentGameState(GameState.PREPARING) && !teamManager.isInTeam(player)){
+            //Join Team
+            teamManager.joinTeam(event.getPlayer(), teamManager.getTeam("spectator"));
+        }
     }
 
     @EventHandler
     public void playerHurt(PlayerDamageEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void playerInteract(PlayerDropItemEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onHunger(FoodLevelChangeEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void playerInteract(PlayerInteractEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void inventoryChanged(InventoryClickEvent event){
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING))
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING))
             if(event.getClickedInventory() == event.getWhoClicked().getInventory())
                 event.setCancelled(true);
     }

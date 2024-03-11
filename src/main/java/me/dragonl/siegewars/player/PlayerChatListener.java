@@ -36,7 +36,7 @@ public class PlayerChatListener implements Listener {
             if(teamManager.getPlayerTeam(player).isPrivateChat()){
                 for(UUID uuid : teamManager.getPlayerTeam(player).getPlayers()){
                     Player p = Bukkit.getPlayer(uuid);
-                    p.sendMessage( ChatColor.YELLOW + "[Team Chat] " + nameGetter.getChatName(player) + ChatColor.DARK_GRAY + " : " + ChatColor.WHITE + event.getMessage());
+                    p.sendMessage( ChatColor.YELLOW + "[隊伍頻道] " + nameGetter.getChatName(player) + ChatColor.DARK_GRAY + " : " + ChatColor.WHITE + event.getMessage());
                 }
                 return;
             }

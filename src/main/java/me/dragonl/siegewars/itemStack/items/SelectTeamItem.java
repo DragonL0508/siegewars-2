@@ -8,6 +8,8 @@ import me.dragonl.siegewars.itemStack.CustomItem;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -18,7 +20,7 @@ public class SelectTeamItem extends CustomItemFairy {
     protected FairyItem register() {
         return FairyItem.builder("sw:teamSelector")
                 .item(ItemBuilder.of(Material.NAME_TAG)
-                        .name("��eSelect Team ��7(Right Click)")
+                        .name("§e選擇隊伍 §7(右鍵點擊)")
                         .build())
                 .build();
     }
@@ -33,7 +35,9 @@ public class SelectTeamItem extends CustomItemFairy {
 
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
-            event.getPlayer().performCommand("ts menu");
+            Player player = event.getPlayer();
+            player.performCommand("ts menu");
+            player.playSound(player.getLocation(), Sound.HORSE_ARMOR, 1, 0.5f);
         }
 
 //        @EventHandler

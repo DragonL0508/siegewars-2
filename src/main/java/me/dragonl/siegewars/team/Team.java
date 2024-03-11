@@ -1,6 +1,9 @@
 package me.dragonl.siegewars.team;
 
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -26,6 +29,32 @@ public class Team {
     }
 
     public List<UUID> getPlayers() {
+        return players;
+    }
+
+    public List<UUID> getOnlinePlayers() {
+        List<UUID> players = new ArrayList<>();
+        this.players.forEach(uuid -> {
+            if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(uuid)))
+                players.add(uuid);
+        });
+        return players;
+    }
+
+    public List<Player> getOnlineBukkitPlayers() {
+        List<Player> players = new ArrayList<>();
+        this.players.forEach(uuid -> {
+            if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(uuid)))
+                players.add(Bukkit.getPlayer(uuid));
+        });
+        return players;
+    }
+
+    public List<Player> getBukkitPlayers() {
+        List<Player> players = new ArrayList<>();
+        this.players.forEach(uuid -> {
+                players.add(Bukkit.getPlayer(uuid));
+        });
         return players;
     }
 
@@ -69,6 +98,10 @@ public class Team {
         return color;
     }
 
+    public Color getBukkitColor(){
+        return translateChatColorToColor(color);
+    }
+
     public void setColor(ChatColor color) {
         this.color = color;
     }
@@ -87,5 +120,47 @@ public class Team {
 
     public void setNametagVisibility(NametagVisibility nametagVisibility) {
         this.nametagVisibility = nametagVisibility;
+    }
+
+    public Color translateChatColorToColor(ChatColor chatColor)
+    {
+        switch (chatColor) {
+            case AQUA:
+                return Color.AQUA;
+            case BLACK:
+                return Color.BLACK;
+            case BLUE:
+                return Color.BLUE;
+            case DARK_AQUA:
+                return Color.AQUA;
+            case DARK_BLUE:
+                return Color.BLUE;
+            case DARK_GRAY:
+                return Color.GRAY;
+            case DARK_GREEN:
+                return Color.GREEN;
+            case DARK_PURPLE:
+                return Color.PURPLE;
+            case DARK_RED:
+                return Color.RED;
+            case GOLD:
+                return Color.ORANGE;
+            case GRAY:
+                return Color.GRAY;
+            case GREEN:
+                return Color.GREEN;
+            case LIGHT_PURPLE:
+                return Color.PURPLE;
+            case RED:
+                return Color.RED;
+            case WHITE:
+                return Color.WHITE;
+            case YELLOW:
+                return Color.YELLOW;
+            default:
+                break;
+        }
+
+        return null;
     }
 }

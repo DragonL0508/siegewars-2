@@ -11,7 +11,6 @@ import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.team.TeamManager;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -33,36 +32,37 @@ public class Sidebar implements SidebarAdapter {
 
     @Override
     public Component getTitle(MCPlayer player) {
-        return LegacyAdventureUtil.decode("¡±eSiege¡±6wars ¡±f¡±lII");
+        return LegacyAdventureUtil.decode("Â§eSiegeÂ§6wars Â§fÂ§lII");
     }
 
     @Override
     public List<Component> getLines(MCPlayer player) {
         Player bukkitPlayer = player.as(Player.class);
         PlayerData playerData = playerDataManager.getPlayerData(bukkitPlayer);
-        if(gameStateManager.isCurrentState(GameState.IN_LOBBY) || gameStateManager.isCurrentState(GameState.PREPARING)){
+        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             return Arrays.asList(
-                    LegacyAdventureUtil.decode("¡±7¡±m--------------------"),
-                    LegacyAdventureUtil.decode("¡±7Player: ¡±6" + player.getName()),
-                    LegacyAdventureUtil.decode("¡±7Team: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
-                    LegacyAdventureUtil.decode("¡±7Ping: ¡±6" + player.getPing() + "¡±6ms"),
+                    LegacyAdventureUtil.decode("Â§7Â§m--------------------"),
+                    LegacyAdventureUtil.decode("Â§7ç©å®¶: Â§6" + player.getName()),
+                    LegacyAdventureUtil.decode("Â§7éšŠä¼: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
+                    LegacyAdventureUtil.decode("Â§7å»¶é²: Â§6" + player.getPing() + "Â§6ms"),
                     LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("¡±7Game State: ¡±6" + gameStateManager.getCurrentState().toString()),
-                    LegacyAdventureUtil.decode("¡±7¡±m--------------------")
+                    LegacyAdventureUtil.decode("Â§7éŠæˆ²éšæ®µ: Â§6" + gameStateManager.getCurrentGameState().toString()),
+                    LegacyAdventureUtil.decode("Â§7Â§m--------------------")
             );
-        } else if (gameStateManager.isCurrentState(GameState.IN_GAME)) {
+        } else if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
             return Arrays.asList(
-                    LegacyAdventureUtil.decode("¡±7¡±m--------------------"),
-                    LegacyAdventureUtil.decode("¡±61 ¡±7- ¡±b2"),
-                    LegacyAdventureUtil.decode("¡±7Round: ¡±6" + gameStateManager.getRound()),
+                    LegacyAdventureUtil.decode("Â§7Â§m--------------------"),
+                    LegacyAdventureUtil.decode("Â§6" + gameStateManager.getScoreA() + " Â§7- Â§b" + gameStateManager.getScoreB()),
+                    LegacyAdventureUtil.decode("Â§7å›åˆ: Â§6" + gameStateManager.getRound()),
                     LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("¡±7Player: ¡±6" + player.getName()),
-                    LegacyAdventureUtil.decode("¡±7Kit: ¡±6" + playerKitManager.getPlayerKit(bukkitPlayer).toString().toLowerCase()),
+                    LegacyAdventureUtil.decode("Â§7ç©å®¶: Â§6" + player.getName()),
+                    LegacyAdventureUtil.decode("Â§7è·æ¥­: Â§6" + playerKitManager.getPlayerKitString(bukkitPlayer)),
                     LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("¡±7Money: ¡±6" + playerData.getMoney() + "$"),
-                    LegacyAdventureUtil.decode("¡±7Kills: ¡±6" + playerData.getKills()),
-                    LegacyAdventureUtil.decode("¡±7Score: ¡±6" + playerData.getScore()),
-                    LegacyAdventureUtil.decode("¡±7¡±m--------------------")
+                    LegacyAdventureUtil.decode("Â§7é‡‘éŒ¢: Â§6" + playerData.getMoney() + "$"),
+                    LegacyAdventureUtil.decode("Â§7æ“Šæ®º: Â§6" + playerData.getKills()),
+                    LegacyAdventureUtil.decode(""),
+                    LegacyAdventureUtil.decode("Â§7åˆ†æ•¸: Â§6" + playerData.getScore()),
+                    LegacyAdventureUtil.decode("Â§7Â§m--------------------")
             );
         }
         return null;

@@ -1,10 +1,21 @@
 package me.dragonl.siegewars.player.data;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 public class PlayerData {
     private Integer kills = 0;
     private Integer deaths = 0;
     private Integer money = 0;
     private Integer score = 0;
+    private Integer assist = 0;
+
+    public Integer getAssist() {
+        return assist;
+    }
+
+    public void setAssist(Integer assist) {
+        this.assist = assist;
+    }
 
     public Integer getScore() {
         return score;
@@ -14,7 +25,7 @@ public class PlayerData {
         this.score = score;
     }
 
-    private float totalDamage = 0.0F;
+    private double totalDamage = 0;
 
     public Integer getKills() {
         return kills;
@@ -40,11 +51,11 @@ public class PlayerData {
         this.money = money;
     }
 
-    public float getTotalDamage() {
+    public double getTotalDamage() {
         return totalDamage;
     }
 
-    public void setTotalDamage(float totalDamage) {
+    public void setTotalDamage(double totalDamage) {
         this.totalDamage = totalDamage;
     }
 }
