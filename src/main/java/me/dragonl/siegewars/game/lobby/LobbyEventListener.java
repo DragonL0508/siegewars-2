@@ -63,13 +63,6 @@ public class LobbyEventListener implements Listener {
     }
 
     @EventHandler
-    public void onHunger(FoodLevelChangeEvent event){
-        if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void playerInteract(PlayerInteractEvent event){
         if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             event.setCancelled(true);

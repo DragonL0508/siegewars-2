@@ -77,7 +77,7 @@ public class InGameListener implements Listener {
                 victimData.setDeaths(victimData.getDeaths() + 1);
 
                 //message
-                event.setDeathMessage(nameGetter.getNameWithTeamColor(killer) + " §c✘ " + nameGetter.getNameWithTeamColor(victim));
+                event.setDeathMessage("§c[擊殺] " + nameGetter.getNameWithTeamColor(killer) + " §c✘ " + nameGetter.getNameWithTeamColor(victim));
 
                 soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH,1,1 + (float)Math.random());
             }

@@ -7,6 +7,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
 import me.dragonl.siegewars.itemStack.items.ability.AttackerAbilityItem;
+import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Sound;
@@ -23,8 +24,13 @@ public class KitAttacker extends SiegeWarsAbstractKit {
     private final AttackerAbilityItem attackerAbilityItem;
     private final RemoveCustomItem removeCustomItem;
 
-    public KitAttacker(PlayerKitManager playerKitManager, TeamManager teamManager, AttackerAbilityItem attackerAbilityItem, RemoveCustomItem removeCustomItem) {
-        super(playerKitManager, teamManager);
+    public KitAttacker(
+            PlayerKitManager playerKitManager
+            , TeamManager teamManager
+            , AttackerAbilityItem attackerAbilityItem
+            , RemoveCustomItem removeCustomItem
+            , NameGetter nameGetter) {
+        super(playerKitManager, teamManager, nameGetter);
         this.attackerAbilityItem = attackerAbilityItem;
         this.removeCustomItem = removeCustomItem;
     }

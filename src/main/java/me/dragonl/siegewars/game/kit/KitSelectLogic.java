@@ -5,6 +5,7 @@ import me.dragonl.siegewars.game.Kit;
 import me.dragonl.siegewars.game.kit.allKits.*;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
 import me.dragonl.siegewars.itemStack.items.ability.AttackerAbilityItem;
+import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.entity.Player;
@@ -15,21 +16,23 @@ public class KitSelectLogic {
     private final TeamManager teamManager;
     private final AttackerAbilityItem attackerAbilityItem;
     private final RemoveCustomItem removeCustomItem;
+    private final NameGetter nameGetter;
 
-    public KitSelectLogic(PlayerKitManager playerKitManager, TeamManager teamManager, AttackerAbilityItem attackerAbilityItem, RemoveCustomItem removeCustomItem) {
+    public KitSelectLogic(PlayerKitManager playerKitManager, TeamManager teamManager, AttackerAbilityItem attackerAbilityItem, RemoveCustomItem removeCustomItem, NameGetter nameGetter) {
         this.playerKitManager = playerKitManager;
         this.teamManager = teamManager;
         this.attackerAbilityItem = attackerAbilityItem;
         this.removeCustomItem = removeCustomItem;
+        this.nameGetter = nameGetter;
     }
 
     public void kitSelect(Player player, Kit kit) {
-        SiegeWarsKit attacker = new KitAttacker(playerKitManager, teamManager, attackerAbilityItem, removeCustomItem);
-        SiegeWarsKit archer = new KitArcher(playerKitManager, teamManager);
-        SiegeWarsKit healer = new KitHealer(playerKitManager, teamManager);
-        SiegeWarsKit special = new KitSpecial(playerKitManager, teamManager);
-        SiegeWarsKit tank = new KitTank(playerKitManager, teamManager);
-        SiegeWarsKit reaper = new KitReaper(playerKitManager, teamManager);
+        SiegeWarsKit attacker = new KitAttacker(playerKitManager, teamManager, attackerAbilityItem, removeCustomItem, nameGetter);
+        SiegeWarsKit archer = new KitArcher(playerKitManager, teamManager, nameGetter);
+        SiegeWarsKit healer = new KitHealer(playerKitManager, teamManager, nameGetter);
+        SiegeWarsKit special = new KitSpecial(playerKitManager, teamManager, nameGetter);
+        SiegeWarsKit tank = new KitTank(playerKitManager, teamManager, nameGetter);
+        SiegeWarsKit reaper = new KitReaper(playerKitManager, teamManager, nameGetter);
 
         if(kit == Kit.ATTACKER) attacker.selectThisKit(player, kit);
         if(kit == Kit.ARCHER) archer.selectThisKit(player, kit);
