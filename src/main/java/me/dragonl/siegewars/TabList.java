@@ -50,21 +50,62 @@ public class TabList implements TablistAdapter {
         String formattedDate = dateFormat.format(currentDate);
         //Lobby Tab List
         if (gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)) {
-            //default texts
-            TabSlot headBorder = new TabSlot().column(TabColumn.LEFT).slot(1).text(LegacyAdventureUtil.decode("§7§m----------------------------------------------------------------------------------------------------------------------------"));
-            TabSlot footBorder = new TabSlot().column(TabColumn.LEFT).slot(20).text(LegacyAdventureUtil.decode("§7§m---------------------------------------------------------------------------------------------------------------------------"));
-            TabSlot statTitle = new TabSlot().column(TabColumn.LEFT).slot(2).text(LegacyAdventureUtil.decode("§e§l個人資訊:"));
-            TabSlot playersTitle = new TabSlot().column(TabColumn.MIDDLE).slot(2).text(LegacyAdventureUtil.decode("§e§l大廳玩家:"));
-            TabSlot spectatorsTitle = new TabSlot().column(TabColumn.RIGHT).slot(2).text(LegacyAdventureUtil.decode("§e§l觀戰玩家:"));
-            TabSlot dateTitle = new TabSlot().column(TabColumn.FAR_RIGHT).slot(2).text(LegacyAdventureUtil.decode("§e§l日期:"));
-            TabSlot nameInfo = new TabSlot().column(TabColumn.LEFT).slot(3).text(LegacyAdventureUtil.decode("§6ID: §f" + player.getName()));
-            TabSlot pingInfo = new TabSlot().column(TabColumn.LEFT).slot(4).text(LegacyAdventureUtil.decode("§6Ping: §f" + player.getPing() + "ms"));
-            TabSlot dateInfo = new TabSlot().column(TabColumn.FAR_RIGHT).slot(3).text(LegacyAdventureUtil.decode("§f" + formattedDate));
-            Set<TabSlot> tabSlots = new HashSet<>(Set.of(
-                    headBorder, footBorder, statTitle, playersTitle, spectatorsTitle
-                    , dateTitle, nameInfo, pingInfo, dateInfo));
-            //information
-            //lobby player list
+            Set<TabSlot> slots = new HashSet<>();
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(1)
+                            .text(LegacyAdventureUtil.decode("§7§m----------------------------------------------------------------------------------------------------------------------------"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(20)
+                            .text(LegacyAdventureUtil.decode("§7§m----------------------------------------------------------------------------------------------------------------------------"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(2)
+                            .text(LegacyAdventureUtil.decode("§e§l個人資訊:"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.MIDDLE)
+                            .slot(2)
+                            .text(LegacyAdventureUtil.decode("§e§l大廳玩家:"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.RIGHT)
+                            .slot(2)
+                            .text(LegacyAdventureUtil.decode("§e§l觀戰玩家:"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.FAR_RIGHT)
+                            .slot(2)
+                            .text(LegacyAdventureUtil.decode("§e§l日期:"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(3)
+                            .text(LegacyAdventureUtil.decode("§6ID: §f" + player.getName()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(4)
+                            .text(LegacyAdventureUtil.decode("§6Ping: §f" + player.getPing() + "ms"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.FAR_RIGHT)
+                            .slot(3)
+                            .text(LegacyAdventureUtil.decode("§f" + formattedDate))
+            );
+            //player list
             List<UUID> lobbyPlayersList = new ArrayList<>();
             lobbyPlayersList.addAll(teamManager.getTeam("lobby").getOnlinePlayers());
             lobbyPlayersList.addAll(teamManager.getTeam("A").getOnlinePlayers());
@@ -76,19 +117,31 @@ public class TabList implements TablistAdapter {
                     nameTag += " §a§l已準備";
                 else
                     nameTag += " §c§l未準備";
-                tabSlots.add(new TabSlot().column(TabColumn.MIDDLE).slot(lobbyPlayersList.indexOf(uuid) + 3).text(LegacyAdventureUtil.decode(nameTag)).skin(Skin.load(uuid)));
+                slots.add(
+                        new TabSlot()
+                                .column(TabColumn.MIDDLE)
+                                .slot(lobbyPlayersList.indexOf(uuid) + 3)
+                                .text(LegacyAdventureUtil.decode(nameTag))
+                                .skin(Skin.load(uuid))
+                );
             });
             //spectators list
             teamManager.getTeam("spectator").getPlayers().forEach(uuid -> {
                 Player p = Bukkit.getPlayer(uuid);
-                tabSlots.add(new TabSlot().column(TabColumn.RIGHT).slot(teamManager.getTeam("spectator").getPlayers().indexOf(uuid) + 3).text(LegacyAdventureUtil.decode(nameGetter.getNameWithTeamColor(p))).skin(Skin.load(uuid)));
+                slots.add(
+                        new TabSlot()
+                                .column(TabColumn.RIGHT)
+                                .slot(teamManager.getTeam("spectator").getPlayers().indexOf(uuid) + 3)
+                                .text(LegacyAdventureUtil.decode(nameGetter.getNameWithTeamColor(p))).skin(Skin.load(uuid))
+                );
             });
-            return tabSlots;
+            return slots;
+
         } else if (gameStateManager.isCurrentGameState(GameState.IN_GAME) || gameStateManager.isCurrentGameState(GameState.GAME_END)) {
             String[] titles = {"§6§l隊伍A:", "§b§l隊伍B:"};
             Player bukkitPlayer = player.as(Player.class);
             PlayerData playerData = playerDataManager.getPlayerData(bukkitPlayer);
-            Set<TabSlot> tabSlots = new HashSet<>();
+            Set<TabSlot> slots = new HashSet<>();
 
             for (int i = 0; i < 2; i++) {
                 String title = titles[i];
@@ -96,33 +149,90 @@ public class TabList implements TablistAdapter {
                     title += " §r§7(你的隊伍)";
 
                 TabSlot teamTitle = new TabSlot().column(i == 0 ? TabColumn.MIDDLE : TabColumn.RIGHT).slot(2).text(LegacyAdventureUtil.decode(title));
-                tabSlots.add(teamTitle);
+                slots.add(teamTitle);
             }
 
-// default texts
-            TabSlot headBorder = new TabSlot().column(TabColumn.LEFT).slot(1).text(LegacyAdventureUtil.decode("§7§m----------------------------------------------------------------------------------------------------------------------------"));
-            TabSlot footBorder = new TabSlot().column(TabColumn.LEFT).slot(20).text(LegacyAdventureUtil.decode("§7§m---------------------------------------------------------------------------------------------------------------------------"));
-            TabSlot statTitle = new TabSlot().column(TabColumn.LEFT).slot(2).text(LegacyAdventureUtil.decode("§e§l個人資訊:"));
-            TabSlot teamAScore = new TabSlot().column(TabColumn.MIDDLE).slot(3).text(LegacyAdventureUtil.decode("§6得分: §f" + gameStateManager.getScoreA()));
-            TabSlot teamBScore = new TabSlot().column(TabColumn.RIGHT).slot(3).text(LegacyAdventureUtil.decode("§b得分: §f" + gameStateManager.getScoreB()));
-            TabSlot dateTitle = new TabSlot().column(TabColumn.FAR_RIGHT).slot(2).text(LegacyAdventureUtil.decode("§e§l日期:"));
-            TabSlot nameInfo = new TabSlot().column(TabColumn.LEFT).slot(3).text(LegacyAdventureUtil.decode("§6ID: §f" + player.getName()));
-            TabSlot pingInfo = new TabSlot().column(TabColumn.LEFT).slot(4).text(LegacyAdventureUtil.decode("§6Ping: §f" + player.getPing() + "ms"));
-            TabSlot killsInfo = new TabSlot().column(TabColumn.LEFT).slot(6).text(LegacyAdventureUtil.decode("§6擊殺數: §f" + playerData.getKills()));
-            TabSlot deathInfo = new TabSlot().column(TabColumn.LEFT).slot(7).text(LegacyAdventureUtil.decode("§6死亡數: §f" + playerData.getDeaths()));
-            TabSlot assistInfo = new TabSlot().column(TabColumn.LEFT).slot(8).text(LegacyAdventureUtil.decode("§6助攻數: §f" + playerData.getAssist()));
-            TabSlot damageInfo = new TabSlot().column(TabColumn.LEFT).slot(9).text(LegacyAdventureUtil.decode("§6傷害量: §f" + playerData.getTotalDamage()));
-            TabSlot dateInfo = new TabSlot().column(TabColumn.FAR_RIGHT).slot(3).text(LegacyAdventureUtil.decode("§f" + formattedDate));
-
-            tabSlots.addAll(Set.of(
-                    headBorder, footBorder, statTitle, teamAScore, teamBScore,
-                    dateTitle, nameInfo, pingInfo, killsInfo, deathInfo, assistInfo, damageInfo, dateInfo));
-
-            //player list
-            addPlayerTabSlots(bukkitPlayer, teamManager.getTeam("A"), TabColumn.MIDDLE, tabSlots);
-            addPlayerTabSlots(bukkitPlayer, teamManager.getTeam("B"), TabColumn.RIGHT, tabSlots);
-            //information
-            return tabSlots;
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(1)
+                            .text(LegacyAdventureUtil.decode("§7§m----------------------------------------------------------------------------------------------------------------------------"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(20)
+                            .text(LegacyAdventureUtil.decode("§7§m----------------------------------------------------------------------------------------------------------------------------"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(2)
+                            .text(LegacyAdventureUtil.decode("§e§l個人資訊:"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.MIDDLE)
+                            .slot(3)
+                            .text(LegacyAdventureUtil.decode("§6得分: §f" + gameStateManager.getScoreA()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.RIGHT)
+                            .slot(3)
+                            .text(LegacyAdventureUtil.decode("§b得分: §f" + gameStateManager.getScoreB()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.FAR_RIGHT)
+                            .slot(2)
+                            .text(LegacyAdventureUtil.decode("§e§l日期:"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(3)
+                            .text(LegacyAdventureUtil.decode("§6ID: §f" + player.getName()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(4)
+                            .text(LegacyAdventureUtil.decode("§6Ping: §f" + player.getPing() + "ms"))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(6)
+                            .text(LegacyAdventureUtil.decode("§6擊殺數: §f" + playerData.getKills()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(7)
+                            .text(LegacyAdventureUtil.decode("§6死亡數: §f" + playerData.getDeaths()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(8)
+                            .text(LegacyAdventureUtil.decode("§6助攻數: §f" + playerData.getAssist()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.LEFT)
+                            .slot(9)
+                            .text(LegacyAdventureUtil.decode("§6傷害量: §f" + playerData.getTotalDamage()))
+            );
+            slots.add(
+                    new TabSlot()
+                            .column(TabColumn.FAR_RIGHT)
+                            .slot(3)
+                            .text(LegacyAdventureUtil.decode("§f" + formattedDate))
+            );
+            addPlayerTabSlots(bukkitPlayer, teamManager.getTeam("A"), TabColumn.MIDDLE, slots);
+            addPlayerTabSlots(bukkitPlayer, teamManager.getTeam("B"), TabColumn.RIGHT, slots);
+            return slots;
         }
         return null;
     }

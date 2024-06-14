@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @InjectableComponent
 public class GameStartCountdown extends BukkitRunnable {
@@ -29,7 +30,7 @@ public class GameStartCountdown extends BukkitRunnable {
 
     @Override
     public void run() {
-        List<UUID> uuids = Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList();
+        List<UUID> uuids = Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList());
         if (timer == 10) {
             Bukkit.getServer().broadcastMessage("§a玩家準備完成，遊戲即將開始...");
             soundPlayer.playSound(uuids, Sound.CLICK, 1, 1);

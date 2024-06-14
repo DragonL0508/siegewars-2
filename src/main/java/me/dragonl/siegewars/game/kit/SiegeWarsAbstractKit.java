@@ -3,6 +3,7 @@ package me.dragonl.siegewars.game.kit;
 import me.dragonl.siegewars.game.Kit;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.TeamManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -17,8 +18,11 @@ public abstract class SiegeWarsAbstractKit implements SiegeWarsKit {
 
     @Override
     public void selectThisKit(Player player, Kit kit) {
-        player.sendMessage("§a你選擇了職業: §e" + playerKitManager.getKitString(kit));
-        player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1, 1.2f);
+        teamManager.getPlayerTeam(player).getPlayers().forEach(uuid -> {
+            Player p = Bukkit.getPlayer(uuid);
+            p.sendMessage(player.getName() + " §a選擇了職業: §e" + playerKitManager.getKitString(kit));
+            p.playSound(p.getLocation(), Sound.NOTE_PIANO, 1, 1.2f);
+        });
         playerKitManager.setPlayerKit(player, kit);
         giveKitItems(player);
     }

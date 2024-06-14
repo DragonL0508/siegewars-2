@@ -42,27 +42,27 @@ public class Sidebar implements SidebarAdapter {
         if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             return Arrays.asList(
                     Component.text("§7§m--------------------"),
-                    Component.text("§7玩家: §6" + player.getName()),
-                    Component.text("§7隊伍: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
-                    Component.text("§7延遲: §6" + player.getPing() + "§6ms"),
+                    Component.text("§f玩家: §6" + player.getName()),
+                    Component.text("§f隊伍: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
+                    Component.text("§f延遲: §6" + player.getPing() + "§6ms"),
                     Component.text(""),
-                    Component.text("§7遊戲階段: §6" + gameStateManager.getCurrentGameState().toString()),
+                    Component.text("§f遊戲階段: §6" + gameStateManager.getCurrentGameState().toString()),
                     Component.text("§7§m--------------------")
             );
         } else if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
             return Arrays.asList(
                     Component.text("§7§m--------------------"),
                     Component.text("§6" + gameStateManager.getScoreA() + " §7- §b" + gameStateManager.getScoreB()),
-                    Component.text("§7回合: §6" + gameStateManager.getRound()),
+                    Component.text("§f回合: §6" + gameStateManager.getRound()),
                     Component.text(""),
-                    Component.text("§7玩家: §6" + player.getName()),
-                    Component.text("§7隊伍: §6" + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
-                    Component.text("§7職業: §6" + playerKitManager.getPlayerKitString(bukkitPlayer)),
+                    Component.text("§f玩家: §6" + player.getName()),
+                    Component.text("§f隊伍: §6" + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
+                    Component.text("§f職業: §6" + playerKitManager.getPlayerKitString(bukkitPlayer)),
                     Component.text(""),
-                    Component.text("§7金錢: §6" + playerData.getMoney() + "$"),
-                    Component.text("§7擊殺: §6" + playerData.getKills()),
+                    Component.text("§f金錢: §6" + playerData.getMoney() + "$"),
+                    Component.text("§f擊殺: §6" + playerData.getKills()),
                     Component.text(""),
-                    Component.text("§7分數: §6" + playerData.getScore()),
+                    Component.text("§f分數: §6" + playerData.getScore()),
                     Component.text("§7§m--------------------")
             );
         }

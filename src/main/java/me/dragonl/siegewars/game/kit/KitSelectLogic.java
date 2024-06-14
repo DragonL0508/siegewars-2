@@ -30,13 +30,12 @@ public class KitSelectLogic {
         SiegeWarsKit special = new KitSpecial(playerKitManager, teamManager);
         SiegeWarsKit tank = new KitTank(playerKitManager, teamManager);
         SiegeWarsKit reaper = new KitReaper(playerKitManager, teamManager);
-        switch (kit) {
-            case ATTACKER -> attacker.selectThisKit(player, kit);
-            case ARCHER -> archer.selectThisKit(player, kit);
-            case HEALER -> healer.selectThisKit(player, kit);
-            case SPECIAL -> special.selectThisKit(player, kit);
-            case TANK -> tank.selectThisKit(player, kit);
-            case REAPER -> reaper.selectThisKit(player, kit);
-        }
+
+        if(kit == Kit.ATTACKER) attacker.selectThisKit(player, kit);
+        if(kit == Kit.ARCHER) archer.selectThisKit(player, kit);
+        if(kit == Kit.HEALER) healer.selectThisKit(player, kit);
+        if(kit == Kit.SPECIAL) special.selectThisKit(player, kit);
+        if(kit == Kit.TANK) tank.selectThisKit(player, kit);
+        if(kit == Kit.REAPER) reaper.selectThisKit(player, kit);
     }
 }

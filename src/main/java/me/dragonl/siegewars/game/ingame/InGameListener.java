@@ -20,6 +20,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.stream.Collectors;
+
 @InjectableComponent
 @RegisterAsListener
 public class InGameListener implements Listener {
@@ -77,7 +79,7 @@ public class InGameListener implements Listener {
                 //message
                 event.setDeathMessage(nameGetter.getNameWithTeamColor(killer) + " §c✘ " + nameGetter.getNameWithTeamColor(victim));
 
-                soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList(), Sound.IRONGOLEM_DEATH,1,1 + (float)Math.random());
+                soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH,1,1 + (float)Math.random());
             }
         }
     }

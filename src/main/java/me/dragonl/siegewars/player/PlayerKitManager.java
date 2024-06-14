@@ -22,39 +22,42 @@ public class PlayerKitManager {
 
     public String getPlayerKitText(Player player) {
         Kit kit = getPlayerKit(player);
-        return switch (kit) {
-            case NONE -> "";
-            case ATTACKER -> "§c§l突";
-            case ARCHER -> "§e§l弓";
-            case TANK -> "§7§l坦";
-            case HEALER -> "§a§l治";
-            case SPECIAL -> "§9§l特";
-            case REAPER -> "§8§l死";
-        };
+        switch (kit) {
+            case NONE : return "";
+            case ATTACKER : return "§c§l突";
+            case ARCHER : return "§e§l弓";
+            case TANK : return "§7§l坦";
+            case HEALER : return "§a§l治";
+            case SPECIAL : return "§9§l特";
+            case REAPER : return "§8§l死";
+        }
+        return null;
     }
 
     public String getPlayerKitString(Player player) {
         Kit kit = getPlayerKit(player);
-        return switch (kit) {
-            case NONE -> "";
-            case ATTACKER -> "突襲者";
-            case ARCHER -> "弓箭手";
-            case TANK -> "坦克";
-            case HEALER -> "治療師";
-            case SPECIAL -> "特種兵";
-            case REAPER -> "死神";
-        };
+        switch (kit) {
+            case NONE : return "";
+            case ATTACKER : return "突襲者";
+            case ARCHER : return "弓箭手";
+            case TANK : return "坦克";
+            case HEALER : return "治療師";
+            case SPECIAL : return "特種兵";
+            case REAPER : return "死神";
+        }
+        return null;
     }
 
     public String getKitString(Kit kit){
-        return switch (kit) {
-            case NONE -> "";
-            case ATTACKER -> "突襲者";
-            case ARCHER -> "弓箭手";
-            case TANK -> "坦克";
-            case HEALER -> "治療師";
-            case SPECIAL -> "特種兵";
-            case REAPER -> "死神";
-        };
+        switch (kit) {
+            case NONE : return "";
+            case ATTACKER : return "突襲者";
+            case ARCHER : return "弓箭手";
+            case TANK : return "坦克";
+            case HEALER : return "治療師";
+            case SPECIAL : return "特種兵";
+            case REAPER : return "死神";
+        }
+        return null;
     }
 }
