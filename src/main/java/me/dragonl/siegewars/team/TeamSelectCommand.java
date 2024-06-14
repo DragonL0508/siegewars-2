@@ -27,10 +27,8 @@ public class TeamSelectCommand extends BaseCommand {
         teamSelectMenu.open(ctx.getPlayer());
     }
 
-    @Command("toggle")
+    @Command(value = "toggle",permissionNode = "siegewars.admin")
     public void toggleTeamSelect(BukkitCommandContext ctx){
-        if(!ctx.getPlayer().isOp())
-            return;
         canTeamSelect = !canTeamSelect;
 
         if(canTeamSelect)

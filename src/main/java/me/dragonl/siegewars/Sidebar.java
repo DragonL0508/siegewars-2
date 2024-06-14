@@ -32,7 +32,7 @@ public class Sidebar implements SidebarAdapter {
 
     @Override
     public Component getTitle(MCPlayer player) {
-        return LegacyAdventureUtil.decode("§eSiege§6wars §f§lII");
+        return Component.text("§eSiege§6wars §f§lII");
     }
 
     @Override
@@ -41,28 +41,29 @@ public class Sidebar implements SidebarAdapter {
         PlayerData playerData = playerDataManager.getPlayerData(bukkitPlayer);
         if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             return Arrays.asList(
-                    LegacyAdventureUtil.decode("§7§m--------------------"),
-                    LegacyAdventureUtil.decode("§7玩家: §6" + player.getName()),
-                    LegacyAdventureUtil.decode("§7隊伍: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
-                    LegacyAdventureUtil.decode("§7延遲: §6" + player.getPing() + "§6ms"),
-                    LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("§7遊戲階段: §6" + gameStateManager.getCurrentGameState().toString()),
-                    LegacyAdventureUtil.decode("§7§m--------------------")
+                    Component.text("§7§m--------------------"),
+                    Component.text("§7玩家: §6" + player.getName()),
+                    Component.text("§7隊伍: " + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
+                    Component.text("§7延遲: §6" + player.getPing() + "§6ms"),
+                    Component.text(""),
+                    Component.text("§7遊戲階段: §6" + gameStateManager.getCurrentGameState().toString()),
+                    Component.text("§7§m--------------------")
             );
         } else if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
             return Arrays.asList(
-                    LegacyAdventureUtil.decode("§7§m--------------------"),
-                    LegacyAdventureUtil.decode("§6" + gameStateManager.getScoreA() + " §7- §b" + gameStateManager.getScoreB()),
-                    LegacyAdventureUtil.decode("§7回合: §6" + gameStateManager.getRound()),
-                    LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("§7玩家: §6" + player.getName()),
-                    LegacyAdventureUtil.decode("§7職業: §6" + playerKitManager.getPlayerKitString(bukkitPlayer)),
-                    LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("§7金錢: §6" + playerData.getMoney() + "$"),
-                    LegacyAdventureUtil.decode("§7擊殺: §6" + playerData.getKills()),
-                    LegacyAdventureUtil.decode(""),
-                    LegacyAdventureUtil.decode("§7分數: §6" + playerData.getScore()),
-                    LegacyAdventureUtil.decode("§7§m--------------------")
+                    Component.text("§7§m--------------------"),
+                    Component.text("§6" + gameStateManager.getScoreA() + " §7- §b" + gameStateManager.getScoreB()),
+                    Component.text("§7回合: §6" + gameStateManager.getRound()),
+                    Component.text(""),
+                    Component.text("§7玩家: §6" + player.getName()),
+                    Component.text("§7隊伍: §6" + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
+                    Component.text("§7職業: §6" + playerKitManager.getPlayerKitString(bukkitPlayer)),
+                    Component.text(""),
+                    Component.text("§7金錢: §6" + playerData.getMoney() + "$"),
+                    Component.text("§7擊殺: §6" + playerData.getKills()),
+                    Component.text(""),
+                    Component.text("§7分數: §6" + playerData.getScore()),
+                    Component.text("§7§m--------------------")
             );
         }
         return null;

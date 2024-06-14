@@ -131,7 +131,9 @@ public class TabList implements TablistAdapter {
         team.getOnlinePlayers().forEach(uuid -> {
             Player player = Bukkit.getPlayer(uuid);
             PlayerData data = playerDataManager.getPlayerData(player);
-            String nametag = nameGetter.getNameWithTeamColor(player) + " " + playerKitManager.getPlayerKitText(player);
+            String nametag = nameGetter.getNameWithTeamColor(player);
+            if(teamManager.getPlayerTeam(target) == team)
+                nametag += " " + playerKitManager.getPlayerKitText(player);
             String info = ChatColor.GRAY + " (" + data.getKills() + "/" + data.getDeaths() + "/" + data.getAssist() + ") " + ChatColor.RED + data.getTotalDamage() + "⚡ ";
             if(teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";
