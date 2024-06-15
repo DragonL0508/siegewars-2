@@ -40,6 +40,7 @@ public class LobbyEventListener implements Listener {
             //Join lobby Team
             teamManager.joinTeam(event.getPlayer(), teamManager.getTeam("lobby"));
             //Set lobby items
+            player.getInventory().clear();
             player.getInventory().setItem(0,selectTeamItem.get(player));
         }
         if(gameStateManager.isCurrentGameState(GameState.PREPARING) && !teamManager.isInTeam(player)){
@@ -56,7 +57,7 @@ public class LobbyEventListener implements Listener {
     }
 
     @EventHandler
-    public void playerInteract(PlayerDropItemEvent event){
+    public void dropItem(PlayerDropItemEvent event){
         if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY) || gameStateManager.isCurrentGameState(GameState.PREPARING)){
             event.setCancelled(true);
         }

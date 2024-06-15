@@ -12,6 +12,7 @@ import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -22,17 +23,14 @@ import java.util.Arrays;
 @InjectableComponent
 public class KitAttacker extends SiegeWarsAbstractKit {
     private final AttackerAbilityItem attackerAbilityItem;
-    private final RemoveCustomItem removeCustomItem;
 
     public KitAttacker(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
             , AttackerAbilityItem attackerAbilityItem
-            , RemoveCustomItem removeCustomItem
             , NameGetter nameGetter) {
         super(playerKitManager, teamManager, nameGetter);
         this.attackerAbilityItem = attackerAbilityItem;
-        this.removeCustomItem = removeCustomItem;
     }
 
     @Override
@@ -43,8 +41,6 @@ public class KitAttacker extends SiegeWarsAbstractKit {
         player.addPotionEffect(speed);
         player.addPotionEffect(blind);
         world.playSound(player.getLocation(), Sound.WITHER_SHOOT, 1, 1.35f);
-
-        removeCustomItem.removeCustomItem(player, Arrays.asList(attackerAbilityItem));
     }
 
     @Override
@@ -53,15 +49,38 @@ public class KitAttacker extends SiegeWarsAbstractKit {
         inv.setHelmet(ItemBuilder.of(XMaterial.LEATHER_HELMET)
                 .color(teamManager.getPlayerTeam(player).getBukkitColor())
                 .enchantment(XEnchantment.PROTECTION_PROJECTILE, 2)
+                .editMeta(m -> {
+                    m.spigot().setUnbreakable(true);
+                })
                 .build());
         inv.setChestplate(ItemBuilder.of(XMaterial.LEATHER_CHESTPLATE)
+                .editMeta(m -> {
+                    m.spigot().setUnbreakable(true);
+                })
                 .build());
         inv.setBoots(ItemBuilder.of(XMaterial.LEATHER_BOOTS)
+                .editMeta(m -> {
+                    m.spigot().setUnbreakable(true);
+                })
                 .build());
         inv.setItem(0, ItemBuilder.of(XMaterial.IRON_SWORD)
+                .editMeta(m -> {
+                    m.spigot().setUnbreakable(true);
+                })
                 .build());
         inv.setItem(1, ItemBuilder.of(XMaterial.FISHING_ROD)
+                .editMeta(m -> {
+                    m.spigot().setUnbreakable(true);
+                })
+                .build());
+        inv.setItem(2, ItemBuilder.of(XMaterial.BOW)
+                .editMeta(m -> {
+                    m.spigot().setUnbreakable(true);
+                })
                 .build());
         inv.setItem(8, attackerAbilityItem.get(player));
+        inv.setItem(9, ItemBuilder.of(XMaterial.ARROW)
+                .amount(8)
+                .build());
     }
 }

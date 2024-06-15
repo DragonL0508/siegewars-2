@@ -5,6 +5,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import io.fairyproject.log.Log;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @InjectableComponent
