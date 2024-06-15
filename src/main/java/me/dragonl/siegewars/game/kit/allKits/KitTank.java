@@ -15,8 +15,8 @@ public class KitTank extends SiegeWarsAbstractKit {
     }
 
     @Override
-    protected void useAbility(Player player) {
-
+    protected Boolean useAbility(Player player) {
+        return true;
     }
 
     @Override

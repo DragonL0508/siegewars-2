@@ -44,8 +44,8 @@ public class SpecialAbilityItem extends CustomItemFairy {
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            kitSpecial.useAbility(player);
-            removeCustomItem.removeCustomItem(player, Arrays.asList(specialAbilityItem));
+            if(kitSpecial.useAbility(player))
+                removeCustomItem.removeCustomItem(player, Arrays.asList(specialAbilityItem));
         }
 
 //        @EventHandler

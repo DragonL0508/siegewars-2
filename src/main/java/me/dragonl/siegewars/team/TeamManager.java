@@ -78,6 +78,15 @@ public class TeamManager {
         return null;
     }
 
+    public Team swGetAnotherTeam(Player player){
+        Team team = getPlayerTeam(player);
+
+        if(team.getDisplayName().equals("A")) return getTeam("B");
+        if(team.getDisplayName().equals("B")) return getTeam("A");
+
+        return null;
+    }
+
     public void swTeamSplits(List<Player> players){
         Team teamA = getTeam("A");
         Team teamB = getTeam("B");

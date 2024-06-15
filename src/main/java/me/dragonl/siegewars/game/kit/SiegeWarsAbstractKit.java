@@ -30,6 +30,6 @@ public abstract class SiegeWarsAbstractKit implements SiegeWarsKit {
         giveKitItems(player);
     }
 
-    protected abstract void useAbility(Player player);
+    protected abstract Boolean useAbility(Player player);
     protected abstract void giveKitItems(Player player);
 }

@@ -2,11 +2,9 @@ package me.dragonl.siegewars.game.kit.allKits;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-import io.fairyproject.Fairy;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
-import me.dragonl.siegewars.itemStack.RemoveCustomItem;
 import me.dragonl.siegewars.itemStack.items.ability.ArcherAbilityItem;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
@@ -14,7 +12,6 @@ import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
@@ -67,9 +64,10 @@ public class KitArcher extends SiegeWarsAbstractKit {
     }
 
     @Override
-    public void useAbility(Player player) {
+    public Boolean useAbility(Player player) {
         player.setVelocity(player.getVelocity().setY(1));
         inventoryItemsUpdate(player);
+        return true;
     }
 
     private void inventoryItemsUpdate(Player player){

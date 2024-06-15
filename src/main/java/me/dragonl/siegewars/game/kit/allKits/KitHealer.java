@@ -20,7 +20,7 @@ public class KitHealer extends SiegeWarsAbstractKit {
     }
 
     @Override
-    public void useAbility(Player player) {
-
+    public Boolean useAbility(Player player) {
+        return true;
     }
 }

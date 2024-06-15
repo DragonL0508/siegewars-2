@@ -12,6 +12,7 @@ import me.dragonl.siegewars.team.TeamManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
@@ -30,9 +31,9 @@ public class PlayerNameTag extends NameTagAdapter {
         Player bukkitPlayer = player.as(Player.class);
         WrapperPlayServerTeams.NameTagVisibility nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.ALWAYS;
         //nametag visibility option
-        if (teamManager.getPlayerTeam(bukkitPlayer) == teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitPlayer).getNametagVisibility() == NametagVisibility.hideForOwnTeams)
+        if (teamManager.getPlayerTeam(bukkitPlayer) == teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForOwnTeams)
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
-        else if (teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitPlayer).getNametagVisibility() == NametagVisibility.hideForOtherTeams)
+        else if (teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForOtherTeams)
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
 
         //output
