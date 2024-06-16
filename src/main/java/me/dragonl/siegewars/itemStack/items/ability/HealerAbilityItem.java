@@ -5,7 +5,7 @@ import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.kit.allKits.KitArcher;
-import me.dragonl.siegewars.game.kit.allKits.KitSpecial;
+import me.dragonl.siegewars.game.kit.allKits.KitHealer;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
@@ -16,12 +16,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Arrays;
 
 @InjectableComponent
-public class SpecialAbilityItem extends CustomItemFairy {
+public class HealerAbilityItem extends CustomItemFairy {
+
     @Override
     protected FairyItem register() {
-        return FairyItem.builder("specialAbility")
-                .item(ItemBuilder.of(Material.BLAZE_POWDER)
-                        .name("§e探查 §7(右鍵使用)")
+        return FairyItem.builder("healerAbility")
+                .item(ItemBuilder.of(Material.NETHER_WARTS)
+                        .name("§e§l群體治癒 §7(右鍵使用)")
                         .lore()
                         .build())
                 .build();
@@ -29,25 +30,25 @@ public class SpecialAbilityItem extends CustomItemFairy {
 
     @RegisterAsListener
     @InjectableComponent
-    class SpecialAbilityListener extends ItemListenerTemplate {
-        private final KitSpecial kitSpecial;
+    class HealerAbilityListener extends ItemListenerTemplate {
+        private final KitHealer kitHealer;
         private final RemoveCustomItem removeCustomItem;
-        private final SpecialAbilityItem specialAbilityItem;
+        private final HealerAbilityItem healerAbilityItem;
 
-        public SpecialAbilityListener(SpecialAbilityItem customItem, KitSpecial kitSpecial, RemoveCustomItem removeCustomItem, SpecialAbilityItem specialAbilityItem) {
+        public HealerAbilityListener(HealerAbilityItem customItem, KitHealer kitHealer, RemoveCustomItem removeCustomItem, HealerAbilityItem healerAbilityItem) {
             super(customItem);
-            this.kitSpecial = kitSpecial;
+            this.kitHealer = kitHealer;
             this.removeCustomItem = removeCustomItem;
-            this.specialAbilityItem = specialAbilityItem;
+            this.healerAbilityItem = healerAbilityItem;
         }
 
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            if(kitSpecial.useAbility(player))
-                removeCustomItem.removeCustomItem(player, Arrays.asList(specialAbilityItem));
-            else{
-                player.sendMessage("§e[技能] §c敵隊目前已被探查!");
+            if(kitHealer.useAbility(player))
+                removeCustomItem.removeCustomItem(player, Arrays.asList(healerAbilityItem));
+            else {
+                player.sendMessage("§e[技能] §c附近沒有同隊玩家!");
             }
         }
 

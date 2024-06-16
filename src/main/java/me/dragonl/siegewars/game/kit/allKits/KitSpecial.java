@@ -6,6 +6,8 @@ import io.fairyproject.FairyLaunch;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.events.SpecialAbilityEndEvent;
+import me.dragonl.siegewars.game.events.SpecialAbilityStartEvent;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.items.ability.SpecialAbilityItem;
 import me.dragonl.siegewars.player.NameGetter;
@@ -36,10 +38,8 @@ public class KitSpecial extends SiegeWarsAbstractKit {
     @Override
     public Boolean useAbility(Player player) {
         Team targetTeam = teamManager.swGetAnotherTeam(player);
-        if(targetTeam.getNametagVisibility() == NametagVisibility.always){
-            player.sendMessage("§e[技能] §c敵隊目前已被探查!");
+        if(targetTeam.getNametagVisibility() == NametagVisibility.always)
             return false;
-        }
         targetTeam.setNametagVisibility(NametagVisibility.always);
 
         // show target position
@@ -61,9 +61,11 @@ public class KitSpecial extends SiegeWarsAbstractKit {
             public void run() {
                 targetTeam.setNametagVisibility(NametagVisibility.hideForOtherTeams);
                 showPlayer.cancel();
+                Bukkit.getPluginManager().callEvent(new SpecialAbilityEndEvent(player));
             }
         }.runTaskLater(BukkitPlugin.INSTANCE, delayTick);
 
+        Bukkit.getPluginManager().callEvent(new SpecialAbilityStartEvent(player));
         return true;
     }
 

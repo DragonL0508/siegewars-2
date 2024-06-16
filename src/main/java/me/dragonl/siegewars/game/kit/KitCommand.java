@@ -9,14 +9,14 @@ import me.dragonl.siegewars.player.PlayerKitManager;
 @Command(value = "kit")
 @InjectableComponent
 public class KitCommand extends BaseCommand {
-    private final PlayerKitManager playerKitManager;
+    private final KitMenu kitMenu;
 
-    public KitCommand(PlayerKitManager playerKitManager) {
-        this.playerKitManager = playerKitManager;
+    public KitCommand(KitMenu kitMenu) {
+        this.kitMenu = kitMenu;
     }
 
     @Command("menu")
     public void openMenu(BukkitCommandContext ctx) {
-        new KitSelectMenu(playerKitManager).open(ctx.getPlayer());
+        kitMenu.open(ctx.getPlayer());
     }
 }

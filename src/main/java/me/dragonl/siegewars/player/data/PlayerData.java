@@ -1,6 +1,7 @@
 package me.dragonl.siegewars.player.data;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.text.DecimalFormat;
 
 public class PlayerData {
     private Integer kills = 0;
@@ -57,5 +58,10 @@ public class PlayerData {
 
     public void setTotalDamage(double totalDamage) {
         this.totalDamage = totalDamage;
+    }
+
+    public String getFormatDamage(){
+        DecimalFormat format = new DecimalFormat("#.#");
+        return format.format(new Double(this.totalDamage));
     }
 }

@@ -41,7 +41,7 @@ public class PlayerKitManager {
             case ATTACKER : return "突襲者";
             case ARCHER : return "弓箭手";
             case TANK : return "坦克";
-            case HEALER : return "治療師";
+            case HEALER : return "治療使者";
             case SPECIAL : return "特種兵";
             case REAPER : return "死神";
         }
@@ -54,7 +54,7 @@ public class PlayerKitManager {
             case ATTACKER : return "突襲者";
             case ARCHER : return "弓箭手";
             case TANK : return "坦克";
-            case HEALER : return "治療師";
+            case HEALER : return "治療使者";
             case SPECIAL : return "特種兵";
             case REAPER : return "死神";
         }

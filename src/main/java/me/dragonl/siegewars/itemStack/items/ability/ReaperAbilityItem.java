@@ -1,27 +1,27 @@
 package me.dragonl.siegewars.itemStack.items.ability;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.dragonl.siegewars.game.kit.allKits.KitArcher;
-import me.dragonl.siegewars.game.kit.allKits.KitSpecial;
+import me.dragonl.siegewars.game.kit.allKits.KitAttacker;
+import me.dragonl.siegewars.game.kit.allKits.KitReaper;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
 
 @InjectableComponent
-public class SpecialAbilityItem extends CustomItemFairy {
+public class ReaperAbilityItem extends CustomItemFairy {
     @Override
     protected FairyItem register() {
-        return FairyItem.builder("specialAbility")
-                .item(ItemBuilder.of(Material.BLAZE_POWDER)
-                        .name("§e探查 §7(右鍵使用)")
+        return FairyItem.builder("reaperAbility")
+                .item(ItemBuilder.of(XMaterial.GUNPOWDER)
+                        .name("§e§l詛咒者 §7(右鍵使用)")
                         .lore()
                         .build())
                 .build();
@@ -29,26 +29,23 @@ public class SpecialAbilityItem extends CustomItemFairy {
 
     @RegisterAsListener
     @InjectableComponent
-    class SpecialAbilityListener extends ItemListenerTemplate {
-        private final KitSpecial kitSpecial;
+    class ReaperAbilityListener extends ItemListenerTemplate {
+        private final KitReaper kitReaper;
         private final RemoveCustomItem removeCustomItem;
-        private final SpecialAbilityItem specialAbilityItem;
+        private final ReaperAbilityItem reaperAbilityItem;
 
-        public SpecialAbilityListener(SpecialAbilityItem customItem, KitSpecial kitSpecial, RemoveCustomItem removeCustomItem, SpecialAbilityItem specialAbilityItem) {
+        public ReaperAbilityListener(ReaperAbilityItem customItem, KitReaper kitReaper, RemoveCustomItem removeCustomItem, ReaperAbilityItem reaperAbilityItem) {
             super(customItem);
-            this.kitSpecial = kitSpecial;
+            this.kitReaper = kitReaper;
             this.removeCustomItem = removeCustomItem;
-            this.specialAbilityItem = specialAbilityItem;
+            this.reaperAbilityItem = reaperAbilityItem;
         }
 
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            if(kitSpecial.useAbility(player))
-                removeCustomItem.removeCustomItem(player, Arrays.asList(specialAbilityItem));
-            else{
-                player.sendMessage("§e[技能] §c敵隊目前已被探查!");
-            }
+            kitReaper.useAbility(player);
+            removeCustomItem.removeCustomItem(player, Arrays.asList(reaperAbilityItem));
         }
 
 //        @EventHandler

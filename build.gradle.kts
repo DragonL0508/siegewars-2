@@ -47,6 +47,7 @@ dependencies {
     api("io.fairyproject:bukkit-bundles")
     api("io.fairyproject:mc-animation")
     api("io.fairyproject:bukkit-command")
+    api("io.fairyproject:bukkit-gui")
     api("io.fairyproject:bukkit-menu")
     api("io.fairyproject:mc-hologram")
     api("io.fairyproject:core-config")

@@ -12,11 +12,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 @InjectableComponent
 public class PlayerUpdater extends BukkitRunnable {
-    private final NameTagService nameTagService;
     private final NameGetter nameGetter;
 
-    public PlayerUpdater(NameTagService nameTagService, NameGetter nameGetter) {
-        this.nameTagService = nameTagService;
+    public PlayerUpdater(NameGetter nameGetter) {
         this.nameGetter = nameGetter;
     }
 
@@ -30,7 +28,6 @@ public class PlayerUpdater extends BukkitRunnable {
         for(Player player : Bukkit.getOnlinePlayers()){
             MCPlayer mcPlayer = MCPlayer.from(player);
             mcPlayer.setDisplayName(LegacyAdventureUtil.decode(nameGetter.getChatName(player)));
-            nameTagService.update(mcPlayer);
         }
     }
 }

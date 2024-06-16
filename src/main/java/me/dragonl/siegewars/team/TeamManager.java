@@ -1,10 +1,12 @@
 package me.dragonl.siegewars.team;
 
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.events.PlayerJoinTeamEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 import java.util.*;
 
@@ -40,6 +42,9 @@ public class TeamManager {
         //message
         player.sendMessage(ChatColor.GREEN + "You joined the team : " + team.getColor() + team.getDisplayName());
         player.playSound(player.getLocation(), Sound.VILLAGER_YES,1,1.3f);
+
+        //event call
+        Bukkit.getPluginManager().callEvent(new PlayerJoinTeamEvent(player));
     }
 
     public void joinTeam(Player player, SiegeWarsTeam team){
@@ -59,6 +64,9 @@ public class TeamManager {
 
         //message
         player.sendMessage( ChatColor.RED + "You left the team : " + team.getColor() + team.getDisplayName());
+
+        //event call
+        Bukkit.getPluginManager().callEvent(new PlayerJoinTeamEvent(player));
     }
 
     public Team getTeam(String name){
@@ -88,8 +96,11 @@ public class TeamManager {
     }
 
     public void swTeamSplits(List<Player> players){
+        players.forEach(this::leaveTeam);
+
         Team teamA = getTeam("A");
         Team teamB = getTeam("B");
+
         players.forEach(player -> {
             if(teamA.getPlayers().size() <= teamB.getPlayers().size())
                 joinTeam(player,teamA);

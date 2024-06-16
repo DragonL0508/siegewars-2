@@ -222,7 +222,7 @@ public class TabList implements TablistAdapter {
                     new TabSlot()
                             .column(TabColumn.LEFT)
                             .slot(9)
-                            .text(LegacyAdventureUtil.decode("§6傷害量: §f" + playerData.getTotalDamage()))
+                            .text(LegacyAdventureUtil.decode("§6傷害量: §f" + playerData.getFormatDamage()))
             );
             slots.add(
                     new TabSlot()
@@ -244,7 +244,7 @@ public class TabList implements TablistAdapter {
             String nametag = nameGetter.getNameWithTeamColor(player);
             if(teamManager.getPlayerTeam(target) == team)
                 nametag += " " + playerKitManager.getPlayerKitText(player);
-            String info = ChatColor.GRAY + " (" + data.getKills() + "/" + data.getDeaths() + "/" + data.getAssist() + ") " + ChatColor.RED + data.getTotalDamage() + "⚡ ";
+            String info = ChatColor.GRAY + " (" + data.getKills() + "/" + data.getDeaths() + "/" + data.getAssist() + ") " + ChatColor.RED + data.getFormatDamage() + "⚡ ";
             if(teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";
             int index = team.getPlayers().indexOf(uuid);
