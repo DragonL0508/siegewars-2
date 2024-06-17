@@ -9,6 +9,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.mc.tablist.util.TabSlot;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
@@ -33,14 +34,16 @@ public class TabList implements TablistAdapter {
     private final PlayerPreparingManager playerPreparingManager;
     private final PlayerDataManager playerDataManager;
     private final PlayerKitManager playerKitManager;
+    private final KitInfoGetter kitInfoGetter;
 
-    public TabList(TeamManager teamManager, NameGetter nameGetter, GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager, PlayerDataManager playerDataManager, PlayerKitManager playerKitManager) {
+    public TabList(TeamManager teamManager, NameGetter nameGetter, GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager, PlayerDataManager playerDataManager, PlayerKitManager playerKitManager, KitInfoGetter kitInfoGetter) {
         this.teamManager = teamManager;
         this.nameGetter = nameGetter;
         this.gameStateManager = gameStateManager;
         this.playerPreparingManager = playerPreparingManager;
         this.playerDataManager = playerDataManager;
         this.playerKitManager = playerKitManager;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override
@@ -243,7 +246,7 @@ public class TabList implements TablistAdapter {
             PlayerData data = playerDataManager.getPlayerData(player);
             String nametag = nameGetter.getNameWithTeamColor(player);
             if(teamManager.getPlayerTeam(target) == team)
-                nametag += " " + playerKitManager.getPlayerKitText(player);
+                nametag += " " + kitInfoGetter.getKitText(playerKitManager.getPlayerKit(player));
             String info = ChatColor.GRAY + " (" + data.getKills() + "/" + data.getDeaths() + "/" + data.getAssist() + ") " + ChatColor.RED + data.getFormatDamage() + "⚡ ";
             if(teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";

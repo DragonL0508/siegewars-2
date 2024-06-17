@@ -1,21 +1,15 @@
 package me.dragonl.siegewars.game.preparing;
 
-import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
-import me.dragonl.siegewars.playsound.SoundPlayer;
+import me.dragonl.siegewars.SoundPlayer;
 import me.dragonl.siegewars.team.TeamManager;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.time.Duration;
 
 @InjectableComponent
 public class PlayerPreparingChecker extends BukkitRunnable {

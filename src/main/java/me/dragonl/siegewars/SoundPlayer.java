@@ -1,4 +1,4 @@
-package me.dragonl.siegewars.playsound;
+package me.dragonl.siegewars;
 
 import io.fairyproject.container.InjectableComponent;
 import org.bukkit.Bukkit;

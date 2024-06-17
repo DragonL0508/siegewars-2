@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
 import me.dragonl.siegewars.itemStack.items.ability.AttackerAbilityItem;
@@ -23,14 +24,16 @@ import java.util.Arrays;
 @InjectableComponent
 public class KitAttacker extends SiegeWarsAbstractKit {
     private final AttackerAbilityItem attackerAbilityItem;
+    private final KitInfoGetter kitInfoGetter;
 
     public KitAttacker(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
             , AttackerAbilityItem attackerAbilityItem
-            , NameGetter nameGetter) {
-        super(playerKitManager, teamManager, nameGetter);
+            , NameGetter nameGetter, KitInfoGetter kitInfoGetter) {
+        super(playerKitManager, teamManager, nameGetter, kitInfoGetter);
         this.attackerAbilityItem = attackerAbilityItem;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override

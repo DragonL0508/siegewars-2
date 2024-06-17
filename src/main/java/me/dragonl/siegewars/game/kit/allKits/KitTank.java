@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
@@ -14,11 +15,13 @@ import org.bukkit.inventory.PlayerInventory;
 
 @InjectableComponent
 public class KitTank extends SiegeWarsAbstractKit {
+    private final KitInfoGetter kitInfoGetter;
     public KitTank(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
-            , NameGetter nameGetter) {
-        super(playerKitManager, teamManager, nameGetter);
+            , NameGetter nameGetter, KitInfoGetter kitInfoGetter) {
+        super(playerKitManager, teamManager, nameGetter, kitInfoGetter);
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override

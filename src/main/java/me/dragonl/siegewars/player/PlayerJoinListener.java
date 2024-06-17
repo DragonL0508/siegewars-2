@@ -1,17 +1,17 @@
 package me.dragonl.siegewars.player;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
-import io.fairyproject.bukkit.util.LegacyAdventureUtil;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.MCPlayer;
+import me.dragonl.siegewars.yaml.MainConfig;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
-import me.dragonl.siegewars.team.TeamManager;
-import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.nio.Buffer;
 
 @RegisterAsListener
 @InjectableComponent
@@ -34,5 +34,8 @@ public class PlayerJoinListener implements Listener {
         //player Default Data
         if(!playerDataManager.hasData(player))
             playerDataManager.setPlayerData(player, new PlayerData());
+
+        //update nametag
+
     }
 }

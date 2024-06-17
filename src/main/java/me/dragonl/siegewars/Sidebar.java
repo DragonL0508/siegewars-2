@@ -6,6 +6,7 @@ import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.sidebar.SidebarAdapter;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
@@ -22,12 +23,14 @@ public class Sidebar implements SidebarAdapter {
     private final TeamManager teamManager;
     private final PlayerKitManager playerKitManager;
     private final PlayerDataManager playerDataManager;
+    private final KitInfoGetter kitInfoGetter;
 
-    public Sidebar(GameStateManager gameStateManager, TeamManager teamManager, PlayerKitManager playerKitManager, PlayerDataManager playerDataManager) {
+    public Sidebar(GameStateManager gameStateManager, TeamManager teamManager, PlayerKitManager playerKitManager, PlayerDataManager playerDataManager, KitInfoGetter kitInfoGetter) {
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.playerKitManager = playerKitManager;
         this.playerDataManager = playerDataManager;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class Sidebar implements SidebarAdapter {
                     Component.text(""),
                     Component.text("§f玩家: §6" + player.getName()),
                     Component.text("§f隊伍: §6" + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
-                    Component.text("§f職業: §6" + playerKitManager.getPlayerKitString(bukkitPlayer)),
+                    Component.text("§f職業: §6" + kitInfoGetter.getKitString(playerKitManager.getPlayerKit(bukkitPlayer))),
                     Component.text(""),
                     Component.text("§f金錢: §6" + playerData.getMoney() + "$"),
                     Component.text("§f擊殺: §6" + playerData.getKills()),

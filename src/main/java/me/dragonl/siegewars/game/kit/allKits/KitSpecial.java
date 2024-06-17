@@ -8,6 +8,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.events.SpecialAbilityEndEvent;
 import me.dragonl.siegewars.game.events.SpecialAbilityStartEvent;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.items.ability.SpecialAbilityItem;
 import me.dragonl.siegewars.player.NameGetter;
@@ -26,13 +27,15 @@ import org.bukkit.scheduler.BukkitTask;
 @InjectableComponent
 public class KitSpecial extends SiegeWarsAbstractKit {
     private final SpecialAbilityItem specialAbilityItem;
+    private final KitInfoGetter kitInfoGetter;
     public KitSpecial(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
             , NameGetter nameGetter
-            , SpecialAbilityItem specialAbilityItem) {
-        super(playerKitManager, teamManager, nameGetter);
+            , SpecialAbilityItem specialAbilityItem, KitInfoGetter kitInfoGetter) {
+        super(playerKitManager, teamManager, nameGetter, kitInfoGetter);
         this.specialAbilityItem = specialAbilityItem;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override

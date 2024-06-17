@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.items.ability.ReaperAbilityItem;
 import me.dragonl.siegewars.player.NameGetter;
@@ -24,12 +25,14 @@ import org.bukkit.scheduler.BukkitTask;
 @InjectableComponent
 public class KitReaper extends SiegeWarsAbstractKit {
     private final ReaperAbilityItem reaperAbilityItem;
+    private final KitInfoGetter kitInfoGetter;
     public KitReaper(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
-            , NameGetter nameGetter, ReaperAbilityItem reaperAbilityItem) {
-        super(playerKitManager, teamManager, nameGetter);
+            , NameGetter nameGetter, ReaperAbilityItem reaperAbilityItem, KitInfoGetter kitInfoGetter) {
+        super(playerKitManager, teamManager, nameGetter, kitInfoGetter);
         this.reaperAbilityItem = reaperAbilityItem;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override
@@ -59,13 +62,14 @@ public class KitReaper extends SiegeWarsAbstractKit {
                     }
                 });
                 //player visual effects
-                player.getWorld().spigot().playEffect(player.getLocation().add(0,1,0), Effect.LARGE_SMOKE, 1, 0, 0.15f, 0.4f, 0.15f, 0, 10, 64);
+                player.getWorld().spigot().playEffect(player.getLocation().add(0,1,0), Effect.LARGE_SMOKE, 1, 0, 0.15f, 0.4f, 0.15f, 0, 10, 32);
             }
         }.runTaskTimer(BukkitPlugin.INSTANCE, 0, 1);
         new BukkitRunnable(){
             @Override
             public void run() {
                 player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0.5f);
+                player.getWorld().spigot().playEffect(player.getLocation().add(0,1,0), Effect.LARGE_SMOKE, 1, 0, 0.15f, 0.4f, 0.15f, 0.5f, 50, 32);
                 debuffTask.cancel();
             }
         }.runTaskLater(BukkitPlugin.INSTANCE, 140);

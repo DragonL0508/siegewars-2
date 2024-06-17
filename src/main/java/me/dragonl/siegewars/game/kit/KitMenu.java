@@ -9,31 +9,55 @@ import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.Kit;
+import me.dragonl.siegewars.game.events.PlayerSelectKitEvent;
+import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
+import me.dragonl.siegewars.team.TeamManager;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+
+import java.util.List;
+import java.util.UUID;
 
 @InjectableComponent
 public class KitMenu {
     private final GuiFactory guiFactory;
     private final PlayerKitManager playerKitManager;
+    private final TeamManager teamManager;
+    private final NameGetter nameGetter;
+    private final KitInfoGetter kitInfoGetter;
+    private final KitSelectLogic kitSelectLogic;
 
-    public KitMenu(GuiFactory guiFactory, PlayerKitManager playerKitManager) {
+    public KitMenu(GuiFactory guiFactory, PlayerKitManager playerKitManager, TeamManager teamManager, NameGetter nameGetter, KitInfoGetter kitInfoGetter, KitSelectLogic kitSelectLogic) {
         this.guiFactory = guiFactory;
         this.playerKitManager = playerKitManager;
+        this.teamManager = teamManager;
+        this.nameGetter = nameGetter;
+        this.kitInfoGetter = kitInfoGetter;
+        this.kitSelectLogic = kitSelectLogic;
     }
 
     public void open(Player player){
         Gui gui = guiFactory.create(Component.text("選擇職業:"));
-        NormalPane pane = Pane.normal(9,3);
-        pane.setSlot(1,1,7,1,GuiSlot.of(XMaterial.BARRIER));
+        NormalPane pane = Pane.normal(9,6);
         pane.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE)
-                .name("")
+                .name(" ")
+                .build()));
+        pane.setSlot(1,1,7,2,GuiSlot.of(XMaterial.AIR));
+        pane.setSlot(0,4,8,5,GuiSlot.of(ItemBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE)
+                .name(" ")
+                .build()));
+        pane.setSlot(2,4,6,4,GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER)
+                .name("&c空")
+                .build()));
+        pane.setSlot(2,5,6,5,GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+                .name("&c沒有職業")
                 .build()));
         pane.setSlot(1,1,GuiSlot.of(ItemBuilder.of(XMaterial.IRON_SWORD)
-                .name("&e" + playerKitManager.getKitString(Kit.ATTACKER))
+                .name("&e" + kitInfoGetter.getKitString(Kit.ATTACKER))
                 .lore("&8輸出"
                         ,""
                         ,"&7傷害 &a|||||||||||||||||||||||||&7|||||"
@@ -46,9 +70,11 @@ public class KitMenu {
                         ,""
                         ,"&7點擊選擇")
                 .itemFlag(ItemFlag.HIDE_ATTRIBUTES)
-                .build()));
+                .build(), clickedPlayer -> {
+            kitSelectLogic.kitSelect(clickedPlayer, Kit.ATTACKER);
+        }));
         pane.setSlot(2,1,GuiSlot.of(ItemBuilder.of(XMaterial.BOW)
-                .name("&e" + playerKitManager.getKitString(Kit.ARCHER))
+                .name("&e" + kitInfoGetter.getKitString(Kit.ARCHER))
                 .lore("&8輸出"
                         ,""
                         ,"&7傷害 &a||||||||||||||||||||&7||||||||||"
@@ -60,9 +86,11 @@ public class KitMenu {
                         ,"&e因為只要戰線被拉進就會對你十分不利"
                         ,""
                         ,"&7點擊選擇")
-                .build()));
+                .build(), clickedPlayer -> {
+            kitSelectLogic.kitSelect(clickedPlayer, Kit.ARCHER);
+        }));
         pane.setSlot(3,1,GuiSlot.of(ItemBuilder.of(XMaterial.POTION)
-                .name("&e" + playerKitManager.getKitString(Kit.HEALER))
+                .name("&e" + kitInfoGetter.getKitString(Kit.HEALER))
                 .lore("&8輔助"
                         ,""
                         ,"&7傷害 &c||||||||||&7||||||||||||||||||||"
@@ -76,9 +104,11 @@ public class KitMenu {
                         ,"&7點擊選擇")
                 .data(8261)
                 .itemFlag(ItemFlag.HIDE_POTION_EFFECTS)
-                .build()));
+                .build(), clickedPlayer -> {
+            kitSelectLogic.kitSelect(clickedPlayer, Kit.HEALER);
+        }));
         pane.setSlot(4,1,GuiSlot.of(ItemBuilder.of(Material.BLAZE_POWDER)
-                .name("&e" + playerKitManager.getKitString(Kit.SPECIAL))
+                .name("&e" + kitInfoGetter.getKitString(Kit.SPECIAL))
                 .lore("&8先鋒"
                         ,""
                         ,"&7傷害 &c||||||||||&7||||||||||||||||||||"
@@ -90,9 +120,11 @@ public class KitMenu {
                         ,"&e並給與隊友戰術協助"
                         ,""
                         ,"&7點擊選擇")
-                .build()));
+                .build(), clickedPlayer -> {
+            kitSelectLogic.kitSelect(clickedPlayer, Kit.SPECIAL);
+        }));
         pane.setSlot(5,1,GuiSlot.of(ItemBuilder.of(Material.IRON_CHESTPLATE)
-                .name("&e" + playerKitManager.getKitString(Kit.TANK))
+                .name("&e" + kitInfoGetter.getKitString(Kit.TANK))
                 .lore("&8輔助"
                         ,""
                         ,"&7傷害 &c|||||&7|||||||||||||||||||||||||"
@@ -104,9 +136,11 @@ public class KitMenu {
                         ,"&e但使用恰當可以為團隊帶來莫大的利益"
                         ,""
                         ,"&7點擊選擇")
-                .build()));
+                .build(), clickedPlayer -> {
+            kitSelectLogic.kitSelect(clickedPlayer, Kit.TANK);
+        }));
         pane.setSlot(6,1,GuiSlot.of(ItemBuilder.of(Material.STONE_HOE)
-                .name("&e" + playerKitManager.getKitString(Kit.REAPER))
+                .name("&e" + kitInfoGetter.getKitString(Kit.REAPER))
                 .lore("&8先鋒"
                         ,""
                         ,"&7傷害 &c||||||||||&7||||||||||||||||||||"
@@ -118,7 +152,32 @@ public class KitMenu {
                         ,"&e無論是進攻或防守都有很大的發揮空間"
                         ,""
                         ,"&7點擊選擇")
-                .build()));
+                .build(), clickedPlayer -> {
+            kitSelectLogic.kitSelect(clickedPlayer, Kit.REAPER);
+        }));
+        gui.onOpenCallback($ -> {
+            gui.getEventNode().addListener(PlayerSelectKitEvent.class, event -> {
+                gui.update(player);
+            });
+        });
+        //show every player selected
+        gui.onDrawCallback($ -> {
+            List<UUID> playerList = teamManager.getPlayerTeam(player).getPlayers();
+            playerList.forEach(uuid -> {
+                Player p = Bukkit.getPlayer(uuid);
+                Kit kit = playerKitManager.getPlayerKit(p);
+                int slot = playerList.indexOf(uuid);
+                pane.setSlot(slot + 2,4,GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                        .skull(p.getName())
+                        .name(nameGetter.getChatName(p))
+                        .build()));
+                if(kit != Kit.NONE)
+                    pane.setSlot(slot + 2, 5, GuiSlot.of(ItemBuilder.of(kitInfoGetter.getKitIcon(kit))
+                            .name("&a已選擇: &e" + kitInfoGetter.getKitString(kit))
+                            .itemFlag(ItemFlag.HIDE_ATTRIBUTES)
+                            .build()));
+            });
+        });
 
         gui.addPane(pane);
         gui.open(player);

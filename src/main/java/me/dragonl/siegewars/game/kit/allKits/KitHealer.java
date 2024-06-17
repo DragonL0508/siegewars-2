@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.items.ability.HealerAbilityItem;
 import me.dragonl.siegewars.player.NameGetter;
@@ -27,13 +28,15 @@ import java.util.concurrent.atomic.AtomicReference;
 @InjectableComponent
 public class KitHealer extends SiegeWarsAbstractKit {
     private final HealerAbilityItem healerAbilityItem;
+    private final KitInfoGetter kitInfoGetter;
     public KitHealer(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
             , NameGetter nameGetter
-            , HealerAbilityItem healerAbilityItem) {
-        super(playerKitManager, teamManager, nameGetter);
+            , HealerAbilityItem healerAbilityItem, KitInfoGetter kitInfoGetter) {
+        super(playerKitManager, teamManager, nameGetter, kitInfoGetter);
         this.healerAbilityItem = healerAbilityItem;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override

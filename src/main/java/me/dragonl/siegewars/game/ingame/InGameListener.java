@@ -8,7 +8,7 @@ import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
-import me.dragonl.siegewars.playsound.SoundPlayer;
+import me.dragonl.siegewars.SoundPlayer;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Bukkit;
@@ -20,7 +20,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.text.DecimalFormat;
 import java.util.stream.Collectors;
 
 @InjectableComponent

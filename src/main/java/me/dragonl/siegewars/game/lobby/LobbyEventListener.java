@@ -8,11 +8,11 @@ import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.itemStack.items.SelectTeamItem;
 import me.dragonl.siegewars.team.TeamManager;
+import me.dragonl.siegewars.yaml.MainConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,11 +24,13 @@ public class LobbyEventListener implements Listener {
     private final GameStateManager gameStateManager;
     private final TeamManager teamManager;
     private final SelectTeamItem selectTeamItem;
+    private final MainConfig mainConfig;
 
-    public LobbyEventListener(GameStateManager gameStateManager, TeamManager teamManager, SelectTeamItem selectTeamItem) {
+    public LobbyEventListener(GameStateManager gameStateManager, TeamManager teamManager, SelectTeamItem selectTeamItem, MainConfig mainConfig) {
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.selectTeamItem = selectTeamItem;
+        this.mainConfig = mainConfig;
     }
 
     @EventHandler
@@ -47,6 +49,8 @@ public class LobbyEventListener implements Listener {
             //Join Team
             teamManager.joinTeam(event.getPlayer(), teamManager.getTeam("spectator"));
         }
+        //tp to lobby spawn
+        player.teleport(mainConfig.getLobbySpawnLoc());
     }
 
     @EventHandler

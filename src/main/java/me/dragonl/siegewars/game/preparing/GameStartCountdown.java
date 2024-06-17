@@ -1,13 +1,9 @@
 package me.dragonl.siegewars.game.preparing;
 
-import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.MCPlayer;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
-import me.dragonl.siegewars.playsound.SoundPlayer;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
+import me.dragonl.siegewars.SoundPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -42,6 +38,7 @@ public class GameStartCountdown extends BukkitRunnable {
             Bukkit.getServer().broadcastMessage("§a遊戲啟動中,請稍後...");
             soundPlayer.playSound(uuids, Sound.ENDERDRAGON_GROWL, 1, 1);
             gameStateManager.setCurrentGameState(GameState.IN_GAME);
+
             this.cancel();
         }
         timer--;

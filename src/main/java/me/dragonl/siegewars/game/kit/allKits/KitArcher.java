@@ -4,12 +4,15 @@ import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.kit.SiegeWarsAbstractKit;
 import me.dragonl.siegewars.itemStack.items.ability.ArcherAbilityItem;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.TeamManager;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -18,13 +21,15 @@ import java.util.Arrays;
 @InjectableComponent
 public class KitArcher extends SiegeWarsAbstractKit {
     private final ArcherAbilityItem archerAbilityItem;
+    private final KitInfoGetter kitInfoGetter;
     public KitArcher(
             PlayerKitManager playerKitManager
             , TeamManager teamManager
             , NameGetter nameGetter
-            , ArcherAbilityItem archerAbilityItem) {
-        super(playerKitManager, teamManager, nameGetter);
+            , ArcherAbilityItem archerAbilityItem, KitInfoGetter kitInfoGetter) {
+        super(playerKitManager, teamManager, nameGetter, kitInfoGetter);
         this.archerAbilityItem = archerAbilityItem;
+        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override
@@ -65,7 +70,9 @@ public class KitArcher extends SiegeWarsAbstractKit {
 
     @Override
     public Boolean useAbility(Player player) {
-        player.setVelocity(player.getVelocity().setY(1));
+        player.setVelocity(player.getVelocity().setY(1.15));
+        player.getWorld().spigot().playEffect(player.getLocation().add(0,0.1,0), Effect.CLOUD, 1, 0, 0.05f, 0.05f, 0.05f, 0.1f, 15, 32);
+        player.getWorld().playSound(player.getLocation(), Sound.HORSE_ARMOR, 1, 1.25f);
         inventoryItemsUpdate(player);
         return true;
     }
