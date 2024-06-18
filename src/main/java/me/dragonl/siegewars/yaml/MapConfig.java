@@ -30,6 +30,7 @@ public class MapConfig extends YamlConfiguration {
     public void addMap(String name){
         maps.put(name, new MapConfigElement());
         this.save();
+        this.load();
     }
 
     public Map<String, MapConfigElement> getMaps() {

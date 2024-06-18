@@ -14,16 +14,16 @@ public class NameGetter {
         this.teamManager = teamManager;
     }
 
-    public String getChatName(Player player){
-        if(teamManager.isInTeam(player)){
+    public String getChatName(Player player) {
+        if (teamManager.isInTeam(player)) {
             Team team = teamManager.getPlayerTeam(player);
             return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix() + ChatColor.RESET;
         }
         return "NoTeam " + player.getName();
     }
 
-    public String getNameWithTeamColor(Player player){
-        if(teamManager.isInTeam(player)){
+    public String getNameWithTeamColor(Player player) {
+        if (teamManager.isInTeam(player)) {
             Team team = teamManager.getPlayerTeam(player);
             return team.getColor() + player.getName() + ChatColor.RESET;
         }

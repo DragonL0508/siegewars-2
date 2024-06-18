@@ -37,6 +37,12 @@ public abstract class ItemListenerTemplate implements Listener {
 
         if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK)
             onClickBlock(event);
+
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK)
+            onLeftClickBlock(event);
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
+            onRightClickBlock(event);
     }
 
 
@@ -44,7 +50,18 @@ public abstract class ItemListenerTemplate implements Listener {
         return itemStack != null && customItem.isSimilar(itemStack);
     }
 
-    protected void onClickItem(PlayerInteractEvent event) {}
-    protected void onRightClickItem(PlayerInteractEvent event) {}
-    protected void onClickBlock(PlayerInteractEvent event) {}
+    protected void onClickItem(PlayerInteractEvent event) {
+    }
+
+    protected void onRightClickItem(PlayerInteractEvent event) {
+    }
+
+    protected void onClickBlock(PlayerInteractEvent event) {
+    }
+
+    protected void onLeftClickBlock(PlayerInteractEvent event) {
+    }
+
+    protected void onRightClickBlock(PlayerInteractEvent event) {
+    }
 }

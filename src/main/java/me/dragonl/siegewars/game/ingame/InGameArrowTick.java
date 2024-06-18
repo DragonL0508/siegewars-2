@@ -37,10 +37,10 @@ public class InGameArrowTick extends BukkitRunnable implements Listener {
     }
     @Override
     public void run() {
-        showArrowsParticle();
+        if(!arrows.isEmpty())
+            showArrowsParticle();
     }
     private void showArrowsParticle(){
-        if(arrows.isEmpty()) return;
         arrows.forEach((e,uuid) -> {
             Player p = Bukkit.getPlayer(uuid);
             Team team = teamManager.getPlayerTeam(p);
@@ -50,8 +50,8 @@ public class InGameArrowTick extends BukkitRunnable implements Listener {
             B = team.getBukkitColor().getBlue();
             R -= 255;
 
-            if(e.isDead()) return;
-            e.getWorld().spigot().playEffect(e.getLocation().add(0,0.2,0),Effect.COLOURED_DUST,0,1,(float) R/255,(float) G/255,(float) B/255,1,0,128);
+            if(!e.isDead())
+                e.getWorld().spigot().playEffect(e.getLocation().add(0,0.2,0),Effect.COLOURED_DUST,0,1,(float) R/255,(float) G/255,(float) B/255,1,0,128);
 
             Arrow arrow = (Arrow) e;
             if(arrow.isOnGround()) arrow.remove();

@@ -15,6 +15,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
+
 @InjectableComponent
 public class PlayerNameTag extends NameTagAdapter {
 
@@ -37,15 +39,20 @@ public class PlayerNameTag extends NameTagAdapter {
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
         else if (teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForOtherTeams)
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
-        else if (teamManager.getPlayerTeam(bukkitPlayer).getGroupID() == teamManager.getPlayerTeam(bukkitTarget).getGroupID() && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForGroupTeam){
-            if(teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget))
+        else if (teamManager.getPlayerTeam(bukkitPlayer).getGroupID() == teamManager.getPlayerTeam(bukkitTarget).getGroupID() && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForGroupTeam) {
+            if (teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget))
                 nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
         }
 
+        DecimalFormat format = new DecimalFormat("#.#");
         //check if force display
-        if(nameTagTemporaryManager.getPlayerSetMap().containsKey(bukkitTarget)){
-            if(nameTagTemporaryManager.getPlayerSetMap().get(bukkitTarget).contains(bukkitPlayer))
-                nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.ALWAYS;
+        if (nameTagTemporaryManager.getPlayerSetMap().containsKey(bukkitTarget.getUniqueId())) {
+            if (nameTagTemporaryManager.getPlayerSetMap().get(bukkitTarget.getUniqueId()).contains(bukkitPlayer.getUniqueId())) {
+                return new NameTag(Component.text("§c")
+                        , Component.text(" §4-" + format.format(new Double(bukkitTarget.getLastDamageCause().getFinalDamage())))
+                        , TextColor.color(0xFFFFFF)
+                        , WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
+            }
         }
 
         //output

@@ -39,11 +39,5 @@ public class SelectTeamItem extends CustomItemFairy {
             player.performCommand("ts menu");
             player.playSound(player.getLocation(), Sound.HORSE_ARMOR, 1, 0.5f);
         }
-
-//        @EventHandler
-//        public void onDrop(PlayerDropItemEvent event){
-//            if(isItem(event.getItemDrop().getItemStack()))
-//                event.getPlayer().sendMessage("DROPPED");
-//        }
     }
 }

@@ -38,7 +38,7 @@ public class LobbyEventListener implements Listener {
         Player player = event.getPlayer();
         MCPlayer mcPlayer = MCPlayer.from(event.getPlayer());
         if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY)){
-            event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + "進入了大廳 ! §8(MC " + mcPlayer.getVersion().getFormatted() + "§8)");
+            event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + "進入了大廳 !");
             //Join lobby Team
             teamManager.joinTeam(event.getPlayer(), teamManager.getTeam("lobby"));
             //Set lobby items

@@ -14,14 +14,17 @@ import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerAchievementAwardedEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.swing.plaf.PanelUI;
 import java.security.PublicKey;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,13 +34,9 @@ import java.util.Set;
 @RegisterAsListener
 public class GlobalEventListener implements Listener {
     private final NameTagService nameTagService;
-    private final NameTagTemporaryManager nameTagTemporaryManager;
-    private final TeamManager teamManager;
 
-    public GlobalEventListener(NameTagService nameTagService, NameTagTemporaryManager nameTagTemporaryManager, TeamManager teamManager) {
+    public GlobalEventListener(NameTagService nameTagService) {
         this.nameTagService = nameTagService;
-        this.nameTagTemporaryManager = nameTagTemporaryManager;
-        this.teamManager = teamManager;
     }
 
     @EventHandler
@@ -68,25 +67,5 @@ public class GlobalEventListener implements Listener {
     @EventHandler
     public void specialAbilityEnd(SpecialAbilityEndEvent event){
         nameTagService.update(MCPlayer.from(event.getPlayer()));
-    }
-
-    //Team NameTag trigger
-    @EventHandler
-    public void onPlayerDamage(PlayerDamageByPlayerEvent event){
-        if(teamManager.getPlayerTeam(event.getPlayer()).isShowNameTagToClicker() == true){
-            Player target = event.getPlayer();
-            Player player = event.getDamager();
-
-            nameTagTemporaryManager.startDisplayToPlayer(target, player);
-            nameTagService.update(MCPlayer.from(target));
-
-            BukkitTask nameTagRemoveTask = new BukkitRunnable(){
-                @Override
-                public void run() {
-                    nameTagTemporaryManager.getPlayerSetMap().get(target).remove(player);
-                    nameTagService.update(MCPlayer.from(target));
-                }
-            }.runTaskLater(BukkitPlugin.INSTANCE, 25);
-        }
     }
 }

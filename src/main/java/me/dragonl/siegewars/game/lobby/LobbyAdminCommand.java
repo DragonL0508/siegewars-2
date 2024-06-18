@@ -5,22 +5,18 @@ import io.fairyproject.command.BaseCommand;
 import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
-import me.dragonl.siegewars.WorldSetup;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.Kit;
 import me.dragonl.siegewars.game.kit.KitSelectLogic;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.itemStack.items.PlayerPrepareItem;
+import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
-import me.dragonl.siegewars.yaml.MainConfig;
-import me.dragonl.siegewars.yaml.MapConfig;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 
 @Command(value = "admin",permissionNode = "siegewars.admin")
 @InjectableComponent
@@ -30,19 +26,15 @@ public class LobbyAdminCommand extends BaseCommand {
     private final TeamManager teamManager;
     private final PlayerPreparingManager playerPreparingManager;
     private final PlayerPrepareItem playerPrepareItem;
-    private final MainConfig mainConfig;
-    private final MapConfig mapConfig;
-    private final WorldSetup worldSetup;
+    private final TNTItem tntItem;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, MainConfig mainConfig, MapConfig mapConfig, WorldSetup worldSetup) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, TNTItem tntItem) {
         this.gameStateManager = gameStateManager;
         this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
         this.playerPreparingManager = playerPreparingManager;
         this.playerPrepareItem = playerPrepareItem;
-        this.mainConfig = mainConfig;
-        this.mapConfig = mapConfig;
-        this.worldSetup = worldSetup;
+        this.tntItem = tntItem;
     }
 
     @Command("menu")
@@ -68,5 +60,15 @@ public class LobbyAdminCommand extends BaseCommand {
     @Command("goToMap")
     public void goToMap(BukkitCommandContext ctx, @Arg("map") World world) {
         ctx.getPlayer().teleport(world.getSpawnLocation());
+    }
+
+    @Command("getItem")
+    public void getItem(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("item") GetItemArgs item){
+        PlayerInventory inv = player.getInventory();
+        switch (item){
+            case TNT:{
+                inv.addItem(tntItem.get(player));
+            }
+        }
     }
 }

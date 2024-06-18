@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.nio.Buffer;
@@ -34,8 +35,6 @@ public class PlayerJoinListener implements Listener {
         //player Default Data
         if(!playerDataManager.hasData(player))
             playerDataManager.setPlayerData(player, new PlayerData());
-
-        //update nametag
 
     }
 }

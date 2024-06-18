@@ -6,16 +6,20 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.player.NameGetter;
+import me.dragonl.siegewars.player.NameTagTemporaryManager;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.SoundPlayer;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -57,15 +61,6 @@ public class InGameListener implements Listener {
     }
 
     @EventHandler
-    public void onDamage(PlayerDamageByPlayerEvent event) {
-        if(gameStateManager.isCurrentGameState(GameState.IN_GAME)){
-            Player damager = event.getDamager();
-            PlayerData damagerData = playerDataManager.getPlayerData(damager);
-            damagerData.setTotalDamage(damagerData.getTotalDamage() + event.getFinalDamage());
-        }
-    }
-
-    @EventHandler
     public void onDeath(PlayerDeathEvent event){
         if(gameStateManager.isCurrentGameState(GameState.IN_GAME)){
             if(event.getEntity().getKiller() != null){
@@ -78,6 +73,7 @@ public class InGameListener implements Listener {
 
                 //message
                 event.setDeathMessage("§c[擊殺] " + nameGetter.getNameWithTeamColor(killer) + " §c✘ " + nameGetter.getNameWithTeamColor(victim));
+                victim.getWorld().spigot().playEffect(victim.getLocation().add(0,1,0), Effect.STEP_SOUND, Material.REDSTONE_BLOCK.getId(), 0, 0.2F, 0.25F, 0.2F, 1, 30, 32);
                 victim.spigot().respawn();
 
                 soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH,1,1 + (float)Math.random());

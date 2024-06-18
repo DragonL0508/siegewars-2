@@ -20,18 +20,18 @@ public class WorldSetup extends BukkitRunnable {
         this.mapConfig = mapConfig;
     }
 
-    public void worldSetup(World world){
+    public void worldSetup(World world) {
         Log.info(world.getName() + " is currently setting up...");
 
-        world.setGameRuleValue("mobGriefing","false");
-        world.setGameRuleValue("doDaylightCycle","false");
-        world.setGameRuleValue("doMobSpawning","false");
-        world.setGameRuleValue("keepInventory","true");
-        world.setGameRuleValue("sendCommandFeedback","false");
-        world.setGameRuleValue("logAdminCommands","false");
-        world.setGameRuleValue("doFireTick","false");
-        world.setGameRuleValue("naturalRegeneration","false");
-        world.setGameRuleValue("doTileDrops","false");
+        world.setGameRuleValue("mobGriefing", "false");
+        world.setGameRuleValue("doDaylightCycle", "false");
+        world.setGameRuleValue("doMobSpawning", "false");
+        world.setGameRuleValue("keepInventory", "true");
+        world.setGameRuleValue("sendCommandFeedback", "false");
+        world.setGameRuleValue("logAdminCommands", "false");
+        world.setGameRuleValue("doFireTick", "false");
+        world.setGameRuleValue("naturalRegeneration", "false");
+        world.setGameRuleValue("doTileDrops", "false");
 
         world.setTime(12000);
         world.setStorm(false);
@@ -39,7 +39,7 @@ public class WorldSetup extends BukkitRunnable {
         world.setAutoSave(false);
     }
 
-    public void bukkitCreateWorld(String worldName){
+    public void bukkitCreateWorld(String worldName) {
         Bukkit.broadcastMessage(ChatColor.YELLOW + "正在創建世界(" + worldName + "), 請稍後...");
         WorldCreator wc = new WorldCreator(worldName);
         wc.createWorld();
@@ -56,7 +56,7 @@ public class WorldSetup extends BukkitRunnable {
     }
 
     @PostInitialize
-    public void init(){
+    public void init() {
         this.runTask(BukkitPlugin.INSTANCE);
     }
 }

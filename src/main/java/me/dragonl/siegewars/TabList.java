@@ -246,10 +246,10 @@ public class TabList implements TablistAdapter {
             Player player = Bukkit.getPlayer(uuid);
             PlayerData data = playerDataManager.getPlayerData(player);
             String nametag = nameGetter.getNameWithTeamColor(player);
-            if(teamManager.getPlayerTeam(target) == team)
+            if (teamManager.getPlayerTeam(target) == team)
                 nametag += " " + kitInfoGetter.getKitText(playerKitManager.getPlayerKit(player));
             String info = ChatColor.GRAY + " (" + data.getKills() + "/" + data.getDeaths() + "/" + data.getAssist() + ") " + ChatColor.RED + data.getFormatDamage() + "⚡ ";
-            if(teamManager.getPlayerTeam(target) == team)
+            if (teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";
             int index = team.getPlayers().indexOf(uuid);
             tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 5).text(LegacyAdventureUtil.decode(nametag)).skin(Skin.load(uuid)).ping(MCPlayer.from(player).getPing()));
