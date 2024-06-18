@@ -126,6 +126,7 @@ public class TabList implements TablistAdapter {
                                 .slot(lobbyPlayersList.indexOf(uuid) + 3)
                                 .text(LegacyAdventureUtil.decode(nameTag))
                                 .skin(Skin.load(uuid))
+                                .ping(MCPlayer.from(p).getPing())
                 );
             });
             //spectators list
@@ -251,7 +252,7 @@ public class TabList implements TablistAdapter {
             if(teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";
             int index = team.getPlayers().indexOf(uuid);
-            tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 5).text(LegacyAdventureUtil.decode(nametag)).skin(Skin.load(uuid)));
+            tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 5).text(LegacyAdventureUtil.decode(nametag)).skin(Skin.load(uuid)).ping(MCPlayer.from(player).getPing()));
             tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 6).text(LegacyAdventureUtil.decode(info)));
         });
     }

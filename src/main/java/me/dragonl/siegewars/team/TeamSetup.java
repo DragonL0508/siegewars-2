@@ -5,7 +5,6 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import io.fairyproject.log.Log;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @InjectableComponent
@@ -27,14 +26,18 @@ public class TeamSetup extends BukkitRunnable {
         teamA.setColor(ChatColor.GOLD);
         teamA.setPrefix(ChatColor.GOLD + "[隊伍A] ");
         teamA.setFriendlyFire(false);
-        teamA.setNametagVisibility(NametagVisibility.hideForOtherTeams);
+        teamA.setNametagVisibility(NametagVisibility.hideForGroupTeam);
         teamA.setPrivateChat(true);
+        teamA.setGroupID("inGame");
+        teamA.setShowNameTagToClicker(true);
 
         teamB.setColor(ChatColor.AQUA);
         teamB.setPrefix(ChatColor.AQUA + "[隊伍B] ");
         teamB.setFriendlyFire(false);
-        teamB.setNametagVisibility(NametagVisibility.hideForOtherTeams);
+        teamB.setNametagVisibility(NametagVisibility.hideForGroupTeam);
         teamB.setPrivateChat(true);
+        teamB.setGroupID("inGame");
+        teamB.setShowNameTagToClicker(true);
 
         spectator.setColor(ChatColor.DARK_GRAY);
         spectator.setPrefix(ChatColor.DARK_GRAY + "[觀戰者] ");

@@ -39,7 +39,7 @@ public class KitReaper extends SiegeWarsAbstractKit {
     public Boolean useAbility(Player player) {
         PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 140, 1, false, false);
         PotionEffect invisibility = new PotionEffect(PotionEffectType.INVISIBILITY, 140, 0, false, false);
-        PotionEffect weekness = new PotionEffect(PotionEffectType.WEAKNESS, 140, 100, false, false);
+        PotionEffect weekness = new PotionEffect(PotionEffectType.WEAKNESS, 140, 1, false, false);
         PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 140, 0, false, false);
         PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, false, false);
         PotionEffect slowness = new PotionEffect(PotionEffectType.SLOW, 1, 0, false, false);

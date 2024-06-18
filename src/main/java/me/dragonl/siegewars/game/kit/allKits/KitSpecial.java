@@ -6,6 +6,8 @@ import io.fairyproject.FairyLaunch;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.scheduler.MCSchedulers;
+import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import me.dragonl.siegewars.game.events.SpecialAbilityEndEvent;
 import me.dragonl.siegewars.game.events.SpecialAbilityStartEvent;
 import me.dragonl.siegewars.game.kit.KitInfoGetter;
@@ -23,6 +25,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 @InjectableComponent
 public class KitSpecial extends SiegeWarsAbstractKit {
@@ -46,27 +51,18 @@ public class KitSpecial extends SiegeWarsAbstractKit {
         targetTeam.setNametagVisibility(NametagVisibility.always);
 
         // show target position
-        BukkitTask showPlayer = new BukkitRunnable(){
-            @Override
-            public void run() {
-                targetTeam.getPlayers().forEach(uuid -> {
-                    Player target = Bukkit.getPlayer(uuid);
-                    target.getWorld().spigot().playEffect(target.getLocation().add(0,1,0), Effect.FLAME, 1, 0, 0, 0, 0, 0.25f, 25, 32);
-                    target.getWorld().playSound(target.getLocation(), Sound.FIRE_IGNITE, 1, 0.3f);
-                    target.getWorld().playSound(target.getLocation(), Sound.FIZZ, 1, 1.25f);
-                });
-            }
-        }.runTaskTimer(BukkitPlugin.INSTANCE, 0, 20);
-
-        int delayTick = 140;
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-                targetTeam.setNametagVisibility(NametagVisibility.hideForOtherTeams);
-                showPlayer.cancel();
-                Bukkit.getPluginManager().callEvent(new SpecialAbilityEndEvent(player));
-            }
-        }.runTaskLater(BukkitPlugin.INSTANCE, delayTick);
+        CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            targetTeam.getPlayers().forEach(uuid -> {
+                Player target = Bukkit.getPlayer(uuid);
+                target.getWorld().spigot().playEffect(target.getLocation().add(0, 1, 0), Effect.FLAME, 1, 0, 0, 0, 0, 0.25f, 25, 32);
+                target.getWorld().playSound(target.getLocation(), Sound.FIRE_IGNITE, 1, 0.3f);
+                target.getWorld().playSound(target.getLocation(), Sound.FIZZ, 1, 1.25f);
+            });
+        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(7))).getFuture();
+        future.thenRun(() -> {
+            targetTeam.setNametagVisibility(NametagVisibility.hideForOtherTeams);
+            Bukkit.getPluginManager().callEvent(new SpecialAbilityEndEvent(player));
+        });
 
         Bukkit.getPluginManager().callEvent(new SpecialAbilityStartEvent(player));
         return true;

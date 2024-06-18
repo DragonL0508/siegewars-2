@@ -1,12 +1,9 @@
 package me.dragonl.siegewars.team;
 
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import net.kyori.adventure.util.RGBLike;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
-import org.w3c.dom.css.RGBColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,24 @@ public class Team {
     private boolean friendlyFire = true;
     private NametagVisibility nametagVisibility = NametagVisibility.always;
     private boolean privateChat = false;
+    private String groupID = "";
+    private boolean showNameTagToClicker = false;
+
+    public boolean isShowNameTagToClicker() {
+        return showNameTagToClicker;
+    }
+
+    public void setShowNameTagToClicker(boolean showNameTagToClicker) {
+        this.showNameTagToClicker = showNameTagToClicker;
+    }
+
+    public String getGroupID() {
+        return groupID;
+    }
+
+    public void setGroupID(String groupID) {
+        this.groupID = groupID;
+    }
 
     public boolean isPrivateChat() {
         return privateChat;

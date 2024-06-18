@@ -19,10 +19,12 @@ import org.bukkit.entity.Player;
 public class PlayerNameTag extends NameTagAdapter {
 
     private final TeamManager teamManager;
+    private final NameTagTemporaryManager nameTagTemporaryManager;
 
-    public PlayerNameTag(TeamManager teamManager) {
+    public PlayerNameTag(TeamManager teamManager, NameTagTemporaryManager nameTagTemporaryManager) {
         super("nametag", 0);
         this.teamManager = teamManager;
+        this.nameTagTemporaryManager = nameTagTemporaryManager;
     }
 
     @Override
@@ -35,6 +37,16 @@ public class PlayerNameTag extends NameTagAdapter {
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
         else if (teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForOtherTeams)
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
+        else if (teamManager.getPlayerTeam(bukkitPlayer).getGroupID() == teamManager.getPlayerTeam(bukkitTarget).getGroupID() && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForGroupTeam){
+            if(teamManager.getPlayerTeam(bukkitPlayer) != teamManager.getPlayerTeam(bukkitTarget))
+                nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
+        }
+
+        //check if force display
+        if(nameTagTemporaryManager.getPlayerSetMap().containsKey(bukkitTarget)){
+            if(nameTagTemporaryManager.getPlayerSetMap().get(bukkitTarget).contains(bukkitPlayer))
+                nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.ALWAYS;
+        }
 
         //output
         if (teamManager.isInTeam(bukkitTarget)) {
