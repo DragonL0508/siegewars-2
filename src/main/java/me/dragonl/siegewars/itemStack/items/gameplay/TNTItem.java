@@ -105,9 +105,9 @@ public class TNTItem extends CustomItemFairy {
                         return;
                     Player target = (Player) e;
                     if (teamManager.isInTeam(target, teamManager.getPlayerTeam(player)))
-                        target.damage(10);
+                        target.damage(6);
                     if (teamManager.swGetAnotherTeam(player) == teamManager.getPlayerTeam(target))
-                        target.damage(10, player);
+                        target.damage(6, player);
 
                 });
 
