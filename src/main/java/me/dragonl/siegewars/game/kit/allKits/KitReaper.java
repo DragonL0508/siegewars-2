@@ -48,6 +48,7 @@ public class KitReaper extends SiegeWarsAbstractKit {
         player.addPotionEffect(invisibility);
         player.addPotionEffect(speed);
         player.addPotionEffect(weekness);
+
         BukkitTask debuffTask = new BukkitRunnable(){
             @Override
             public void run() {

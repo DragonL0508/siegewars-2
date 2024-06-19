@@ -103,7 +103,7 @@ public class SetupCommand extends BaseCommand {
                 if(setupWandManager.getPlayerSelection1().containsKey(player.getUniqueId()) && setupWandManager.getPlayerSelection2().containsKey(player.getUniqueId())){
                     Position pos1 = BukkitPos.toMCPos(setupWandManager.getPlayerSelection1().get(player.getUniqueId()));
                     Position pos2 = BukkitPos.toMCPos(setupWandManager.getPlayerSelection2().get(player.getUniqueId()));
-                    mapElement.getDestroyableWallList().add(new DestroyableWallElement(pos1, pos2));
+                    mapElement.getDestroyableWallList().add(new DestroyableWallElement(getPosWithMaxXYZ(pos1, pos2), getPosWithMinXYZ(pos1, pos2)));
 
                     player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的可破牆! §7(" + mapElement.getDestroyableWallList().size() + ")");
                     break;
@@ -117,7 +117,7 @@ public class SetupCommand extends BaseCommand {
                 if(setupWandManager.getPlayerSelection1().containsKey(player.getUniqueId()) && setupWandManager.getPlayerSelection2().containsKey(player.getUniqueId())){
                     Position pos1 = BukkitPos.toMCPos(setupWandManager.getPlayerSelection1().get(player.getUniqueId()));
                     Position pos2 = BukkitPos.toMCPos(setupWandManager.getPlayerSelection2().get(player.getUniqueId()));
-                    mapElement.getDestroyableWindowList().add(new DestroyableWindowElement(pos1, pos2));
+                    mapElement.getDestroyableWindowList().add(new DestroyableWindowElement(getPosWithMaxXYZ(pos1, pos2), getPosWithMinXYZ(pos1, pos2)));
 
                     player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的可破窗! §7(" + mapElement.getDestroyableWindowList().size() + ")");
                     break;
@@ -131,12 +131,13 @@ public class SetupCommand extends BaseCommand {
         mapConfig.save();
     }
 
-    private Boolean isInMap(Player player){
-        List<World> mapList = new ArrayList<>();
-        mapConfig.getMaps().forEach((m, element) -> {
-            mapList.add(Bukkit.getWorld(m));
-        });
+    private Position getPosWithMaxXYZ(Position pos1, Position pos2){
+        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX()), maxY = Math.max(pos1.getBlockY(), pos2.getBlockY()), maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+        return new Position(pos1.getWorld(), maxX, maxY, maxZ);
+    }
 
-        return mapList.contains(player.getWorld());
+    private Position getPosWithMinXYZ(Position pos1, Position pos2){
+        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX()), minY = Math.min(pos1.getBlockY(), pos2.getBlockY()), minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+        return new Position(pos1.getWorld(), minX, minY, minZ);
     }
 }

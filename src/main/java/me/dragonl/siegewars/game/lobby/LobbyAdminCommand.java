@@ -8,6 +8,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.Kit;
+import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.game.kit.KitSelectLogic;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.itemStack.items.PlayerPrepareItem;
@@ -18,7 +19,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
-@Command(value = "admin",permissionNode = "siegewars.admin")
+@Command(value = "admin", permissionNode = "siegewars.admin")
 @InjectableComponent
 public class LobbyAdminCommand extends BaseCommand {
     private final GameStateManager gameStateManager;
@@ -27,19 +28,21 @@ public class LobbyAdminCommand extends BaseCommand {
     private final PlayerPreparingManager playerPreparingManager;
     private final PlayerPrepareItem playerPrepareItem;
     private final TNTItem tntItem;
+    private final MapObjectCatcher mapObjectCatcher;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, TNTItem tntItem) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, TNTItem tntItem, MapObjectCatcher mapObjectCatcher) {
         this.gameStateManager = gameStateManager;
         this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
         this.playerPreparingManager = playerPreparingManager;
         this.playerPrepareItem = playerPrepareItem;
         this.tntItem = tntItem;
+        this.mapObjectCatcher = mapObjectCatcher;
     }
 
     @Command("menu")
     public void openMenu(BukkitCommandContext ctx) {
-        new LobbyAdminMenu(gameStateManager,playerPreparingManager, teamManager, playerPrepareItem).open(ctx.getPlayer());
+        new LobbyAdminMenu(gameStateManager, playerPreparingManager, teamManager, playerPrepareItem).open(ctx.getPlayer());
     }
 
     @Command("setKit")
@@ -62,13 +65,26 @@ public class LobbyAdminCommand extends BaseCommand {
         ctx.getPlayer().teleport(world.getSpawnLocation());
     }
 
-    @Command("getItem")
-    public void getItem(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("item") GetItemArgs item){
+    @Command("giveItem")
+    public void giveItem(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("item") GetItemArgs item) {
         PlayerInventory inv = player.getInventory();
-        switch (item){
-            case TNT:{
+        switch (item) {
+            case TNT: {
                 inv.addItem(tntItem.get(player));
             }
         }
+    }
+
+    @Command("restoreMapObjects")
+    public void restoreMapObjects(BukkitCommandContext ctx) {
+        mapObjectCatcher.getDestroyableWalls().forEach(((element, blockStates) -> {
+            blockStates.forEach(blockState -> {
+                blockState.update(true);
+            });
+        }));
+
+        //clear maps
+        mapObjectCatcher.getDestroyableWalls().clear();
+        ctx.getPlayer().sendMessage("§a已復原所有地圖物件!");
     }
 }

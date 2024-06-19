@@ -2,7 +2,6 @@ package me.dragonl.siegewars.yaml.element;
 
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.config.annotation.ElementType;
-import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.util.Position;
 
 import java.util.*;
@@ -55,7 +54,7 @@ public class MapConfigElement {
         this.defendSpot = defendSpot;
     }
 
-    public MapConfigElement(){
+    public MapConfigElement() {
 
     }
 
@@ -81,5 +80,25 @@ public class MapConfigElement {
 
     public void setSpecSpawn(Position specSpawn) {
         this.specSpawn = specSpawn;
+    }
+
+    public DestroyableWallElement getWallAtPosition(Position position) {
+        AtomicReference<DestroyableWallElement> element = new AtomicReference<>(new DestroyableWallElement());
+
+        destroyableWallList.forEach(wall -> {
+            int minX = Math.min(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
+            int maxX = Math.max(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
+            int minY = Math.min(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
+            int maxY = Math.max(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
+            int minZ = Math.min(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
+            int maxZ = Math.max(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
+
+            if (position.getBlockX() >= minX && position.getBlockX() <= maxX
+                    && position.getBlockY() >= minY && position.getBlockY() <= maxY
+                    && position.getBlockZ() >= minZ && position.getBlockZ() <= maxZ)
+                element.set(wall);
+
+        });
+        return element.get();
     }
 }

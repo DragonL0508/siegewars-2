@@ -5,6 +5,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
 import me.dragonl.siegewars.yaml.MapConfig;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
@@ -20,11 +21,13 @@ public class TNTParticleRunTime extends BukkitRunnable {
     private final GameStateManager gameStateManager;
     private final TNTItem tntItem;
     private final MapConfig mapConfig;
+    private final MapObjectCatcher catcher;
 
-    public TNTParticleRunTime(GameStateManager gameStateManager, TNTItem tntItem, MapConfig mapConfig) {
+    public TNTParticleRunTime(GameStateManager gameStateManager, TNTItem tntItem, MapConfig mapConfig, MapObjectCatcher catcher) {
         this.gameStateManager = gameStateManager;
         this.tntItem = tntItem;
         this.mapConfig = mapConfig;
+        this.catcher = catcher;
     }
 
     @Override
@@ -42,12 +45,15 @@ public class TNTParticleRunTime extends BukkitRunnable {
             MapConfigElement element = mapConfig.getMaps().get(p.getWorld().getName());
             if (tntItem.isSimilar(p.getItemInHand())) {
                 element.getDestroyableWallList().forEach(wall -> {
-                    int minX = Math.min(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
-                    int maxX = Math.max(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
-                    int minY = Math.min(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
-                    int maxY = Math.max(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
-                    int minZ = Math.min(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
-                    int maxZ = Math.max(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
+                    if (catcher.isSaved(wall))
+                        return;
+
+                    int minX = wall.getPosition2().getBlockX();
+                    int maxX = wall.getPosition1().getBlockX();
+                    int minY = wall.getPosition2().getBlockY();
+                    int maxY = wall.getPosition1().getBlockY();
+                    int minZ = wall.getPosition2().getBlockZ();
+                    int maxZ = wall.getPosition1().getBlockZ();
 
                     showCuboid(p, minX, minY, minZ, maxX, maxY, maxZ);
                 });
