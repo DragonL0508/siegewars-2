@@ -86,17 +86,37 @@ public class MapConfigElement {
         AtomicReference<DestroyableWallElement> element = new AtomicReference<>(new DestroyableWallElement());
 
         destroyableWallList.forEach(wall -> {
-            int minX = Math.min(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
-            int maxX = Math.max(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
-            int minY = Math.min(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
-            int maxY = Math.max(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
-            int minZ = Math.min(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
-            int maxZ = Math.max(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
+            int minX = wall.getPosition2().getBlockX();
+            int maxX = wall.getPosition1().getBlockX();
+            int minY = wall.getPosition2().getBlockY();
+            int maxY = wall.getPosition1().getBlockY();
+            int minZ = wall.getPosition2().getBlockZ();
+            int maxZ = wall.getPosition1().getBlockZ();
 
             if (position.getBlockX() >= minX && position.getBlockX() <= maxX
                     && position.getBlockY() >= minY && position.getBlockY() <= maxY
                     && position.getBlockZ() >= minZ && position.getBlockZ() <= maxZ)
                 element.set(wall);
+
+        });
+        return element.get();
+    }
+
+    public DestroyableWindowElement getWindowAtPosition(Position position) {
+        AtomicReference<DestroyableWindowElement> element = new AtomicReference<>(new DestroyableWindowElement());
+
+        destroyableWindowList.forEach(window -> {
+            int minX = window.getPosition2().getBlockX();
+            int maxX = window.getPosition1().getBlockX();
+            int minY = window.getPosition2().getBlockY();
+            int maxY = window.getPosition1().getBlockY();
+            int minZ = window.getPosition2().getBlockZ();
+            int maxZ = window.getPosition1().getBlockZ();
+
+            if (position.getBlockX() >= minX && position.getBlockX() <= maxX
+                    && position.getBlockY() >= minY && position.getBlockY() <= maxY
+                    && position.getBlockZ() >= minZ && position.getBlockZ() <= maxZ)
+                element.set(window);
 
         });
         return element.get();

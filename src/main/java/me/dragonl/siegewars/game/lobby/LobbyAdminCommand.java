@@ -12,9 +12,11 @@ import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.game.kit.KitSelectLogic;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.itemStack.items.PlayerPrepareItem;
+import me.dragonl.siegewars.itemStack.items.gameplay.BaffleItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -28,15 +30,17 @@ public class LobbyAdminCommand extends BaseCommand {
     private final PlayerPreparingManager playerPreparingManager;
     private final PlayerPrepareItem playerPrepareItem;
     private final TNTItem tntItem;
+    private final BaffleItem baffleItem;
     private final MapObjectCatcher mapObjectCatcher;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, TNTItem tntItem, MapObjectCatcher mapObjectCatcher) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher) {
         this.gameStateManager = gameStateManager;
         this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
         this.playerPreparingManager = playerPreparingManager;
         this.playerPrepareItem = playerPrepareItem;
         this.tntItem = tntItem;
+        this.baffleItem = baffleItem;
         this.mapObjectCatcher = mapObjectCatcher;
     }
 
@@ -71,20 +75,38 @@ public class LobbyAdminCommand extends BaseCommand {
         switch (item) {
             case TNT: {
                 inv.addItem(tntItem.get(player));
+                break;
+            }
+            case baffle: {
+                inv.addItem(baffleItem.get(player));
             }
         }
     }
 
     @Command("restoreMapObjects")
     public void restoreMapObjects(BukkitCommandContext ctx) {
-        mapObjectCatcher.getDestroyableWalls().forEach(((element, blockStates) -> {
+        mapObjectCatcher.getDestroyableWalls().forEach((element, blockStates) -> {
             blockStates.forEach(blockState -> {
                 blockState.update(true);
             });
-        }));
+        });
+
+        mapObjectCatcher.getDestroyableWindow().forEach((element, blockStates) -> {
+            blockStates.forEach(blockState -> {
+                blockState.update(true);
+            });
+        });
+
+        mapObjectCatcher.getBafflePlaced().forEach(location -> {
+            location.getBlock().setType(Material.AIR);
+            while (location.add(0, 1, 0).getBlock().getType() == Material.ACACIA_FENCE)
+                location.getBlock().setType(Material.AIR);
+        });
 
         //clear maps
         mapObjectCatcher.getDestroyableWalls().clear();
+        mapObjectCatcher.getDestroyableWindow().clear();
+        mapObjectCatcher.getBafflePlaced().clear();
         ctx.getPlayer().sendMessage("§a已復原所有地圖物件!");
     }
 }

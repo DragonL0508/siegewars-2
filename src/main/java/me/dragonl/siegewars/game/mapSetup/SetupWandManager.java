@@ -47,12 +47,32 @@ public class SetupWandManager {
         MapConfigElement element = mapConfig.getMaps().get(position.getWorld());
 
         element.getDestroyableWallList().forEach(wall -> {
-            int minX = Math.min(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
-            int maxX = Math.max(wall.getPosition1().getBlockX(), wall.getPosition2().getBlockX());
-            int minY = Math.min(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
-            int maxY = Math.max(wall.getPosition1().getBlockY(), wall.getPosition2().getBlockY());
-            int minZ = Math.min(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
-            int maxZ = Math.max(wall.getPosition1().getBlockZ(), wall.getPosition2().getBlockZ());
+            int minX = wall.getPosition2().getBlockX();
+            int maxX = wall.getPosition1().getBlockX();
+            int minY = wall.getPosition2().getBlockY();
+            int maxY = wall.getPosition1().getBlockY();
+            int minZ = wall.getPosition2().getBlockZ();
+            int maxZ = wall.getPosition1().getBlockZ();
+
+            if (position.getBlockX() >= minX && position.getBlockX() <= maxX
+                    && position.getBlockY() >= minY && position.getBlockY() <= maxY
+                    && position.getBlockZ() >= minZ && position.getBlockZ() <= maxZ)
+                bool.set(true);
+        });
+        return bool.get();
+    }
+
+    public boolean isDestroyableWindow(Position position) {
+        AtomicReference<Boolean> bool = new AtomicReference<>(false);
+        MapConfigElement element = mapConfig.getMaps().get(position.getWorld());
+
+        element.getDestroyableWindowList().forEach(window -> {
+            int minX = window.getPosition2().getBlockX();
+            int maxX = window.getPosition1().getBlockX();
+            int minY = window.getPosition2().getBlockY();
+            int maxY = window.getPosition1().getBlockY();
+            int minZ = window.getPosition2().getBlockZ();
+            int maxZ = window.getPosition1().getBlockZ();
 
             if (position.getBlockX() >= minX && position.getBlockX() <= maxX
                     && position.getBlockY() >= minY && position.getBlockY() <= maxY

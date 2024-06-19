@@ -3,9 +3,11 @@ package me.dragonl.siegewars.game;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.yaml.element.DestroyableWallElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWindowElement;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,15 @@ import java.util.Map;
 public class MapObjectCatcher {
     private Map<DestroyableWallElement, List<BlockState>> destroyableWalls = new HashMap<>();
     private Map<DestroyableWindowElement, List<BlockState>> destroyableWindow = new HashMap<>();
+    private List<Location> bafflePlaced = new ArrayList<>();
+
+    public List<Location> getBafflePlaced() {
+        return bafflePlaced;
+    }
+
+    public void setBafflePlaced(List<Location> bafflePlaced) {
+        this.bafflePlaced = bafflePlaced;
+    }
 
     public Map<DestroyableWallElement, List<BlockState>> getDestroyableWalls() {
         return destroyableWalls;
