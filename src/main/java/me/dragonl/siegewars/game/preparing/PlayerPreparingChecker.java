@@ -34,7 +34,7 @@ public class PlayerPreparingChecker extends BukkitRunnable {
     public void run() {
         if (gameStateManager.isCurrentGameState(GameState.PREPARING)) {
             Bukkit.getOnlinePlayers().forEach(player -> {
-                Titles.sendTitle(player, 0, 30, 0,"§a玩家準備中","§7(點選綠寶石進行準備)");
+                Titles.sendTitle(player, 0, 30, 0, "§a玩家準備中", "§7(點選綠寶石進行準備)");
             });
             if (!playerPreparingManager.playerPrepareMap.containsValue(false)) {
                 teamManager.swTeamSplits(teamManager.getTeam("lobby").getOnlineBukkitPlayers());
@@ -44,7 +44,7 @@ public class PlayerPreparingChecker extends BukkitRunnable {
                 });
                 this.cancel();
 
-                new GameStartCountdown(soundPlayer, gameStateManager).runTaskTimer(BukkitPlugin.INSTANCE, 0, 20);
+                new GameStartCountdown(soundPlayer, gameStateManager, teamManager).runTaskTimer(BukkitPlugin.INSTANCE, 0, 20);
             }
         }
     }

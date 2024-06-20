@@ -11,6 +11,7 @@ import me.dragonl.siegewars.WorldSetup;
 import me.dragonl.siegewars.itemStack.items.SetupWand;
 import me.dragonl.siegewars.yaml.MainConfig;
 import me.dragonl.siegewars.yaml.MapConfig;
+import me.dragonl.siegewars.yaml.element.BombSiteElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWallElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWindowElement;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
@@ -80,24 +81,28 @@ public class SetupCommand extends BaseCommand {
                 break;
             }
             case attackSpawn:{
-                player.sendMessage("§a已設置 §e" + player.getWorld().getName() + " §a的攻擊方初始點!");
-                mapElement.setAttackSpawn(BukkitPos.toMCPos(player.getLocation()));
+                mapElement.getAttackSpawn().add(BukkitPos.toMCPos(player.getLocation()));
+                player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的攻擊方點位! §7(" + mapElement.getAttackSpawn().size() + ")");
                 break;
             }
             case defendSpawn:{
-                player.sendMessage("§a已設置 §e" + player.getWorld().getName() + " §a的防守方初始點!");
-                mapElement.setDefendSpawn(BukkitPos.toMCPos(player.getLocation()));
+                mapElement.getDefendSpawn().add(BukkitPos.toMCPos(player.getLocation()));
+                player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的防守方點位! §7(" + mapElement.getDefendSpawn().size() + ")");
                 break;
             }
-            case attackSpot:{
-                mapElement.getAttackSpot().add(BukkitPos.toMCPos(player.getLocation()));
-                player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的攻擊方點位! §7(" + mapElement.getAttackSpot().size() + ")");
-                break;
-            }
-            case defendSpot:{
-                mapElement.getDefendSpot().add(BukkitPos.toMCPos(player.getLocation()));
-                player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的防守方點位! §7(" + mapElement.getDefendSpot().size() + ")");
-                break;
+            case bombsite:{
+                if(setupWandManager.getPlayerSelection1().containsKey(player.getUniqueId()) && setupWandManager.getPlayerSelection2().containsKey(player.getUniqueId())){
+                    Position pos1 = BukkitPos.toMCPos(setupWandManager.getPlayerSelection1().get(player.getUniqueId()));
+                    Position pos2 = BukkitPos.toMCPos(setupWandManager.getPlayerSelection2().get(player.getUniqueId()));
+                    mapElement.getBombSiteList().add(new BombSiteElement(getPosWithMaxXYZ(pos1, pos2), getPosWithMinXYZ(pos1, pos2)));
+
+                    player.sendMessage("§a已新增1個 §e" + player.getWorld().getName() + " §a的爆破點! §7(" + mapElement.getBombSiteList().size() + ")");
+                    break;
+                }
+                else {
+                    player.sendMessage("§c你需要圈選一個區域來創建可破牆, 使用 §e/setup getWand §c獲得圈選工具!");
+                    return;
+                }
             }
             case destroyableWall:{
                 if(setupWandManager.getPlayerSelection1().containsKey(player.getUniqueId()) && setupWandManager.getPlayerSelection2().containsKey(player.getUniqueId())){

@@ -16,14 +16,17 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Map;
+import java.util.UUID;
+
 @InjectableComponent
-public class TNTParticleRunTime extends BukkitRunnable {
+public class InGameItemRunTime extends BukkitRunnable {
     private final GameStateManager gameStateManager;
     private final TNTItem tntItem;
     private final MapConfig mapConfig;
     private final MapObjectCatcher catcher;
 
-    public TNTParticleRunTime(GameStateManager gameStateManager, TNTItem tntItem, MapConfig mapConfig, MapObjectCatcher catcher) {
+    public InGameItemRunTime(GameStateManager gameStateManager, TNTItem tntItem, MapConfig mapConfig, MapObjectCatcher catcher) {
         this.gameStateManager = gameStateManager;
         this.tntItem = tntItem;
         this.mapConfig = mapConfig;

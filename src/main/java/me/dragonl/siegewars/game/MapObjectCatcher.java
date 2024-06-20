@@ -1,16 +1,15 @@
 package me.dragonl.siegewars.game;
 
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.util.Position;
 import me.dragonl.siegewars.yaml.element.DestroyableWallElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWindowElement;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @InjectableComponent
 public class MapObjectCatcher {
@@ -42,11 +41,58 @@ public class MapObjectCatcher {
         this.destroyableWindow = destroyableWindow;
     }
 
-    public boolean isSaved(DestroyableWallElement element){
+    public boolean isSaved(DestroyableWallElement element) {
         return destroyableWalls.containsKey(element);
     }
 
-    public boolean isSaved(DestroyableWindowElement element){
+    public boolean isSaved(DestroyableWindowElement element) {
         return destroyableWindow.containsKey(element);
+    }
+
+    public boolean isBaffle(Location location) {
+        if (bafflePlaced.contains(location))
+            return true;
+        while (location.add(0, -1, 0).getBlock().getType() == Material.ACACIA_FENCE) {
+            if (bafflePlaced.contains(location))
+                return true;
+        }
+        return false;
+    }
+
+    public List<Location> getBafflesGroup(Location location) {
+        if (bafflePlaced.contains(location))
+            return getBafflesBeside(location.clone());
+        else {
+            while (location.add(0, -1, 0).getBlock().getType() == Material.ACACIA_FENCE) {
+                if(bafflePlaced.contains(location)){
+                    return getBafflesBeside(location.clone());
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private List<Location> getBafflesBeside(Location location) {
+        List<Location> baffles = new ArrayList<>();
+        baffles.add(location.clone());
+        Location clone = location.clone();
+
+        while (location.add(1,0,0).getBlock().getType() == Material.ACACIA_FENCE){
+            baffles.add(location.clone());
+        }
+        location = clone.clone();
+        while (location.add(-1,0,0).getBlock().getType() == Material.ACACIA_FENCE){
+            baffles.add(location.clone());
+        }
+        location = clone.clone();
+        while (location.add(0,0,1).getBlock().getType() == Material.ACACIA_FENCE){
+            baffles.add(location.clone());
+        }
+        location = clone.clone();
+        while (location.add(0,0,-1).getBlock().getType() == Material.ACACIA_FENCE){
+            baffles.add(location.clone());
+        }
+
+        return baffles;
     }
 }

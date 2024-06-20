@@ -1,6 +1,7 @@
 package me.dragonl.siegewars.game;
 
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.dragonl.siegewars.yaml.element.DestroyableWallElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWindowElement;
 import org.bukkit.*;
@@ -49,10 +50,43 @@ public class MapObjectDestroyer {
             for (int y = y1; y <= y2; y++) {
                 for (int z = z1; z <= z2; z++) {
                     blockStates.add(w.getBlockAt(x, y, z).getState());
-                    w.spigot().playEffect(new Location(w, x + 0.5, y + 0.5, z + 0.5), Effect.STEP_SOUND, w.getBlockAt(x, y, z).getType().getId(), 0, 0.25F, 0.25F, 0.25F, 1, 5, 32);
+                    w.spigot().playEffect(new Location(w, x + 0.5, y + 0.5, z + 0.5), Effect.STEP_SOUND, w.getBlockAt(x, y, z).getTypeId(), w.getBlockAt(x, y, z).getState().getRawData(), 0.25F, 0.25F, 0.25F, 1, 5, 32);
                     w.getBlockAt(x, y, z).setType(Material.AIR);
                 }
             }
         }
+    }
+
+    public void destroyBaffle(Location location) {
+        Location[] loc = new Location[]{location, location.clone()};
+
+        if (mapObjectCatcher.isBaffle(loc[0].clone())) {
+            MCSchedulers.getGlobalScheduler().schedule(() -> {
+                baffleBreakEffect(loc[0]);
+                while (loc[0].add(0, 1, 0).getBlock().getType() == Material.ACACIA_FENCE) {
+                    baffleBreakEffect(loc[0]);
+                }
+
+                loc[0] = loc[1];
+
+                if (mapObjectCatcher.getBafflePlaced().contains(loc[0])) {
+                    mapObjectCatcher.getBafflePlaced().remove(loc[0]);
+                    return;
+                }
+
+                while (loc[0].add(0, -1, 0).getBlock().getType() == Material.ACACIA_FENCE) {
+                    baffleBreakEffect(loc[0]);
+                    if (mapObjectCatcher.getBafflePlaced().contains(loc[0])) {
+                        mapObjectCatcher.getBafflePlaced().remove(loc[0]);
+                        break;
+                    }
+                }
+            }, 1);
+        }
+    }
+
+    private void baffleBreakEffect(Location loc) {
+        loc.getBlock().setType(Material.AIR);
+        loc.getWorld().spigot().playEffect(loc, Effect.STEP_SOUND, Material.ACACIA_FENCE.getId(), 0, 0.25F, 0.25F, 0.25F, 0, 3, 16);
     }
 }

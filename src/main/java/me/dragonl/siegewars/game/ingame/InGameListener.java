@@ -3,8 +3,11 @@ package me.dragonl.siegewars.game.ingame;
 import io.fairyproject.bukkit.events.player.PlayerDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.MapObjectCatcher;
+import me.dragonl.siegewars.game.MapObjectDestroyer;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.NameTagTemporaryManager;
 import me.dragonl.siegewars.player.data.PlayerData;
@@ -12,13 +15,11 @@ import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.SoundPlayer;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -34,36 +35,39 @@ public class InGameListener implements Listener {
     private final TeamManager teamManager;
     private final SoundPlayer soundPlayer;
     private final NameGetter nameGetter;
+    private final MapObjectDestroyer mapObjectDestroyer;
 
-    public InGameListener(PlayerDataManager playerDataManager, GameStateManager gameStateManager, TeamManager teamManager, SoundPlayer soundPlayer, NameGetter nameGetter) {
+    public InGameListener(PlayerDataManager playerDataManager, GameStateManager gameStateManager, TeamManager teamManager, SoundPlayer soundPlayer, NameGetter nameGetter, MapObjectDestroyer mapObjectDestroyer) {
         this.playerDataManager = playerDataManager;
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.soundPlayer = soundPlayer;
         this.nameGetter = nameGetter;
+        this.mapObjectDestroyer = mapObjectDestroyer;
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event){
-        if(gameStateManager.isCurrentGameState(GameState.IN_GAME)){
+    public void onJoin(PlayerJoinEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
             Player player = event.getPlayer();
-            if(teamManager.isInTeam(player, teamManager.getTeam("A")) || teamManager.isInTeam(player, teamManager.getTeam("B")))
+            if (teamManager.isInTeam(player, teamManager.getTeam("A")) || teamManager.isInTeam(player, teamManager.getTeam("B")))
                 return;
 
             teamManager.joinTeam(player, SiegeWarsTeam.Spectator);
         }
     }
 
-    @EventHandler void onDrop(PlayerDropItemEvent event){
-        if(gameStateManager.isCurrentGameState(GameState.IN_GAME)){
+    @EventHandler
+    void onDrop(PlayerDropItemEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onDeath(PlayerDeathEvent event){
-        if(gameStateManager.isCurrentGameState(GameState.IN_GAME)){
-            if(event.getEntity().getKiller() != null){
+    public void onDeath(PlayerDeathEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            if (event.getEntity().getKiller() != null) {
                 Player victim = event.getEntity().getPlayer();
                 Player killer = event.getEntity().getKiller();
                 PlayerData killerData = playerDataManager.getPlayerData(killer);
@@ -73,11 +77,17 @@ public class InGameListener implements Listener {
 
                 //message
                 event.setDeathMessage("§c[擊殺] " + nameGetter.getNameWithTeamColor(killer) + " §c✘ " + nameGetter.getNameWithTeamColor(victim));
-                victim.getWorld().spigot().playEffect(victim.getLocation().add(0,1,0), Effect.STEP_SOUND, Material.REDSTONE_BLOCK.getId(), 0, 0.2F, 0.25F, 0.2F, 1, 30, 32);
+                victim.getWorld().spigot().playEffect(victim.getLocation().add(0, 1, 0), Effect.STEP_SOUND, Material.REDSTONE_BLOCK.getId(), 0, 0.2F, 0.25F, 0.2F, 1, 30, 32);
                 victim.spigot().respawn();
 
-                soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH,1,1 + (float)Math.random());
+                soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH, 1, 1 + (float) Math.random());
             }
         }
+    }
+
+    @EventHandler
+    public void onBaffleBreak(BlockBreakEvent event) {
+        if(gameStateManager.isCurrentGameState(GameState.IN_GAME))
+            mapObjectDestroyer.destroyBaffle(event.getBlock().getLocation());
     }
 }

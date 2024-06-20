@@ -8,6 +8,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.mc.util.Position;
+import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.game.MapObjectDestroyer;
 import me.dragonl.siegewars.game.mapSetup.SetupWandManager;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
@@ -30,12 +31,14 @@ public class TNTItem extends CustomItemFairy {
     private final SetupWandManager setupWandManager;
     private final MapConfig mapConfig;
     private final MapObjectDestroyer mapObjectDestroyer;
+    private final MapObjectCatcher mapObjectCatcher;
     private final TeamManager teamManager;
 
-    public TNTItem(SetupWandManager setupWandManager, MapConfig mapConfig, MapObjectDestroyer mapObjectDestroyer, TeamManager teamManager) {
+    public TNTItem(SetupWandManager setupWandManager, MapConfig mapConfig, MapObjectDestroyer mapObjectDestroyer, MapObjectCatcher mapObjectCatcher, TeamManager teamManager) {
         this.setupWandManager = setupWandManager;
         this.mapConfig = mapConfig;
         this.mapObjectDestroyer = mapObjectDestroyer;
+        this.mapObjectCatcher = mapObjectCatcher;
         this.teamManager = teamManager;
     }
 
@@ -67,16 +70,33 @@ public class TNTItem extends CustomItemFairy {
 
             if (isItem(event.getItemInHand())) {
                 if (setupWandManager.isDestroyableWall(blockPos)) {
-                    summonTNT(p, event.getBlockPlaced().getLocation(), mapConfig.getMaps().get(w.getName()).getWallAtPosition(blockPos));
-                    w.playSound(event.getBlockPlaced().getLocation(), Sound.FUSE, 1, 1);
+                    summonTNT(p, event.getBlockPlaced().getLocation());
                     itemRemover.decreaseItemInHand(p, 1);
+
+                    //destroy wall
+                    MCSchedulers.getGlobalScheduler().schedule(() -> {
+                        DestroyableWallElement element = mapConfig.getMaps().get(w.getName()).getWallAtPosition(blockPos);
+
+                        if (!mapObjectCatcher.isSaved(element))
+                            mapObjectDestroyer.destroyWall(element);
+                    }, 20 * 4);
+                }
+                if (mapObjectCatcher.isBaffle(event.getBlockAgainst().getLocation())) {
+                    summonTNT(p, event.getBlockPlaced().getLocation());
+                    itemRemover.decreaseItemInHand(p, 1);
+
+                    //destroy baffle
+                    MCSchedulers.getGlobalScheduler().schedule(() -> {
+                        mapObjectCatcher.getBafflesGroup(event.getBlockAgainst().getLocation()).forEach(mapObjectDestroyer::destroyBaffle);
+                    }, 20 * 4);
                 }
                 event.setCancelled(true);
             }
         }
 
-        private void summonTNT(Player player, Location location, DestroyableWallElement element) {
+        private void summonTNT(Player player, Location location) {
             World w = location.getWorld();
+            w.playSound(location, Sound.FUSE, 1, 1);
             TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(location.add(0.5f, 0.5f, 0.5f), EntityType.PRIMED_TNT);
             tnt.setFuseTicks(120);
 
@@ -97,7 +117,6 @@ public class TNTItem extends CustomItemFairy {
                 w.spigot().playEffect(tnt.getLocation(), Effect.EXPLOSION_HUGE, 0, 0, 0, 0, 0, 1, 1, 64);
                 w.playSound(tnt.getLocation(), Sound.EXPLODE, 2, 0.75f);
                 w.playSound(tnt.getLocation(), Sound.ZOMBIE_WOODBREAK, 1.5f, 0.8f);
-                mapObjectDestroyer.destroyWall(element);
 
                 //damage
                 tnt.getNearbyEntities(3, 3, 3).forEach(e -> {

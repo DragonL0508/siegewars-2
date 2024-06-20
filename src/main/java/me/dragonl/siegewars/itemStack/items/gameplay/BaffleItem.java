@@ -1,5 +1,6 @@
 package me.dragonl.siegewars.itemStack.items.gameplay;
 
+import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
@@ -8,6 +9,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.mc.util.Position;
+import io.fairyproject.scheduler.ScheduledTask;
 import io.fairyproject.scheduler.response.TaskResponse;
 import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
@@ -54,7 +56,7 @@ public class BaffleItem extends CustomItemFairy {
             if (isItem(event.getItemInHand())) {
                 event.setCancelled(true);
 
-                if (event.getBlockAgainst().getType() == XMaterial.YELLOW_TERRACOTTA.parseMaterial()) {
+                if (XBlock.isSimilar(event.getBlockAgainst(), XMaterial.YELLOW_TERRACOTTA)) {
                     placeBaffle(event.getPlayer(), BukkitPos.toBukkitLocation(blockPos));
                     itemRemover.decreaseItemInHand(event.getPlayer(), 1);
                     mapObjectCatcher.getBafflePlaced().add(event.getBlockPlaced().getLocation());
@@ -63,25 +65,37 @@ public class BaffleItem extends CustomItemFairy {
         }
 
         private void placeBaffle(Player player, Location location) {
-            Location blockPlaced = location.clone();
-            PotionEffect slowness = new PotionEffect(PotionEffectType.SLOW, 12, 3, false, false);
-            player.addPotionEffect(slowness);
-            location.getWorld().spigot().playEffect(blockPlaced, Effect.STEP_SOUND, Material.ACACIA_FENCE.getId(), 0, 0.25F, 0.25F, 0.25F, 0, 3, 16);
-
             MCSchedulers.getGlobalScheduler().schedule(() -> {
-                blockPlaced.getBlock().setType(Material.ACACIA_FENCE);
+                bafflePlaceEffect(player, location);
             }, 1);
 
-            MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
-                if (location.add(0, 1, 0).getBlock().getType() == Material.AIR) {
-                    player.addPotionEffect(slowness);
-                    location.getBlock().setType(Material.ACACIA_FENCE);
-                    location.getWorld().spigot().playEffect(location, Effect.STEP_SOUND, Material.ACACIA_FENCE.getId(), 0, 0.25F, 0.25F, 0.25F, 0, 3, 16);
+            ScheduledTask<?> task = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+                if (location.add(0, 1, 0).getBlock().getType() == Material.AIR && baffleStillExist(location)) {
+                    bafflePlaceEffect(player, location);
                 } else
                     return TaskResponse.success(null);
 
                 return TaskResponse.continueTask();
             }, 11, 10);
+        }
+
+        private void bafflePlaceEffect(Player player, Location location) {
+            PotionEffect slowness = new PotionEffect(PotionEffectType.SLOW, 20, 3, false, false);
+
+            player.addPotionEffect(slowness);
+            location.getBlock().setType(Material.ACACIA_FENCE);
+            location.getWorld().spigot().playEffect(location, Effect.STEP_SOUND, Material.ACACIA_FENCE.getId(), 0, 0.25F, 0.25F, 0.25F, 0, 3, 16);
+        }
+
+        private boolean baffleStillExist(Location loc) {
+            Location location = loc.clone();
+            if (mapObjectCatcher.getBafflePlaced().contains(loc))
+                return true;
+            while (location.add(0, -1, 0).getBlock().getType() == Material.ACACIA_FENCE) {
+                if (mapObjectCatcher.getBafflePlaced().contains(location))
+                    return true;
+            }
+            return false;
         }
     }
 }

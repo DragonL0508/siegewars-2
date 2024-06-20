@@ -3,24 +3,58 @@ package me.dragonl.siegewars.yaml.element;
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.mc.util.Position;
+import me.dragonl.siegewars.player.PlayerUpdater;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @ConfigurationElement
 public class MapConfigElement {
-    private Position attackSpawn = new Position();
-    private Position defendSpawn = new Position();
+    private String mapName = "&e未知";
     private Position specSpawn = new Position();
 
     @ElementType(Position.class)
-    private List<Position> attackSpot = Arrays.asList();
+    private List<Position> attackSpawn = new ArrayList<>();
     @ElementType(Position.class)
-    private List<Position> defendSpot = Arrays.asList();
+    private List<Position> defendSpawn = new ArrayList<>();
+    @ElementType(BombSiteElement.class)
+    private List<BombSiteElement> bombSiteList = new ArrayList<>();
     @ElementType(DestroyableWallElement.class)
     private List<DestroyableWallElement> destroyableWallList = new ArrayList<>();
     @ElementType(DestroyableWindowElement.class)
     private List<DestroyableWindowElement> destroyableWindowList = new ArrayList<>();
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
+
+    public List<BombSiteElement> getBombSiteList() {
+        return bombSiteList;
+    }
+
+    public void setBombSiteList(List<BombSiteElement> bombSiteList) {
+        this.bombSiteList = bombSiteList;
+    }
+
+    public List<Position> getAttackSpawn() {
+        return attackSpawn;
+    }
+
+    public void setAttackSpawn(List<Position> attackSpawn) {
+        this.attackSpawn = attackSpawn;
+    }
+
+    public List<Position> getDefendSpawn() {
+        return defendSpawn;
+    }
+
+    public void setDefendSpawn(List<Position> defendSpawn) {
+        this.defendSpawn = defendSpawn;
+    }
 
     public List<DestroyableWindowElement> getDestroyableWindowList() {
         return destroyableWindowList;
@@ -38,40 +72,12 @@ public class MapConfigElement {
         this.destroyableWallList = destroyableWallList;
     }
 
-    public List<Position> getAttackSpot() {
-        return attackSpot;
-    }
-
-    public void setAttackSpot(List<Position> attackSpot) {
-        this.attackSpot = attackSpot;
-    }
-
-    public List<Position> getDefendSpot() {
-        return defendSpot;
-    }
-
-    public void setDefendSpot(List<Position> defendSpot) {
-        this.defendSpot = defendSpot;
-    }
-
     public MapConfigElement() {
 
     }
 
-    public Position getAttackSpawn() {
-        return attackSpawn;
-    }
-
-    public void setAttackSpawn(Position attackSpawn) {
-        this.attackSpawn = attackSpawn;
-    }
-
-    public Position getDefendSpawn() {
-        return defendSpawn;
-    }
-
-    public void setDefendSpawn(Position defendSpawn) {
-        this.defendSpawn = defendSpawn;
+    public MapConfigElement(String mapName) {
+        this.mapName = mapName;
     }
 
     public Position getSpecSpawn() {

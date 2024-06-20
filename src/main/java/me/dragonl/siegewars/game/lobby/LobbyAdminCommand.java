@@ -12,6 +12,7 @@ import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.game.kit.KitSelectLogic;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.itemStack.items.PlayerPrepareItem;
+import me.dragonl.siegewars.itemStack.items.gameplay.AxeItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.BaffleItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
@@ -27,26 +28,26 @@ public class LobbyAdminCommand extends BaseCommand {
     private final GameStateManager gameStateManager;
     private final KitSelectLogic kitSelectLogic;
     private final TeamManager teamManager;
-    private final PlayerPreparingManager playerPreparingManager;
-    private final PlayerPrepareItem playerPrepareItem;
     private final TNTItem tntItem;
     private final BaffleItem baffleItem;
     private final MapObjectCatcher mapObjectCatcher;
+    private final AxeItem axeItem;
+    private final LobbyAdminMenu lobbyAdminMenu;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, PlayerPreparingManager playerPreparingManager, PlayerPrepareItem playerPrepareItem, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, LobbyAdminMenu lobbyAdminMenu) {
         this.gameStateManager = gameStateManager;
         this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
-        this.playerPreparingManager = playerPreparingManager;
-        this.playerPrepareItem = playerPrepareItem;
         this.tntItem = tntItem;
         this.baffleItem = baffleItem;
         this.mapObjectCatcher = mapObjectCatcher;
+        this.axeItem = axeItem;
+        this.lobbyAdminMenu = lobbyAdminMenu;
     }
 
     @Command("menu")
     public void openMenu(BukkitCommandContext ctx) {
-        new LobbyAdminMenu(gameStateManager, playerPreparingManager, teamManager, playerPrepareItem).open(ctx.getPlayer());
+        lobbyAdminMenu.open(ctx.getPlayer());
     }
 
     @Command("setKit")
@@ -79,7 +80,12 @@ public class LobbyAdminCommand extends BaseCommand {
             }
             case baffle: {
                 inv.addItem(baffleItem.get(player));
+                break;
             }
+            case axe:{
+                inv.addItem(axeItem.get(player));
+            }
+
         }
     }
 

@@ -1,6 +1,11 @@
 package me.dragonl.siegewars.game;
 
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.team.SiegeWarsTeam;
+import me.dragonl.siegewars.team.Team;
+import me.dragonl.siegewars.team.TeamManager;
+import me.dragonl.siegewars.yaml.MapConfig;
+import me.dragonl.siegewars.yaml.element.MapConfigElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +16,24 @@ public class GameStateManager {
     private List<UUID> inGamePlayers = new ArrayList<>();
     private GameState currentGameState = GameState.IN_LOBBY;
     private RoundState currentRoundState = RoundState.PREPARING;
+    private MapConfigElement selectedMap = new MapConfigElement("&c未選擇");
+    private Team attackTeam;
+
+    public Team getAttackTeam() {
+        return attackTeam;
+    }
+
+    public void setAttackTeam(Team attackTeam) {
+        this.attackTeam = attackTeam;
+    }
+
+    public MapConfigElement getSelectedMap() {
+        return selectedMap;
+    }
+
+    public void setSelectedMap(MapConfigElement selectedMap) {
+        this.selectedMap = selectedMap;
+    }
 
     public RoundState getCurrentRoundState() {
         return currentRoundState;
@@ -20,7 +43,7 @@ public class GameStateManager {
         this.currentRoundState = currentRoundState;
     }
 
-    public boolean isCurrentRoundState(RoundState state){
+    public boolean isCurrentRoundState(RoundState state) {
         return this.currentRoundState == state;
     }
 
@@ -60,14 +83,15 @@ public class GameStateManager {
         ScoreB = scoreB;
     }
 
-    public void setCurrentGameState(GameState state){
+    public void setCurrentGameState(GameState state) {
         currentGameState = state;
     }
-    public GameState getCurrentGameState(){
+
+    public GameState getCurrentGameState() {
         return this.currentGameState;
     }
 
-    public boolean isCurrentGameState(GameState state){
+    public boolean isCurrentGameState(GameState state) {
         return this.currentGameState == state;
     }
 }
