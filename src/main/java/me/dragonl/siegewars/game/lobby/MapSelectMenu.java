@@ -11,6 +11,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.yaml.MapConfig;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -61,6 +62,7 @@ public class MapSelectMenu {
                         .build(), click -> {
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.5f);
                     gameStateManager.setSelectedMap(e);
+                    Bukkit.broadcastMessage("§a地圖已更換為: §e" + e.getMapName());
                     gui.update(player);
                 }));
             });

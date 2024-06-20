@@ -37,11 +37,10 @@ public class NameTagTemporaryManager extends BukkitRunnable {
         this.playerSetMap = playerSetMap;
     }
 
-    public void startDisplayToPlayer(Player target, Player player){
-        if(playerSetMap.containsKey(target.getUniqueId())){
+    public void startDisplayToPlayer(Player target, Player player) {
+        if (playerSetMap.containsKey(target.getUniqueId())) {
             playerSetMap.get(target.getUniqueId()).add(player.getUniqueId());
-        }
-        else{
+        } else {
             playerSetMap.put(target.getUniqueId(), new HashSet<>(Arrays.asList(player.getUniqueId())));
         }
 
@@ -53,24 +52,23 @@ public class NameTagTemporaryManager extends BukkitRunnable {
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             UUID uuid = player.getUniqueId();
-            if(playerCountDown.containsKey(uuid)){
-                if(playerCountDown.get(uuid) > 0)
+            if (playerCountDown.containsKey(uuid)) {
+                if (playerCountDown.get(uuid) > 0)
                     playerCountDown.put(uuid, playerCountDown.get(uuid) - 1);
 
-                if(playerCountDown.get(uuid) == 0){
+                if (playerCountDown.get(uuid) == 0) {
                     playerSetMap.get(uuid).clear();
                     nameTagService.update(MCPlayer.from(player));
                     playerCountDown.put(uuid, -1);
                 }
-            }
-            else {
+            } else {
                 playerCountDown.put(uuid, -1);
             }
         });
     }
 
     @PostInitialize
-    public void init(){
+    public void init() {
         this.runTaskTimer(BukkitPlugin.INSTANCE, 0, 1);
     }
 }

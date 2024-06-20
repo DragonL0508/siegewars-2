@@ -1,7 +1,9 @@
 package me.dragonl.siegewars.game.preparing;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bukkit.util.BukkitPos;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
@@ -14,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -66,18 +69,20 @@ public class GameStartCountdown extends BukkitRunnable {
         MapConfigElement element = gameStateManager.getSelectedMap();
         Bukkit.getOnlinePlayers().forEach(p -> {
             Random r = new Random();
-            if (teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam()){
+            ItemStack air = ItemBuilder.of(XMaterial.AIR).build();
+            p.getInventory().clear();
+            p.getInventory().setArmorContents(new ItemStack[]{air,air,air,air});
+            p.updateInventory();
+            p.setGameMode(GameMode.SPECTATOR);
+            p.teleport(BukkitPos.toBukkitLocation(element.getSpecSpawn()));
+
+            //p.teleport(BukkitPos.toBukkitLocation(element.getAttackSpawn().get(r.nextInt(element.getAttackSpawn().size()))));
+            if (teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam())
                 Titles.sendTitle(p, 10, 70, 20, "§c攻擊方", "§e你的隊伍將先擔任");
-                p.teleport(BukkitPos.toBukkitLocation(element.getAttackSpawn().get(r.nextInt(element.getAttackSpawn().size() - 1))));
-            }
-            else if (teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam()){
-                Titles.sendTitle(p, 10, 70, 20, "§b防守方", "§e你的隊伍將先擔任");
-                p.teleport(BukkitPos.toBukkitLocation(element.getDefendSpawn().get(r.nextInt(element.getDefendSpawn().size() - 1))));
-            }
-            else if (teamManager.isInTeam(p, teamManager.getTeam("spec"))){
-                p.setGameMode(GameMode.SPECTATOR);
-                p.teleport(BukkitPos.toBukkitLocation(element.getSpecSpawn()));
-            }
+            else if (teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam())
+                Titles.sendTitle(p, 10, 70, 20, "§a防守方", "§e你的隊伍將先擔任");
+
+            p.playSound(p.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
         });
     }
 }

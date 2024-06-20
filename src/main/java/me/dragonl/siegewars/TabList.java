@@ -147,12 +147,27 @@ public class TabList implements TablistAdapter {
             PlayerData playerData = playerDataManager.getPlayerData(bukkitPlayer);
             Set<TabSlot> slots = new HashSet<>();
 
+            String attackText = "§c§l攻擊方";
+            String defenseText = "§a§l防守方";
+            boolean isAttackTeamA = gameStateManager.getAttackTeam() == teamManager.getTeam("A");
+
+            slots.add(
+                    new TabSlot().column(TabColumn.MIDDLE)
+                            .slot(2)
+                            .text(Component.text(isAttackTeamA ? attackText : defenseText))
+            );
+            slots.add(
+                    new TabSlot().column(TabColumn.RIGHT)
+                            .slot(2)
+                            .text(Component.text(isAttackTeamA ? defenseText : attackText))
+            );
+
             for (int i = 0; i < 2; i++) {
                 String title = titles[i];
                 if (teamManager.isInTeam(bukkitPlayer, teamManager.getTeam(i == 0 ? "A" : "B")))
                     title += " §r§7(你的隊伍)";
 
-                TabSlot teamTitle = new TabSlot().column(i == 0 ? TabColumn.MIDDLE : TabColumn.RIGHT).slot(2).text(LegacyAdventureUtil.decode(title));
+                TabSlot teamTitle = new TabSlot().column(i == 0 ? TabColumn.MIDDLE : TabColumn.RIGHT).slot(3).text(LegacyAdventureUtil.decode(title));
                 slots.add(teamTitle);
             }
 
@@ -177,13 +192,13 @@ public class TabList implements TablistAdapter {
             slots.add(
                     new TabSlot()
                             .column(TabColumn.MIDDLE)
-                            .slot(3)
+                            .slot(4)
                             .text(LegacyAdventureUtil.decode("§6得分: §f" + gameStateManager.getScoreA()))
             );
             slots.add(
                     new TabSlot()
                             .column(TabColumn.RIGHT)
-                            .slot(3)
+                            .slot(4)
                             .text(LegacyAdventureUtil.decode("§b得分: §f" + gameStateManager.getScoreB()))
             );
             slots.add(
@@ -252,8 +267,8 @@ public class TabList implements TablistAdapter {
             if (teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";
             int index = team.getPlayers().indexOf(uuid);
-            tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 5).text(LegacyAdventureUtil.decode(nametag)).skin(Skin.load(uuid)).ping(MCPlayer.from(player).getPing()));
-            tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 6).text(LegacyAdventureUtil.decode(info)));
+            tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 6).text(LegacyAdventureUtil.decode(nametag)).skin(Skin.load(uuid)).ping(MCPlayer.from(player).getPing()));
+            tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 7).text(LegacyAdventureUtil.decode(info)));
         });
     }
 
