@@ -6,6 +6,7 @@ import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.player.PlayerKitManager;
+import org.bukkit.entity.Player;
 
 @Command(value = "kit", permissionNode = "siegewars.admin")
 @InjectableComponent
@@ -21,9 +22,8 @@ public class KitCommand extends BaseCommand {
         kitMenu.open(ctx.getPlayer());
     }
 
-    @Command("openMenuAndDeop")
-    public void openMenuAndDeop(BukkitCommandContext ctx) {
-        kitMenu.open(ctx.getPlayer());
-        ctx.getPlayer().setOp(false);
+    @Command("openMenu")
+    public void openMenuWithName(BukkitCommandContext ctx, @Arg("name") Player player) {
+        kitMenu.open(player);
     }
 }

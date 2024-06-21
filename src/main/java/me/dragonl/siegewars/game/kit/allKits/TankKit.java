@@ -35,7 +35,7 @@ public class TankKit implements SiegeWarsKit {
 
     @Override
     public String getKitChar() {
-        return "§7§l坦";
+        return "§7§l衝";
     }
 
     @Override

@@ -46,13 +46,7 @@ public class ShopMenu {
         pane.setSlot(2, 3, 3, 4, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .name("&c&l我想重新選擇職業")
                 .build(), p -> {
-            if (p.isOp())
-                Bukkit.getServer().dispatchCommand(p, "kit menu");
-            else {
-                p.setOp(true);
-                Bukkit.getServer().dispatchCommand(p, "kit openMenuAndDeop");
-            }
-
+            Bukkit.getServer().dispatchCommand(p.getServer().getConsoleSender(),"kit openMenu " + p.getName());
             isManualClose.set(false);
         }));
         pane.setSlot(5, 3, 6, 4, GuiSlot.of(ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
