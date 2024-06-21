@@ -20,4 +20,10 @@ public class KitCommand extends BaseCommand {
     public void openMenu(BukkitCommandContext ctx) {
         kitMenu.open(ctx.getPlayer());
     }
+
+    @Command("openMenuAndDeop")
+    public void openMenuAndDeop(BukkitCommandContext ctx) {
+        kitMenu.open(ctx.getPlayer());
+        ctx.getPlayer().setOp(false);
+    }
 }

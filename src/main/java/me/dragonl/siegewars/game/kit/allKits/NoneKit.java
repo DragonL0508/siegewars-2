@@ -36,6 +36,13 @@ public class NoneKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "沒有敘述"
+        };
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.AIR).build(),

@@ -59,6 +59,23 @@ public class ReaperKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "&8先鋒"
+                , ""
+                , "&7傷害 &c||||||||||&7||||||||||||||||||||"
+                , "&7防禦 &6|||||||||||||||&7|||||||||||||||"
+                , ""
+                , "&e死神是一個適合擾亂敵方節奏的角色"
+                , "&e身為先鋒，你可以最先探勘敵情"
+                , "&e並通知隊友敵方的狀態"
+                , "&e無論是進攻或防守都有很大的發揮空間"
+                , ""
+                , "&7點擊選擇"
+        };
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.LEATHER_HELMET)

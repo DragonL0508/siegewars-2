@@ -44,6 +44,22 @@ public class AttackerKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "&8輸出"
+                , ""
+                , "&7傷害 &a|||||||||||||||||||||||||&7|||||"
+                , "&7防禦 &c|||||&7|||||||||||||||||||||||||"
+                , ""
+                , "&e身為一位近戰的輸出角色"
+                , "&e你必須用最快的速度埋伏並擊殺對手"
+                , "&e在防禦並不高的情況下"
+                , "&e能夠適時的進攻與撤退便成為重要的戰術之一"
+                , ""
+                , "&7點擊選擇"};
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.LEATHER_HELMET)

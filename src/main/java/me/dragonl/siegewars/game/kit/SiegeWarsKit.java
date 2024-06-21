@@ -8,6 +8,7 @@ public interface SiegeWarsKit {
     String getKitName();
     String getKitChar();
     ItemStack getKitIcon();
+    String[] getDescription();
     ItemStack[] getArmors(Player player);
     ItemStack[] getItems();
     ItemStack getAbilityItem(Player player);

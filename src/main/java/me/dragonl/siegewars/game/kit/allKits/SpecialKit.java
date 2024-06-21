@@ -55,6 +55,23 @@ public class SpecialKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "&8先鋒"
+                , ""
+                , "&7傷害 &c||||||||||&7||||||||||||||||||||"
+                , "&7防禦 &a||||||||||||||||||||&7||||||||||"
+                , ""
+                , "&e特種兵的能力值很平均"
+                , "&e在探勘與實戰中很具優勢"
+                , "&e在大多數的情況下能夠自由穿梭戰場"
+                , "&e並給與隊友戰術協助"
+                , ""
+                , "&7點擊選擇"
+        };
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.LEATHER_HELMET)

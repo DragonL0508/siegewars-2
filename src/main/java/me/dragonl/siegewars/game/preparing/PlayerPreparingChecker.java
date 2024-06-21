@@ -114,7 +114,7 @@ public class PlayerPreparingChecker extends BukkitRunnable {
             p.playSound(p.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
         });
 
-        inGameTimer.setTimeLeft(100);
+        inGameTimer.setTimeLeft(30);
         MCSchedulers.getGlobalScheduler().schedule(inGamePreparingExecuter::start, 20 * 5);
     }
 }

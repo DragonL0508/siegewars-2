@@ -44,6 +44,23 @@ public class TankKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "&8輔助"
+                , ""
+                , "&7傷害 &c|||||&7|||||||||||||||||||||||||"
+                , "&7防禦 &a||||||||||||||||||||&7||||||||||"
+                , ""
+                , "&e身為團戰最堅強的後盾"
+                , "&e你必須跟緊你的隊友並適時幫助他們"
+                , "&e雖然沒辦法對敵人造成太多傷害"
+                , "&e但使用恰當可以為團隊帶來莫大的利益"
+                , ""
+                , "&7點擊選擇"
+        };
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.LEATHER_HELMET)

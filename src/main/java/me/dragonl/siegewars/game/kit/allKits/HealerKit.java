@@ -56,6 +56,23 @@ public class HealerKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "&8輔助"
+                , ""
+                , "&7傷害 &c||||||||||&7||||||||||||||||||||"
+                , "&7防禦 &6|||||||||||||||&7|||||||||||||||"
+                , ""
+                , "&e治療使者是相當重要的角色之一"
+                , "&e能夠在關鍵時刻回復隊友的防禦"
+                , "&e相對的你也更容易成為敵人的目標"
+                , "&e請注意好自身的安全"
+                , ""
+                , "&7點擊選擇"
+        };
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.LEATHER_HELMET)

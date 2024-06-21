@@ -49,6 +49,23 @@ public class ArcherKit implements SiegeWarsKit {
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{
+                "&8輸出"
+                , ""
+                , "&7傷害 &a||||||||||||||||||||&7||||||||||"
+                , "&7防禦 &6||||||||||&7||||||||||||||||||||"
+                , ""
+                , "&e弓箭手是一位強力的遠程角色"
+                , "&e你必須善用地形的優勢"
+                , "&e盡快在遠處擊殺敵人"
+                , "&e因為只要戰線被拉進就會對你十分不利"
+                , ""
+                , "&7點擊選擇"
+        };
+    }
+
+    @Override
     public ItemStack[] getArmors(Player player) {
         return new ItemStack[]{
                 ItemBuilder.of(XMaterial.LEATHER_HELMET)
