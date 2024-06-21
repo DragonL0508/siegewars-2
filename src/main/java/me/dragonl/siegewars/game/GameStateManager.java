@@ -108,4 +108,17 @@ public class GameStateManager {
     public boolean isCurrentGameState(GameState state) {
         return this.currentGameState == state;
     }
+    public String getRoundStateName(){
+        switch (currentRoundState){
+            case PREPARING:
+                return "雙方備戰";
+            case POSITION_CHOOSING:
+                return "人員部屬";
+            case FIGHTING:
+                return "戰鬥階段";
+            case ENDING:
+                return "回合結束";
+        }
+        return "無階段";
+    }
 }

@@ -4,11 +4,10 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.dragonl.siegewars.game.kit.allKits.KitArcher;
-import me.dragonl.siegewars.game.kit.allKits.KitSpecial;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
+import me.dragonl.siegewars.player.PlayerKitManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -30,13 +29,13 @@ public class SpecialAbilityItem extends CustomItemFairy {
     @RegisterAsListener
     @InjectableComponent
     class SpecialAbilityListener extends ItemListenerTemplate {
-        private final KitSpecial kitSpecial;
+        private final PlayerKitManager kitManager;
         private final RemoveCustomItem removeCustomItem;
         private final SpecialAbilityItem specialAbilityItem;
 
-        public SpecialAbilityListener(SpecialAbilityItem customItem, KitSpecial kitSpecial, RemoveCustomItem removeCustomItem, SpecialAbilityItem specialAbilityItem) {
+        public SpecialAbilityListener(SpecialAbilityItem customItem, PlayerKitManager kitManager, RemoveCustomItem removeCustomItem, SpecialAbilityItem specialAbilityItem) {
             super(customItem);
-            this.kitSpecial = kitSpecial;
+            this.kitManager = kitManager;
             this.removeCustomItem = removeCustomItem;
             this.specialAbilityItem = specialAbilityItem;
         }
@@ -44,7 +43,7 @@ public class SpecialAbilityItem extends CustomItemFairy {
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            if(kitSpecial.useAbility(player))
+            if(kitManager.getPlayerKit(player).useAbility(player))
                 removeCustomItem.removeCustomItem(player, Arrays.asList(specialAbilityItem));
             else{
                 player.sendMessage("§e[技能] §c敵隊目前已被探查!");

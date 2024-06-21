@@ -7,14 +7,13 @@ import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
-import me.dragonl.siegewars.game.Kit;
 import me.dragonl.siegewars.game.MapObjectCatcher;
-import me.dragonl.siegewars.game.kit.KitSelectLogic;
-import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
-import me.dragonl.siegewars.itemStack.items.PlayerPrepareItem;
+import me.dragonl.siegewars.game.kit.SiegeWarsKit;
+import me.dragonl.siegewars.game.shop.ShopMenu;
 import me.dragonl.siegewars.itemStack.items.gameplay.AxeItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.BaffleItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
+import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Material;
@@ -26,23 +25,25 @@ import org.bukkit.inventory.PlayerInventory;
 @InjectableComponent
 public class LobbyAdminCommand extends BaseCommand {
     private final GameStateManager gameStateManager;
-    private final KitSelectLogic kitSelectLogic;
     private final TeamManager teamManager;
     private final TNTItem tntItem;
     private final BaffleItem baffleItem;
     private final MapObjectCatcher mapObjectCatcher;
     private final AxeItem axeItem;
     private final LobbyAdminMenu lobbyAdminMenu;
+    private final PlayerKitManager playerKitManager;
+    private final ShopMenu shopMenu;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, KitSelectLogic kitSelectLogic, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, LobbyAdminMenu lobbyAdminMenu) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu) {
         this.gameStateManager = gameStateManager;
-        this.kitSelectLogic = kitSelectLogic;
         this.teamManager = teamManager;
         this.tntItem = tntItem;
         this.baffleItem = baffleItem;
         this.mapObjectCatcher = mapObjectCatcher;
         this.axeItem = axeItem;
         this.lobbyAdminMenu = lobbyAdminMenu;
+        this.playerKitManager = playerKitManager;
+        this.shopMenu = shopMenu;
     }
 
     @Command("menu")
@@ -51,8 +52,8 @@ public class LobbyAdminCommand extends BaseCommand {
     }
 
     @Command("setKit")
-    public void setKit(BukkitCommandContext ctx, @Arg("kit") Kit kit) {
-        kitSelectLogic.kitSelect(ctx.getPlayer(), kit);
+    public void setKit(BukkitCommandContext ctx, @Arg("kit") SiegeWarsKit kit) {
+        playerKitManager.playerSelectKit(ctx.getPlayer(), kit);
     }
 
     @Command("setGameState")
@@ -114,5 +115,10 @@ public class LobbyAdminCommand extends BaseCommand {
         mapObjectCatcher.getDestroyableWindow().clear();
         mapObjectCatcher.getBafflePlaced().clear();
         ctx.getPlayer().sendMessage("§a已復原所有地圖物件!");
+    }
+
+    @Command("shopMenu")
+    public void openShopMenu(BukkitCommandContext ctx){
+        shopMenu.open(ctx.getPlayer());
     }
 }

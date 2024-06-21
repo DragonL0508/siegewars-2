@@ -1,12 +1,11 @@
 package me.dragonl.siegewars;
 
-import io.fairyproject.bukkit.util.LegacyAdventureUtil;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.sidebar.SidebarAdapter;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
-import me.dragonl.siegewars.game.kit.KitInfoGetter;
+import me.dragonl.siegewars.game.ingame.InGameTimer;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
@@ -23,14 +22,14 @@ public class Sidebar implements SidebarAdapter {
     private final TeamManager teamManager;
     private final PlayerKitManager playerKitManager;
     private final PlayerDataManager playerDataManager;
-    private final KitInfoGetter kitInfoGetter;
+    private final InGameTimer inGameTimer;
 
-    public Sidebar(GameStateManager gameStateManager, TeamManager teamManager, PlayerKitManager playerKitManager, PlayerDataManager playerDataManager, KitInfoGetter kitInfoGetter) {
+    public Sidebar(GameStateManager gameStateManager, TeamManager teamManager, PlayerKitManager playerKitManager, PlayerDataManager playerDataManager, InGameTimer inGameTimer) {
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.playerKitManager = playerKitManager;
         this.playerDataManager = playerDataManager;
-        this.kitInfoGetter = kitInfoGetter;
+        this.inGameTimer = inGameTimer;
     }
 
     @Override
@@ -60,12 +59,13 @@ public class Sidebar implements SidebarAdapter {
                     Component.text(""),
                     Component.text("§f玩家: §6" + player.getName()),
                     Component.text("§f隊伍: §6" + teamManager.getPlayerTeam(bukkitPlayer).getColor() + teamManager.getPlayerTeam(bukkitPlayer).getDisplayName()),
-                    Component.text("§f職業: §6" + kitInfoGetter.getKitString(playerKitManager.getPlayerKit(bukkitPlayer))),
+                    Component.text("§f職業: §6" + playerKitManager.getPlayerKit(bukkitPlayer).getKitName()),
                     Component.text(""),
                     Component.text("§f金錢: §6" + playerData.getMoney() + "$"),
                     Component.text("§f擊殺: §6" + playerData.getKills()),
                     Component.text(""),
-                    Component.text("§f分數: §6" + playerData.getScore()),
+                    Component.text("§f階段: §6" + gameStateManager.getRoundStateName()),
+                    Component.text("§f時間: §6" + inGameTimer.getFormattedTimer()),
                     Component.text("§7§m--------------------")
             );
         }

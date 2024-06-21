@@ -5,11 +5,10 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.dragonl.siegewars.game.kit.allKits.KitAttacker;
-import me.dragonl.siegewars.game.kit.allKits.KitReaper;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
+import me.dragonl.siegewars.player.PlayerKitManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -30,21 +29,21 @@ public class ReaperAbilityItem extends CustomItemFairy {
     @RegisterAsListener
     @InjectableComponent
     class ReaperAbilityListener extends ItemListenerTemplate {
-        private final KitReaper kitReaper;
         private final RemoveCustomItem removeCustomItem;
         private final ReaperAbilityItem reaperAbilityItem;
+        private final PlayerKitManager kitManager;
 
-        public ReaperAbilityListener(ReaperAbilityItem customItem, KitReaper kitReaper, RemoveCustomItem removeCustomItem, ReaperAbilityItem reaperAbilityItem) {
+        public ReaperAbilityListener(ReaperAbilityItem customItem, RemoveCustomItem removeCustomItem, ReaperAbilityItem reaperAbilityItem, PlayerKitManager kitManager) {
             super(customItem);
-            this.kitReaper = kitReaper;
             this.removeCustomItem = removeCustomItem;
             this.reaperAbilityItem = reaperAbilityItem;
+            this.kitManager = kitManager;
         }
 
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            kitReaper.useAbility(player);
+            kitManager.getPlayerKit(player).useAbility(player);
             removeCustomItem.removeCustomItem(player, Arrays.asList(reaperAbilityItem));
         }
 

@@ -9,7 +9,6 @@ import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.mc.tablist.util.TabSlot;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
-import me.dragonl.siegewars.game.kit.KitInfoGetter;
 import me.dragonl.siegewars.game.preparing.PlayerPreparingManager;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.PlayerKitManager;
@@ -34,16 +33,14 @@ public class TabList implements TablistAdapter {
     private final PlayerPreparingManager playerPreparingManager;
     private final PlayerDataManager playerDataManager;
     private final PlayerKitManager playerKitManager;
-    private final KitInfoGetter kitInfoGetter;
 
-    public TabList(TeamManager teamManager, NameGetter nameGetter, GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager, PlayerDataManager playerDataManager, PlayerKitManager playerKitManager, KitInfoGetter kitInfoGetter) {
+    public TabList(TeamManager teamManager, NameGetter nameGetter, GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager, PlayerDataManager playerDataManager, PlayerKitManager playerKitManager) {
         this.teamManager = teamManager;
         this.nameGetter = nameGetter;
         this.gameStateManager = gameStateManager;
         this.playerPreparingManager = playerPreparingManager;
         this.playerDataManager = playerDataManager;
         this.playerKitManager = playerKitManager;
-        this.kitInfoGetter = kitInfoGetter;
     }
 
     @Override
@@ -261,11 +258,15 @@ public class TabList implements TablistAdapter {
             Player player = Bukkit.getPlayer(uuid);
             PlayerData data = playerDataManager.getPlayerData(player);
             String nametag = nameGetter.getNameWithTeamColor(player);
+
             if (teamManager.getPlayerTeam(target) == team)
-                nametag += " " + kitInfoGetter.getKitText(playerKitManager.getPlayerKit(player));
+                nametag += " " + playerKitManager.getPlayerKit(player).getKitChar();
+
             String info = ChatColor.GRAY + " (" + data.getKills() + "/" + data.getDeaths() + "/" + data.getAssist() + ") " + ChatColor.RED + data.getFormatDamage() + "⚡ ";
+
             if (teamManager.getPlayerTeam(target) == team)
                 info += "" + ChatColor.YELLOW + data.getMoney() + "$";
+
             int index = team.getPlayers().indexOf(uuid);
             tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 6).text(LegacyAdventureUtil.decode(nametag)).skin(Skin.load(uuid)).ping(MCPlayer.from(player).getPing()));
             tabSlots.add(new TabSlot().column(tabColumn).slot(index * 2 + 7).text(LegacyAdventureUtil.decode(info)));

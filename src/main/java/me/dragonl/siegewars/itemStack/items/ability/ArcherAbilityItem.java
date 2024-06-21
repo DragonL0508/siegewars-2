@@ -4,10 +4,10 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.dragonl.siegewars.game.kit.allKits.KitArcher;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
+import me.dragonl.siegewars.player.PlayerKitManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -30,21 +30,21 @@ public class ArcherAbilityItem extends CustomItemFairy {
     @RegisterAsListener
     @InjectableComponent
     class ArcherAbilityListener extends ItemListenerTemplate {
-        private final KitArcher kitArcher;
         private final RemoveCustomItem removeCustomItem;
         private final ArcherAbilityItem archerAbilityItem;
+        private final PlayerKitManager kitManager;
 
-        public ArcherAbilityListener(ArcherAbilityItem customItem, KitArcher kitArcher, RemoveCustomItem removeCustomItem, ArcherAbilityItem archerAbilityItem) {
+        public ArcherAbilityListener(ArcherAbilityItem customItem, RemoveCustomItem removeCustomItem, ArcherAbilityItem archerAbilityItem, PlayerKitManager kitManager) {
             super(customItem);
-            this.kitArcher = kitArcher;
             this.removeCustomItem = removeCustomItem;
             this.archerAbilityItem = archerAbilityItem;
+            this.kitManager = kitManager;
         }
 
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            kitArcher.useAbility(player);
+            kitManager.getPlayerKit(player).useAbility(player);
             removeCustomItem.removeCustomItem(player, Arrays.asList(archerAbilityItem));
         }
 

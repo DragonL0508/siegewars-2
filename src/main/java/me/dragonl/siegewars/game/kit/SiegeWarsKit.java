@@ -1,9 +1,15 @@
 package me.dragonl.siegewars.game.kit;
 
-import me.dragonl.siegewars.game.Kit;
-import me.dragonl.siegewars.player.PlayerKitManager;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public interface SiegeWarsKit {
-    void selectThisKit(Player player, Kit kit);
+    String getID();
+    String getKitName();
+    String getKitChar();
+    ItemStack getKitIcon();
+    ItemStack[] getArmors(Player player);
+    ItemStack[] getItems();
+    ItemStack getAbilityItem(Player player);
+    Boolean useAbility(Player player);
 }

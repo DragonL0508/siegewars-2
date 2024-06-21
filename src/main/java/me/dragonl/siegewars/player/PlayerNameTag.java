@@ -33,6 +33,10 @@ public class PlayerNameTag extends NameTagAdapter {
     public NameTag fetch(MCPlayer player, MCPlayer target) {
         Player bukkitTarget = target.as(Player.class);
         Player bukkitPlayer = player.as(Player.class);
+
+        if(teamManager.getPlayerTeam(bukkitPlayer) == null)
+            return new NameTag(LegacyAdventureUtil.decode("NoTeam "), Component.empty(), TextColor.color(255, 255, 255), WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
+
         WrapperPlayServerTeams.NameTagVisibility nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.ALWAYS;
         //nametag visibility option
         if (teamManager.getPlayerTeam(bukkitPlayer) == teamManager.getPlayerTeam(bukkitTarget) && teamManager.getPlayerTeam(bukkitTarget).getNametagVisibility() == NametagVisibility.hideForOwnTeams)

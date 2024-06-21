@@ -4,10 +4,10 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.dragonl.siegewars.game.kit.allKits.KitAttacker;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
+import me.dragonl.siegewars.player.PlayerKitManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -29,13 +29,13 @@ public class AttackerAbilityItem extends CustomItemFairy {
     @RegisterAsListener
     @InjectableComponent
     class AttackAbilityListener extends ItemListenerTemplate {
-        private final KitAttacker kitAttacker;
+        private final PlayerKitManager kitManager;
         private final RemoveCustomItem removeCustomItem;
         private final AttackerAbilityItem attackerAbilityItem;
 
-        public AttackAbilityListener(AttackerAbilityItem customItem, KitAttacker kitAttacker, RemoveCustomItem removeCustomItem, AttackerAbilityItem attackerAbilityItem) {
+        public AttackAbilityListener(AttackerAbilityItem customItem, PlayerKitManager kitManager, RemoveCustomItem removeCustomItem, AttackerAbilityItem attackerAbilityItem) {
             super(customItem);
-            this.kitAttacker = kitAttacker;
+            this.kitManager = kitManager;
             this.removeCustomItem = removeCustomItem;
             this.attackerAbilityItem = attackerAbilityItem;
         }
@@ -43,7 +43,7 @@ public class AttackerAbilityItem extends CustomItemFairy {
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
             Player player = event.getPlayer();
-            kitAttacker.useAbility(player);
+            kitManager.getPlayerKit(player).useAbility(player);
             removeCustomItem.removeCustomItem(player, Arrays.asList(attackerAbilityItem));
         }
 
