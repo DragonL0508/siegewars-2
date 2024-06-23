@@ -2,25 +2,38 @@ package me.dragonl.siegewars.game.kit.allKits;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
+import io.fairyproject.mc.scheduler.MCSchedulers;
+import io.fairyproject.mc.util.Position;
+import io.fairyproject.scheduler.repeat.RepeatPredicate;
+import io.fairyproject.scheduler.response.TaskResponse;
+import me.dragonl.siegewars.game.MapObjectCatcher;
+import me.dragonl.siegewars.game.MapObjectDestroyer;
 import me.dragonl.siegewars.game.kit.SiegeWarsKit;
-import me.dragonl.siegewars.itemStack.items.ability.ArcherAbilityItem;
+import me.dragonl.siegewars.game.mapSetup.SetupWandManager;
+import me.dragonl.siegewars.itemStack.items.ability.TankAbilityItem;
 import me.dragonl.siegewars.team.TeamManager;
-import org.bukkit.Color;
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 
-import java.util.Arrays;
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 public class TankKit implements SiegeWarsKit {
     private final TeamManager teamManager;
+    private final TankAbilityItem tankAbilityItem;
+    private final MapObjectCatcher mapObjectCatcher;
+    private final MapObjectDestroyer mapObjectDestroyer;
 
-    public TankKit(TeamManager teamManager) {
+    public TankKit(TeamManager teamManager, TankAbilityItem tankAbilityItem, MapObjectCatcher mapObjectCatcher, MapObjectDestroyer mapObjectDestroyer) {
         this.teamManager = teamManager;
+        this.tankAbilityItem = tankAbilityItem;
+        this.mapObjectCatcher = mapObjectCatcher;
+        this.mapObjectDestroyer = mapObjectDestroyer;
     }
 
     @Override
@@ -117,11 +130,62 @@ public class TankKit implements SiegeWarsKit {
 
     @Override
     public ItemStack getAbilityItem(Player player) {
-        return new ItemStack(Material.GLOWSTONE_DUST);
+        return tankAbilityItem.get(player);
     }
 
     @Override
     public Boolean useAbility(Player player) {
+        Location location = player.getLocation();
+
+        player.getWorld().playSound(location, Sound.COW_HURT, 1, 0.5f);
+        sprint(player, location.getYaw());
         return true;
+    }
+
+    private void sprint(Player player, float yaw) {
+        CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            doSprintVelocity(player, yaw);
+
+            Location location = player.getLocation().add(player.getVelocity().setY(0));
+            Block blockAt = player.getWorld().getBlockAt(location);
+
+            if (blockAt.getType() != Material.AIR) {
+                hitBlock(player, blockAt);
+                return TaskResponse.failure("");
+            }
+
+            return TaskResponse.continueTask();
+        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(3))).getFuture();
+        future.thenRun(() -> onSprintEnded(player));
+    }
+
+    private void doSprintVelocity(Player player, float yaw) {
+        Location location = player.getLocation();
+        Location to = new Location(player.getWorld(), location.getX(), location.getY(), location.getZ(), yaw, 0);
+
+        player.teleport(to);
+
+        Vector dir = location.getDirection().normalize().multiply(0.65);
+        player.setVelocity(new Vector(dir.getX(), -1, dir.getZ()));
+        player.getWorld().spigot().playEffect(location.clone().add(0, 1.8, 0), Effect.VILLAGER_THUNDERCLOUD, 1, 0, 0.1f, 0.1f, 0.1f, 0, 1, 32);
+    }
+
+    private static void onSprintEnded(Player player) {
+        player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0.85f);
+        player.getWorld().spigot().playEffect(player.getLocation().add(0,2,0), Effect.EXTINGUISH, 1, 0, 0, 0, 0, 0, 10, 32);
+    }
+
+    private void hitBlock(Player player, Block block) {
+        Location location = block.getLocation();
+        Position mcPos = BukkitPos.toMCPos(location.clone());
+        player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 0.85f);
+        player.getWorld().spigot().playEffect(player.getLocation().add(0,1,0), Effect.EXPLOSION_HUGE, 1, 0, 0, 0, 0, 0, 1, 32);
+
+        if(mapObjectCatcher.isBaffle(location.clone()))
+            mapObjectDestroyer.destroyBaffle(location);
+        if(mapObjectCatcher.isDestroyableWall(mcPos))
+            mapObjectDestroyer.destroyWall(location);
+        if(mapObjectCatcher.isDestroyableWindow(mcPos))
+            mapObjectDestroyer.destroyWindow(location);
     }
 }

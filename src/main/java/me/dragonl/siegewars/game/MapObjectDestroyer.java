@@ -1,7 +1,9 @@
 package me.dragonl.siegewars.game;
 
+import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
+import me.dragonl.siegewars.yaml.MapConfig;
 import me.dragonl.siegewars.yaml.element.DestroyableWallElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWindowElement;
 import org.bukkit.*;
@@ -16,9 +18,21 @@ import java.util.Map;
 @InjectableComponent
 public class MapObjectDestroyer {
     private final MapObjectCatcher mapObjectCatcher;
+    private final MapConfig mapConfig;
 
-    public MapObjectDestroyer(MapObjectCatcher mapObjectCatcher) {
+    public MapObjectDestroyer(MapObjectCatcher mapObjectCatcher, MapConfig mapConfig) {
         this.mapObjectCatcher = mapObjectCatcher;
+        this.mapConfig = mapConfig;
+    }
+
+    public void destroyWall(Location location){
+        DestroyableWallElement element = mapConfig.getMaps().get(location.getWorld().getName()).getWallAtPosition(BukkitPos.toMCPos(location));
+        destroyWall(element);
+    }
+
+    public void destroyWindow(Location location){
+        DestroyableWindowElement element = mapConfig.getMaps().get(location.getWorld().getName()).getWindowAtPosition(BukkitPos.toMCPos(location));
+        destroyWindow(element);
     }
 
     public void destroyWall(DestroyableWallElement element) {

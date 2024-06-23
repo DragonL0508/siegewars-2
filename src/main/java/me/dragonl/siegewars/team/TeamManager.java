@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
 
@@ -18,6 +20,10 @@ public class TeamManager {
         Team team = new Team();
         team.setDisplayName(name);
         teams.add(team);
+
+        Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        org.bukkit.scoreboard.Team scoreboardTeam = mainScoreboard.registerNewTeam(name);
+        scoreboardTeam.setAllowFriendlyFire(false);
 
         return team;
     }
@@ -38,6 +44,11 @@ public class TeamManager {
         if(isInTeam(player))
             leaveTeam(player);
         team.addPlayer(player);
+
+        //add to scoreboard team
+        Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        org.bukkit.scoreboard.Team scoreboardTeam = mainScoreboard.getTeam(team.getDisplayName());
+        scoreboardTeam.addPlayer(player);
 
         //message
         player.sendMessage(ChatColor.GREEN + "You joined the team : " + team.getColor() + team.getDisplayName());
@@ -61,6 +72,11 @@ public class TeamManager {
     public void leaveTeam(Player player){
         Team team = getPlayerTeam(player);
         team.removePlayer(player);
+
+        //remove from scoreboard team
+        Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        org.bukkit.scoreboard.Team scoreboardTeam = mainScoreboard.getTeam(team.getDisplayName());
+        scoreboardTeam.removePlayer(player);
 
         //message
         player.sendMessage( ChatColor.RED + "You left the team : " + team.getColor() + team.getDisplayName());

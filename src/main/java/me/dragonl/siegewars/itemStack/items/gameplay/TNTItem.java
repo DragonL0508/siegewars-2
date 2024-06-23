@@ -69,7 +69,7 @@ public class TNTItem extends CustomItemFairy {
             Position blockPos = BukkitPos.toMCPos(event.getBlockAgainst().getLocation());
 
             if (isItem(event.getItemInHand())) {
-                if (setupWandManager.isDestroyableWall(blockPos)) {
+                if (mapObjectCatcher.isDestroyableWall(blockPos)) {
                     summonTNT(p, event.getBlockPlaced().getLocation());
                     itemRemover.decreaseItemInHand(p, 1);
 

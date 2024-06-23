@@ -8,6 +8,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.MapObjectCatcher;
+import me.dragonl.siegewars.game.ingame.preparing.InGamePreparingExecuter;
 import me.dragonl.siegewars.game.kit.SiegeWarsKit;
 import me.dragonl.siegewars.game.shop.ShopMenu;
 import me.dragonl.siegewars.itemStack.items.gameplay.AxeItem;
@@ -33,8 +34,9 @@ public class LobbyAdminCommand extends BaseCommand {
     private final LobbyAdminMenu lobbyAdminMenu;
     private final PlayerKitManager playerKitManager;
     private final ShopMenu shopMenu;
+    private final InGamePreparingExecuter inGamePreparingExecuter;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu, InGamePreparingExecuter inGamePreparingExecuter) {
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.tntItem = tntItem;
@@ -44,6 +46,7 @@ public class LobbyAdminCommand extends BaseCommand {
         this.lobbyAdminMenu = lobbyAdminMenu;
         this.playerKitManager = playerKitManager;
         this.shopMenu = shopMenu;
+        this.inGamePreparingExecuter = inGamePreparingExecuter;
     }
 
     @Command("menu")
@@ -83,7 +86,7 @@ public class LobbyAdminCommand extends BaseCommand {
                 inv.addItem(baffleItem.get(player));
                 break;
             }
-            case axe:{
+            case axe: {
                 inv.addItem(axeItem.get(player));
             }
 
@@ -114,11 +117,15 @@ public class LobbyAdminCommand extends BaseCommand {
         mapObjectCatcher.getDestroyableWalls().clear();
         mapObjectCatcher.getDestroyableWindow().clear();
         mapObjectCatcher.getBafflePlaced().clear();
-        ctx.getPlayer().sendMessage("§a已復原所有地圖物件!");
     }
 
     @Command("shopMenu")
-    public void openShopMenu(BukkitCommandContext ctx){
+    public void openShopMenu(BukkitCommandContext ctx) {
         shopMenu.open(ctx.getPlayer());
+    }
+
+    @Command("transformInvToBuyCounts")
+    public void transformInvToBuyCounts(BukkitCommandContext ctx) {
+        inGamePreparingExecuter.transformInvToBuyCounts(ctx.getPlayer());
     }
 }

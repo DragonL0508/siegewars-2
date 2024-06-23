@@ -6,6 +6,7 @@ import io.fairyproject.container.PostInitialize;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.MapObjectCatcher;
+import me.dragonl.siegewars.itemStack.items.ability.TankAbilityItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
 import me.dragonl.siegewars.yaml.MapConfig;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
@@ -23,12 +24,14 @@ import java.util.UUID;
 public class InGameItemRunTime extends BukkitRunnable {
     private final GameStateManager gameStateManager;
     private final TNTItem tntItem;
+    private final TankAbilityItem tankAbilityItem;
     private final MapConfig mapConfig;
     private final MapObjectCatcher catcher;
 
-    public InGameItemRunTime(GameStateManager gameStateManager, TNTItem tntItem, MapConfig mapConfig, MapObjectCatcher catcher) {
+    public InGameItemRunTime(GameStateManager gameStateManager, TNTItem tntItem, TankAbilityItem tankAbilityItem, MapConfig mapConfig, MapObjectCatcher catcher) {
         this.gameStateManager = gameStateManager;
         this.tntItem = tntItem;
+        this.tankAbilityItem = tankAbilityItem;
         this.mapConfig = mapConfig;
         this.catcher = catcher;
     }
@@ -46,7 +49,7 @@ public class InGameItemRunTime extends BukkitRunnable {
                 return;
 
             MapConfigElement element = mapConfig.getMaps().get(p.getWorld().getName());
-            if (tntItem.isSimilar(p.getItemInHand())) {
+            if (tntItem.isSimilar(p.getItemInHand()) || tankAbilityItem.isSimilar(p.getItemInHand())) {
                 element.getDestroyableWallList().forEach(wall -> {
                     if (catcher.isSaved(wall))
                         return;

@@ -23,7 +23,7 @@ public class KitCommand extends BaseCommand {
     }
 
     @Command("openMenu")
-    public void openMenuWithName(BukkitCommandContext ctx, @Arg("name") Player player) {
+    public void openMenuWithName(BukkitCommandContext ctx, @Arg("player") Player player) {
         kitMenu.open(player);
     }
 }

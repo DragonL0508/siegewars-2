@@ -5,6 +5,7 @@ import me.dragonl.siegewars.game.events.PlayerSelectKitEvent;
 import me.dragonl.siegewars.game.kit.KitManager;
 import me.dragonl.siegewars.game.kit.SiegeWarsKit;
 import me.dragonl.siegewars.game.shop.ShopMenu;
+import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -19,13 +20,15 @@ public class PlayerKitManager {
     private final TeamManager teamManager;
     private final NameGetter nameGetter;
     private final ShopMenu shopMenu;
+    private final PlayerDataManager playerDataManager;
     private Map<UUID, SiegeWarsKit> playerKits = new HashMap<>();
 
-    public PlayerKitManager(KitManager kitManager, TeamManager teamManager, NameGetter nameGetter, ShopMenu shopMenu) {
+    public PlayerKitManager(KitManager kitManager, TeamManager teamManager, NameGetter nameGetter, ShopMenu shopMenu, PlayerDataManager playerDataManager) {
         this.kitManager = kitManager;
         this.teamManager = teamManager;
         this.nameGetter = nameGetter;
         this.shopMenu = shopMenu;
+        this.playerDataManager = playerDataManager;
     }
 
     public void setPlayerKit(Player player, SiegeWarsKit kit) {
@@ -51,6 +54,11 @@ public class PlayerKitManager {
         player.getInventory().setArmorContents(reverseArray(kit.getArmors(player)));
         player.getInventory().setContents(kit.getItems());
         player.getInventory().setItem(8, kit.getAbilityItem(player));
+        playerDataManager.getPlayerData(player).getBuyCountsMap().forEach((k,v) -> {
+            for(int i = 0; i < v; i++){
+                player.getInventory().addItem(k.getItemStack());
+            }
+        });
 
         //call event
         Bukkit.getPluginManager().callEvent(new PlayerSelectKitEvent(player, kit));

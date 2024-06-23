@@ -5,6 +5,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
+import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.game.MapObjectDestroyer;
 import me.dragonl.siegewars.game.mapSetup.SetupWandManager;
 import me.dragonl.siegewars.team.Team;
@@ -30,12 +31,14 @@ public class InGameArrowTick extends BukkitRunnable implements Listener {
     private final TeamManager teamManager;
     private Map<Entity, UUID> arrows = new HashMap<>();
     private final MapObjectDestroyer mapObjectDestroyer;
+    private final MapObjectCatcher mapObjectCatcher;
     private final MapConfig mapConfig;
     private final SetupWandManager setupWandManager;
 
-    public InGameArrowTick(TeamManager teamManager, MapObjectDestroyer mapObjectDestroyer, MapConfig mapConfig, SetupWandManager setupWandManager) {
+    public InGameArrowTick(TeamManager teamManager, MapObjectDestroyer mapObjectDestroyer, MapObjectCatcher mapObjectCatcher, MapConfig mapConfig, SetupWandManager setupWandManager) {
         this.teamManager = teamManager;
         this.mapObjectDestroyer = mapObjectDestroyer;
+        this.mapObjectCatcher = mapObjectCatcher;
         this.mapConfig = mapConfig;
         this.setupWandManager = setupWandManager;
     }
@@ -76,7 +79,7 @@ public class InGameArrowTick extends BukkitRunnable implements Listener {
         deadArrows.forEach(arrow -> {
             arrows.remove(arrow);
 
-            if(!setupWandManager.isDestroyableWindow(BukkitPos.toMCPos(arrow.getLocation())))
+            if(!mapObjectCatcher.isDestroyableWindow(BukkitPos.toMCPos(arrow.getLocation())))
                 return;
 
             MapConfigElement element = mapConfig.getMaps().get(arrow.getWorld().getName());

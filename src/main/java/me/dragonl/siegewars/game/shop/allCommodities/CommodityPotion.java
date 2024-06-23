@@ -14,7 +14,7 @@ public class CommodityPotion implements Commodity {
 
     @Override
     public String getName() {
-        return "§e治療藥水 §c2❤";
+        return "§e治療藥水 §d2❤";
     }
 
     @Override
@@ -23,14 +23,18 @@ public class CommodityPotion implements Commodity {
     }
 
     @Override
+    public int getBuyLimit() {
+        return 2;
+    }
+
+    @Override
     public ItemStack getShopIcon() {
         return ItemBuilder.of(XMaterial.POTION)
                 .name(getName())
-                .lore("&e售價: &a" + getPrice() + "$"
-                        , ""
+                .lore("&8限制購買" + getBuyLimit() +"個"
+                        ,""
                         , "§7重要的回血道具"
                         , "§7也許是逆轉戰局的關鍵"
-                        , ""
                         , "")
                 .data(16453)
                 .itemFlag(ItemFlag.HIDE_POTION_EFFECTS)

@@ -1,6 +1,8 @@
 package me.dragonl.siegewars.game.kit;
 
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.MapObjectCatcher;
+import me.dragonl.siegewars.game.MapObjectDestroyer;
 import me.dragonl.siegewars.game.kit.allKits.*;
 import me.dragonl.siegewars.itemStack.items.ability.*;
 import me.dragonl.siegewars.team.TeamManager;
@@ -16,7 +18,7 @@ public class KitManager {
         return kits;
     }
 
-    public KitManager(TeamManager teamManager, AttackerAbilityItem attackerAbilityItem, ArcherAbilityItem archerAbilityItem, HealerAbilityItem healerAbilityItem, SpecialAbilityItem specialAbilityItem, ReaperAbilityItem reaperAbilityItem) {
+    public KitManager(TeamManager teamManager, AttackerAbilityItem attackerAbilityItem, ArcherAbilityItem archerAbilityItem, HealerAbilityItem healerAbilityItem, SpecialAbilityItem specialAbilityItem, ReaperAbilityItem reaperAbilityItem, TankAbilityItem tankAbilityItem, MapObjectCatcher mapObjectCatcher, MapObjectDestroyer mapObjectDestroyer) {
 
         //register kits
         registerKit(new AttackerKit(teamManager, attackerAbilityItem));
@@ -24,7 +26,7 @@ public class KitManager {
         registerKit(new HealerKit(teamManager, healerAbilityItem));
         registerKit(new SpecialKit(teamManager, specialAbilityItem));
         registerKit(new ReaperKit(teamManager, reaperAbilityItem));
-        registerKit(new TankKit(teamManager));
+        registerKit(new TankKit(teamManager, tankAbilityItem, mapObjectCatcher, mapObjectDestroyer));
         registerKit(new NoneKit());
     }
 

@@ -11,8 +11,9 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.SoundPlayer;
-import me.dragonl.siegewars.game.ingame.InGameTimer;
+import me.dragonl.siegewars.game.ingame.ingameTimer.InGameTimerManager;
 import me.dragonl.siegewars.game.ingame.preparing.InGamePreparingExecuter;
+import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.team.TeamManager;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
 import org.bukkit.Bukkit;
@@ -34,15 +35,15 @@ public class PlayerPreparingChecker extends BukkitRunnable {
     private final InGamePreparingExecuter inGamePreparingExecuter;
     private final TeamManager teamManager;
     private final SoundPlayer soundPlayer;
-    private final InGameTimer inGameTimer;
+    private final PlayerDataManager playerDataManager;
 
-    public PlayerPreparingChecker(GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager, InGamePreparingExecuter inGamePreparingExecuter, TeamManager teamManager, SoundPlayer soundPlayer, InGameTimer inGameTimer) {
+    public PlayerPreparingChecker(GameStateManager gameStateManager, PlayerPreparingManager playerPreparingManager, InGamePreparingExecuter inGamePreparingExecuter, TeamManager teamManager, SoundPlayer soundPlayer, PlayerDataManager playerDataManager) {
         this.gameStateManager = gameStateManager;
         this.playerPreparingManager = playerPreparingManager;
         this.inGamePreparingExecuter = inGamePreparingExecuter;
         this.teamManager = teamManager;
         this.soundPlayer = soundPlayer;
-        this.inGameTimer = inGameTimer;
+        this.playerDataManager = playerDataManager;
     }
 
     @PostInitialize
@@ -105,6 +106,7 @@ public class PlayerPreparingChecker extends BukkitRunnable {
             p.updateInventory();
             p.setGameMode(GameMode.SPECTATOR);
             p.teleport(BukkitPos.toBukkitLocation(element.getSpecSpawn()));
+            playerDataManager.getPlayerData(p).getBuyCountsMap().clear();
 
             if (teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam())
                 Titles.sendTitle(p, 10, 70, 20, "§c攻擊方", "§e你的隊伍將先擔任");
@@ -114,7 +116,6 @@ public class PlayerPreparingChecker extends BukkitRunnable {
             p.playSound(p.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
         });
 
-        inGameTimer.setTimeLeft(30);
         MCSchedulers.getGlobalScheduler().schedule(inGamePreparingExecuter::start, 20 * 5);
     }
 }
