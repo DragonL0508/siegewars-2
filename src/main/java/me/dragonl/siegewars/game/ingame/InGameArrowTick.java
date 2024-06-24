@@ -70,7 +70,7 @@ public class InGameArrowTick extends BukkitRunnable implements Listener {
 
             Arrow arrow = (Arrow) e;
 
-            if (arrow.isOnGround()) {
+            if (arrow.isOnGround() || arrow.isDead()) {
                 deadArrows.add(e);
                 arrow.remove();
             }

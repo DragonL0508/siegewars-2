@@ -1,11 +1,15 @@
 package me.dragonl.siegewars.yaml.element;
 
+import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.mc.util.Position;
-import me.dragonl.siegewars.player.PlayerUpdater;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @ConfigurationElement
@@ -126,5 +130,45 @@ public class MapConfigElement {
 
         });
         return element.get();
+    }
+
+    public Location getNextAttackSpawn(Location location) {
+        AtomicInteger i = new AtomicInteger();
+        attackSpawn.forEach(pos -> {
+            Location thisLoc = BukkitPos.toBukkitLocation(pos);
+            Block thisBlock = thisLoc.getBlock();
+            Block inputBlock = location.getBlock();
+            if (thisBlock.getX() == inputBlock.getX()
+                    && thisBlock.getY() == inputBlock.getY()
+                    && thisBlock.getZ() == inputBlock.getZ()) {
+                i.set(attackSpawn.indexOf(pos));
+            }
+        });
+
+        i.set(i.get() + 1);
+        if (i.get() == attackSpawn.size())
+            i.set(0);
+
+        return BukkitPos.toBukkitLocation(attackSpawn.get(i.get()));
+    }
+
+    public Location getPreviousAttackSpawn(Location location) {
+        AtomicInteger i = new AtomicInteger();
+        attackSpawn.forEach(pos -> {
+            Location thisLoc = BukkitPos.toBukkitLocation(pos);
+            Block thisBlock = thisLoc.getBlock();
+            Block inputBlock = location.getBlock();
+            if (thisBlock.getX() == inputBlock.getX()
+                    && thisBlock.getY() == inputBlock.getY()
+                    && thisBlock.getZ() == inputBlock.getZ()) {
+                i.set(attackSpawn.indexOf(pos));
+            }
+        });
+
+        i.set(i.get() - 1);
+        if (i.get() < 0)
+            i.set(attackSpawn.size() - 1);
+
+        return BukkitPos.toBukkitLocation(attackSpawn.get(i.get()));
     }
 }

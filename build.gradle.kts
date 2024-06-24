@@ -61,6 +61,7 @@ dependencies {
     api("io.fairyproject:bukkit-timer")
     api("io.fairyproject:bukkit-nbt")
     api("io.fairyproject:mc-tablist")
+    api("io.fairyproject:mc-actionbar")
 }
 
 // Repositories

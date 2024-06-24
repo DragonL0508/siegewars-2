@@ -1,13 +1,15 @@
 package me.dragonl.siegewars.game.ingame;
 
+import com.cryptomorin.xseries.messages.ActionBar;
+import com.cryptomorin.xseries.messages.Titles;
+import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.events.player.PlayerDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
+import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.scheduler.MCSchedulers;
-import me.dragonl.siegewars.game.GameState;
-import me.dragonl.siegewars.game.GameStateManager;
-import me.dragonl.siegewars.game.MapObjectCatcher;
-import me.dragonl.siegewars.game.MapObjectDestroyer;
+import me.dragonl.siegewars.game.*;
 import me.dragonl.siegewars.player.NameGetter;
 import me.dragonl.siegewars.player.NameTagTemporaryManager;
 import me.dragonl.siegewars.player.data.PlayerData;
@@ -15,15 +17,23 @@ import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.SoundPlayer;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
+import me.dragonl.siegewars.yaml.element.MapConfigElement;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 
 import java.util.stream.Collectors;
 
@@ -87,7 +97,39 @@ public class InGameListener implements Listener {
 
     @EventHandler
     public void onBaffleBreak(BlockBreakEvent event) {
-        if(gameStateManager.isCurrentGameState(GameState.IN_GAME))
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME))
             mapObjectDestroyer.destroyBaffle(event.getBlock().getLocation());
+    }
+
+    @EventHandler
+    public void onLocChoosingClick(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        MapConfigElement map = gameStateManager.getSelectedMap();
+
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME) && gameStateManager.isCurrentRoundState(RoundState.POSITION_CHOOSING)
+                && teamManager.isInTeam(player, gameStateManager.getAttackTeam())) {
+            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                //next position
+                Location nextAttackSpawn = map.getNextAttackSpawn(player.getLocation());
+                ActionBar.clearActionBar(player);
+                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, player, "§a進攻點 §e" + (map.getAttackSpawn().indexOf(BukkitPos.toMCPos(nextAttackSpawn)) + 1) + " §7| §a左鍵§7前往下一個", 999999);
+                player.teleport(nextAttackSpawn);
+            }
+        }
+    }
+
+    @EventHandler
+    public void moveOnChoosing(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME) && gameStateManager.isCurrentRoundState(RoundState.POSITION_CHOOSING)
+                && teamManager.isInTeam(player, gameStateManager.getAttackTeam())) {
+            Location from = event.getFrom(), to = event.getTo();
+            if (!(from.getBlockX() == to.getBlockX()
+                    && from.getBlockY() == to.getBlockY()
+                    && from.getBlockZ() == to.getBlockZ())){
+                event.setCancelled(true);
+                player.teleport(new Location(from.getWorld(), from.getBlockX() + 0.5, from.getBlockY() + 0.5, from.getBlockZ() + 0.5));
+            }
+        }
     }
 }
