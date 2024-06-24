@@ -11,7 +11,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.RoundState;
-import me.dragonl.siegewars.game.kit.KitMenu;
+import me.dragonl.siegewars.game.ingame.InGameRunTime;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
 import net.kyori.adventure.text.Component;
@@ -30,12 +30,14 @@ public class ShopMenu {
     private final CommodityManager commodityManager;
     private final GameStateManager gameStateManager;
     private final PlayerDataManager playerDataManager;
+    private final InGameRunTime inGameRunTime;
 
-    public ShopMenu(GuiFactory guiFactory, CommodityManager commodityManager, GameStateManager gameStateManager, PlayerDataManager playerDataManager) {
+    public ShopMenu(GuiFactory guiFactory, CommodityManager commodityManager, GameStateManager gameStateManager, PlayerDataManager playerDataManager, InGameRunTime inGameRunTime) {
         this.guiFactory = guiFactory;
         this.commodityManager = commodityManager;
         this.gameStateManager = gameStateManager;
         this.playerDataManager = playerDataManager;
+        this.inGameRunTime = inGameRunTime;
     }
 
     public void open(Player player) {
@@ -60,6 +62,7 @@ public class ShopMenu {
                 .name("&a&l我完成備戰了")
                 .build(), p -> {
             isManualClose.set(false);
+            inGameRunTime.getPreparingPlayers().put(p.getUniqueId(), true);
             p.closeInventory();
         }));
 

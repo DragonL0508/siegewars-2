@@ -4,6 +4,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
+import me.dragonl.siegewars.game.ingame.InGameRunTime;
 
 import java.time.Duration;
 import java.util.*;
@@ -14,9 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class InGameTimerManager {
     private List<TimerMap> timers = new ArrayList<>();
 
-    public InGameTimerManager() {
-        registerTimer(new PreparingTimer(35));
-        registerTimer(new PositionChoosingTimer(30));
+    public InGameTimerManager(InGameRunTime inGameRunTime) {
+        registerTimer(new PreparingTimer(35, inGameRunTime));
+        registerTimer(new PositionChoosingTimer(30, inGameRunTime));
     }
 
     public void registerTimer(Timer timer) {
@@ -29,9 +30,14 @@ public class InGameTimerManager {
 
     public void startTimer(Timer timer) {
         timer.setIsStop(false);
+        timer.runTime();
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             if (timer.isStop())
                 return TaskResponse.failure("");
+
+            if(timer.getTime() == 0){
+                return TaskResponse.success("");
+            }
 
             if (timer.getTime() > 0)
                 timer.setTime(timer.getTime() - 1);
@@ -40,8 +46,8 @@ public class InGameTimerManager {
         }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
         future.thenRun(() -> {
 
-            startTimer(getNextTimer(timer));
             stopTimer(timer);
+            startTimer(getNextTimer(timer));
         });
     }
 

@@ -1,12 +1,16 @@
 package me.dragonl.siegewars.game.ingame.ingameTimer;
 
+import me.dragonl.siegewars.game.ingame.InGameRunTime;
+
 public class PositionChoosingTimer implements Timer{
     private Integer time;
     private final Integer initialTime;
     private Boolean isStop = true;
-    public PositionChoosingTimer(Integer time){
+    private final InGameRunTime inGameRunTime;
+    public PositionChoosingTimer(Integer time, InGameRunTime inGameRunTime){
         this.time = time;
         this.initialTime = time;
+        this.inGameRunTime = inGameRunTime;
     }
     @Override
     public String getID() {
@@ -46,5 +50,10 @@ public class PositionChoosingTimer implements Timer{
     @Override
     public void setIsStop(Boolean bool) {
         this.isStop = bool;
+    }
+
+    @Override
+    public void runTime() {
+        inGameRunTime.positionChoosingRunTime(this);
     }
 }

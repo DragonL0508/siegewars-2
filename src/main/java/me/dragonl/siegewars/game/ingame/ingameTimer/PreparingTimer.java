@@ -1,14 +1,16 @@
 package me.dragonl.siegewars.game.ingame.ingameTimer;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import me.dragonl.siegewars.game.ingame.InGameRunTime;
 
 public class PreparingTimer implements Timer{
     private Integer time;
     private final Integer initialTime;
     private Boolean isStop = true;
-    public PreparingTimer(Integer time){
+    private final InGameRunTime inGameRunTime;
+    public PreparingTimer(Integer time, InGameRunTime inGameRunTime){
         this.time = time;
         this.initialTime = time;
+        this.inGameRunTime = inGameRunTime;
     }
     @Override
     public String getID() {
@@ -48,5 +50,10 @@ public class PreparingTimer implements Timer{
     @Override
     public void setIsStop(Boolean bool) {
         this.isStop = bool;
+    }
+
+    @Override
+    public void runTime() {
+        inGameRunTime.preparingRunTime(this);
     }
 }

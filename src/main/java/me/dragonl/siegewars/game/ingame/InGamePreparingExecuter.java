@@ -1,4 +1,4 @@
-package me.dragonl.siegewars.game.ingame.preparing;
+package me.dragonl.siegewars.game.ingame;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;

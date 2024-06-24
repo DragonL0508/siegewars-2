@@ -8,7 +8,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.MapObjectCatcher;
-import me.dragonl.siegewars.game.ingame.preparing.InGamePreparingExecuter;
+import me.dragonl.siegewars.game.ingame.InGamePreparingExecuter;
 import me.dragonl.siegewars.game.kit.SiegeWarsKit;
 import me.dragonl.siegewars.game.shop.ShopMenu;
 import me.dragonl.siegewars.itemStack.items.gameplay.AxeItem;

@@ -11,4 +11,5 @@ public interface Timer {
     void reset();
     Boolean isStop();
     void setIsStop(Boolean bool);
+    void runTime();
 }
