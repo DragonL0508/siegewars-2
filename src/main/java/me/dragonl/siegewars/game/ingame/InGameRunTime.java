@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
@@ -114,7 +115,7 @@ public class InGameRunTime {
         Bukkit.getOnlinePlayers().forEach(p -> {
             Random r = new Random();
             if (teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam()) {
-                p.teleport(BukkitPos.toBukkitLocation(defendSpawn.get(r.nextInt(defendSpawn.size() - 1))));
+                p.teleport(BukkitPos.toBukkitLocation(defendSpawn.get(r.nextInt(defendSpawn.size()) - 1)));
                 p.setGameMode(GameMode.SURVIVAL);
                 Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e請做好防守準備");
                 gameStateManager.getAttackTeam().getPlayers().forEach(uuid -> {

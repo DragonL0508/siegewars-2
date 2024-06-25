@@ -1,5 +1,6 @@
 package me.dragonl.siegewars.game.ingame;
 
+import com.github.retrooper.packetevents.protocol.sound.Sounds;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
@@ -14,6 +15,7 @@ import me.dragonl.siegewars.yaml.MapConfig;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -84,6 +86,7 @@ public class InGameArrowTick extends BukkitRunnable implements Listener {
 
             MapConfigElement element = mapConfig.getMaps().get(arrow.getWorld().getName());
             mapObjectDestroyer.destroyWindow(element.getWindowAtPosition(BukkitPos.toMCPos(arrow.getLocation())));
+            arrow.getWorld().playSound(arrow.getLocation(), Sound.GLASS, 2.5f, 1);
         });
 
         deadArrows.clear();

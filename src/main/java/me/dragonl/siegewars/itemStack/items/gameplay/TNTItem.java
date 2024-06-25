@@ -115,7 +115,7 @@ public class TNTItem extends CustomItemFairy {
                 firework.setFireworkMeta(fireworkMeta);
 
                 w.spigot().playEffect(tnt.getLocation(), Effect.EXPLOSION_HUGE, 0, 0, 0, 0, 0, 1, 1, 64);
-                w.playSound(tnt.getLocation(), Sound.EXPLODE, 2, 0.75f);
+                w.playSound(tnt.getLocation(), Sound.EXPLODE, 2.5f, 0.75f);
                 w.playSound(tnt.getLocation(), Sound.ZOMBIE_WOODBREAK, 1.5f, 0.8f);
 
                 //damage

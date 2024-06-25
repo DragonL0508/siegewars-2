@@ -159,7 +159,7 @@ public class HealerKit implements SiegeWarsKit {
 
     private void playerHeal(Player player, Player target) {
         PotionEffect regen = new PotionEffect(PotionEffectType.REGENERATION, 400, 0, false, false),
-                absorption = new PotionEffect(PotionEffectType.ABSORPTION, 400, 1, false, false);
+                absorption = new PotionEffect(PotionEffectType.ABSORPTION, 400, 0, false, false);
         target.addPotionEffect(regen);
         target.addPotionEffect(absorption);
         target.getWorld().spigot().playEffect(target.getLocation().add(0, 1.75, 0), Effect.HEART, 1, 0, 0.5f, 0, 0.5f, 0, 3, 32);
