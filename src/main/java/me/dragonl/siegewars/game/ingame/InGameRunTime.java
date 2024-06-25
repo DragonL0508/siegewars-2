@@ -125,7 +125,7 @@ public class InGameRunTime {
             else if(teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam()){
                 p.teleport(BukkitPos.toBukkitLocation(attackSpawn.get(0)));
                 ActionBar.clearActionBar(p);
-                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, p, "§a進攻點 §e1 §7| §a左鍵§7前往下一個", 999999);
+                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, p, "§a進攻點 §e1 §7| §a左鍵§7前往下一個");
                 p.setGameMode(GameMode.SURVIVAL);
                 Titles.sendTitle(p, 10,40,20,"§a人員部屬階段","§e請選擇進攻位置");
                 PlayerInventory inventory = p.getInventory();

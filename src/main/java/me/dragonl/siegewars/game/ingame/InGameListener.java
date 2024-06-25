@@ -112,7 +112,7 @@ public class InGameListener implements Listener {
                 //next position
                 Location nextAttackSpawn = map.getNextAttackSpawn(player.getLocation());
                 ActionBar.clearActionBar(player);
-                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, player, "§a進攻點 §e" + (map.getAttackSpawn().indexOf(BukkitPos.toMCPos(nextAttackSpawn)) + 1) + " §7| §a左鍵§7前往下一個", 999999);
+                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, player, "§a進攻點 §e" + (map.getAttackSpawn().indexOf(BukkitPos.toMCPos(nextAttackSpawn)) + 1) + " §7| §a左鍵§7前往下一個");
                 player.teleport(nextAttackSpawn);
             }
         }
