@@ -2,6 +2,7 @@ package me.dragonl.siegewars.game.kit.allKits;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.mc.scheduler.MCSchedulers;
@@ -16,11 +17,16 @@ import me.dragonl.siegewars.itemStack.items.ability.TankAbilityItem;
 import me.dragonl.siegewars.team.TeamManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.time.Duration;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class TankKit implements SiegeWarsKit {
@@ -28,6 +34,7 @@ public class TankKit implements SiegeWarsKit {
     private final TankAbilityItem tankAbilityItem;
     private final MapObjectCatcher mapObjectCatcher;
     private final MapObjectDestroyer mapObjectDestroyer;
+    private Map<UUID, List<UUID>> hitPlayersList = new HashMap<>();
 
     public TankKit(TeamManager teamManager, TankAbilityItem tankAbilityItem, MapObjectCatcher mapObjectCatcher, MapObjectDestroyer mapObjectDestroyer) {
         this.teamManager = teamManager;
@@ -149,13 +156,19 @@ public class TankKit implements SiegeWarsKit {
             Location location = player.getLocation().add(player.getVelocity().setY(0));
             Block blockAt = player.getWorld().getBlockAt(location);
 
-            if (blockAt.getType() != Material.AIR) {
-                hitBlock(player, blockAt);
-                return TaskResponse.failure("");
+            if (blockAt.getType() != Material.AIR)
+                if (hitBlock(player, blockAt))
+                    return TaskResponse.failure("");
+
+            for (Entity nearbyEntity : player.getNearbyEntities(0.65, 0.65, 0.65)) {
+                if (nearbyEntity.getType() == EntityType.PLAYER)
+                    if (teamManager.getPlayerTeam((Player) nearbyEntity) == teamManager.swGetAnotherTeam(player)
+                    && !hitPlayersList.getOrDefault(player.getUniqueId(), Arrays.asList()).contains(nearbyEntity.getUniqueId()))
+                        hitPlayer(player, (Player) nearbyEntity);
             }
 
             return TaskResponse.continueTask();
-        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(3))).getFuture();
+        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(2))).getFuture();
         future.thenRun(() -> onSprintEnded(player));
     }
 
@@ -170,22 +183,48 @@ public class TankKit implements SiegeWarsKit {
         player.getWorld().spigot().playEffect(location.clone().add(0, 1.8, 0), Effect.VILLAGER_THUNDERCLOUD, 1, 0, 0.1f, 0.1f, 0.1f, 0, 1, 32);
     }
 
-    private static void onSprintEnded(Player player) {
+    private void onSprintEnded(Player player) {
         player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0.85f);
-        player.getWorld().spigot().playEffect(player.getLocation().add(0,2,0), Effect.EXTINGUISH, 1, 0, 0, 0, 0, 0, 10, 32);
+        player.getWorld().spigot().playEffect(player.getLocation().add(0, 2, 0), Effect.SMOKE, 1, 0, 0.1f, 0.1f, 0.1f, 0.05f, 30, 32);
+        hitPlayersList.remove(player.getUniqueId());
     }
 
-    private void hitBlock(Player player, Block block) {
+    private void hitPlayer(Player player, Player target) {
+        PotionEffect slowness = new PotionEffect(PotionEffectType.SLOW, 20, 1),
+                blind = new PotionEffect(PotionEffectType.BLINDNESS, 40, 0),
+                slowMining = new PotionEffect(PotionEffectType.SLOW_DIGGING, 20, 100);
+
+        target.addPotionEffect(slowness);
+        target.addPotionEffect(blind);
+        target.addPotionEffect(slowMining);
+        target.getWorld().playSound(target.getLocation(), Sound.ZOMBIE_WOODBREAK, 0.5f, 0.85f);
+        target.damage(3, player);
+        Titles.sendTitle(target, 0, 20, 10, " ", "§c你受到了 §e" + player.getName() + " §c的撞擊");
+
+        List<UUID> hitPlayers = new ArrayList<>(hitPlayersList.getOrDefault(player.getUniqueId(), Arrays.asList()));
+        hitPlayers.add(target.getUniqueId());
+        hitPlayersList.put(player.getUniqueId(), hitPlayers);
+    }
+
+    private Boolean hitBlock(Player player, Block block) {
         Location location = block.getLocation();
         Position mcPos = BukkitPos.toMCPos(location.clone());
         player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 0.85f);
-        player.getWorld().spigot().playEffect(player.getLocation().add(0,1,0), Effect.EXPLOSION_HUGE, 1, 0, 0, 0, 0, 0, 1, 32);
+        player.getWorld().spigot().playEffect(player.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 1, 0, 0, 0, 0, 0, 1, 32);
 
-        if(mapObjectCatcher.isBaffle(location.clone()))
+        if (mapObjectCatcher.isBaffle(location.clone())) {
             mapObjectDestroyer.destroyBaffle(location);
-        if(mapObjectCatcher.isDestroyableWall(mcPos))
+            return false;
+        }
+        if (mapObjectCatcher.isDestroyableWall(mcPos)) {
             mapObjectDestroyer.destroyWall(location);
-        if(mapObjectCatcher.isDestroyableWindow(mcPos))
+            return false;
+        }
+        if (mapObjectCatcher.isDestroyableWindow(mcPos)) {
             mapObjectDestroyer.destroyWindow(location);
+            return false;
+        }
+
+        return true;
     }
 }

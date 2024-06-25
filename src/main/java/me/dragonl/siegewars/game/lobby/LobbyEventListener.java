@@ -40,7 +40,6 @@ public class LobbyEventListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
-        MCPlayer mcPlayer = MCPlayer.from(event.getPlayer());
         if(gameStateManager.isCurrentGameState(GameState.IN_LOBBY)){
             event.setJoinMessage(ChatColor.YELLOW + event.getPlayer().getName() + " 進入了大廳 !");
 

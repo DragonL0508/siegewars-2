@@ -83,12 +83,12 @@ public class InGameItemRunTime extends BukkitRunnable {
         for (double y = yArr[0]; y < yArr[1]; y += step)
             for (double x : xArr)
                 for (double z : zArr) {
-                    world.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
+                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
                 }
         for (double z = zArr[0]; z < zArr[1]; z += step)
             for (double y : yArr)
                 for (double x : xArr) {
-                    world.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
+                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
                 }
     }
 

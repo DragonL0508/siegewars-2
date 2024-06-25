@@ -14,12 +14,12 @@ public class FightingTimer implements Timer{
     }
     @Override
     public String getID() {
-        return "positionChoosing";
+        return "fighting";
     }
 
     @Override
     public String getName() {
-        return "人員部屬";
+        return "戰鬥階段";
     }
 
     @Override
@@ -54,6 +54,6 @@ public class FightingTimer implements Timer{
 
     @Override
     public void runTime() {
-        inGameRunTime.positionChoosingRunTime(this);
+        inGameRunTime.fightingRunTime(this);
     }
 }

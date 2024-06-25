@@ -6,6 +6,7 @@ import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.mc.util.Position;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
@@ -39,8 +40,6 @@ public class InGameRunTime {
     private final TeamManager teamManager;
     private final GameStateManager gameStateManager;
     Map<UUID, Boolean> preparingPlayers = new HashMap<>();
-    Map<UUID, ItemStack[]> savedArmors = new HashMap<>();
-    Map<UUID, ItemStack[]> savedInv = new HashMap<>();
 
     public InGameRunTime(TeamManager teamManager, GameStateManager gameStateManager) {
         this.teamManager = teamManager;
@@ -80,13 +79,13 @@ public class InGameRunTime {
 
             Bukkit.getOnlinePlayers().forEach(p -> {
                 if (teamManager.isInTeam(p, teamManager.getTeam("spectator")))
-                    Titles.sendTitle(p, 0, 20, 0, "§e玩家備戰中...", "§6" + teamAString + " §7| " + "§b" + teamBString);
+                    Titles.sendTitle(p, 0, 40, 0, "§e玩家備戰中...", "§6" + teamAString + " §7| " + "§b" + teamBString);
                 if (timer.getTime() <= 5)
-                    p.playSound(p.getLocation(), Sound.NOTE_STICKS, 1, 0.75f);
+                    p.playSound(p.getLocation(), Sound.CLICK, 1, 0.75f);
             });
 
             return TaskResponse.continueTask();
-        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
+        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
 
         future.thenRun(() -> {
             timer.setTime(0);
@@ -111,43 +110,56 @@ public class InGameRunTime {
         MapConfigElement map = gameStateManager.getSelectedMap();
         List<Position> defendSpawn = map.getDefendSpawn();
         List<Position> attackSpawn = map.getAttackSpawn();
-        savedArmors.clear();
-        savedInv.clear();
-        PotionEffect invisible = new PotionEffect(PotionEffectType.INVISIBILITY, 999999, 0, false, false);
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             Random r = new Random();
-            if(teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam()){
+            if (teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam()) {
                 p.teleport(BukkitPos.toBukkitLocation(defendSpawn.get(r.nextInt(defendSpawn.size() - 1))));
                 p.setGameMode(GameMode.SURVIVAL);
-                Titles.sendTitle(p, 10,40,20,"§a人員部屬階段","§e請做好防守準備");
-            }
-            else if(teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam()){
+                Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e請做好防守準備");
+                gameStateManager.getAttackTeam().getPlayers().forEach(uuid -> {
+                    p.hidePlayer(Bukkit.getPlayer(uuid));
+                });
+
+            } else if (teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam()) {
                 p.teleport(BukkitPos.toBukkitLocation(attackSpawn.get(0)));
                 ActionBar.clearActionBar(p);
                 ActionBar.sendActionBar(BukkitPlugin.INSTANCE, p, "§a進攻點 §e1 §7| §a左鍵§7前往下一個");
                 p.setGameMode(GameMode.SURVIVAL);
-                Titles.sendTitle(p, 10,40,20,"§a人員部屬階段","§e請選擇進攻位置");
-                PlayerInventory inventory = p.getInventory();
+                Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e請選擇進攻位置");
 
-                ItemStack air = ItemBuilder.of(Material.AIR).build();
-                savedArmors.put(p.getUniqueId(), inventory.getArmorContents());
-                savedInv.put(p.getUniqueId(), inventory.getContents());
-                inventory.setArmorContents(new ItemStack[]{air, air, air, air});
-                inventory.clear();
-
-                p.addPotionEffect(invisible);
-            }
-            else{
-                Titles.sendTitle(p, 10,40,20,"§a人員部屬階段","§e遊戲即將開始");
+            } else {
+                Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e遊戲即將開始");
             }
         });
 
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if (timer.getTime() <= 5)
+                    p.playSound(p.getLocation(), Sound.CLICK, 1, 0.75f);
+            });
+        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
 
-        },0,1,RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
         future.thenRun(() -> {
-            Bukkit.broadcastMessage("Position Choosing Done!");
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                gameStateManager.getAttackTeam().getPlayers().forEach(uuid -> {
+                    player.showPlayer(Bukkit.getPlayer(uuid));
+                });
+            });
         });
+    }
+
+    public void fightingRunTime(Timer timer) {
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            ActionBar.clearActionBar(p);
+            Titles.sendTitle(p, 10, 40, 20, "§a戰鬥開始", "§e部屬階段結束");
+            p.playSound(p.getLocation(), Sound.ENDERDRAGON_GROWL, 1, 1);
+        });
+
+        gameStateManager.setCurrentRoundState(RoundState.FIGHTING);
+
+        MCSchedulers.getGlobalScheduler().schedule(() -> {
+            Bukkit.broadcastMessage("fighting end!");
+        }, timer.getTime() * 20);
     }
 }

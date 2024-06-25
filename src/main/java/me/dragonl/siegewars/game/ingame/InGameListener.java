@@ -88,7 +88,9 @@ public class InGameListener implements Listener {
                 //message
                 event.setDeathMessage("§c[擊殺] " + nameGetter.getNameWithTeamColor(killer) + " §c✘ " + nameGetter.getNameWithTeamColor(victim));
                 victim.getWorld().spigot().playEffect(victim.getLocation().add(0, 1, 0), Effect.STEP_SOUND, Material.REDSTONE_BLOCK.getId(), 0, 0.2F, 0.25F, 0.2F, 1, 30, 32);
-                victim.spigot().respawn();
+                victim.setHealth(20);
+                victim.setGameMode(GameMode.SPECTATOR);
+                Titles.sendTitle(victim,0,30,10,"§c死亡","§7你被擊殺了");
 
                 soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH, 1, 1 + (float) Math.random());
             }
@@ -114,6 +116,7 @@ public class InGameListener implements Listener {
                 ActionBar.clearActionBar(player);
                 ActionBar.sendActionBar(BukkitPlugin.INSTANCE, player, "§a進攻點 §e" + (map.getAttackSpawn().indexOf(BukkitPos.toMCPos(nextAttackSpawn)) + 1) + " §7| §a左鍵§7前往下一個");
                 player.teleport(nextAttackSpawn);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 0.7f);
             }
         }
     }

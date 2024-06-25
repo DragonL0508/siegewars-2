@@ -2,6 +2,7 @@ package me.dragonl.siegewars.game.kit.allKits;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
@@ -127,9 +128,12 @@ public class SpecialKit implements SiegeWarsKit {
     @Override
     public Boolean useAbility(Player player) {
         Team targetTeam = teamManager.swGetAnotherTeam(player);
-        if(targetTeam.getNametagVisibility() == NametagVisibility.always)
+        if (targetTeam.getNametagVisibility() == NametagVisibility.always)
             return false;
         targetTeam.setNametagVisibility(NametagVisibility.always);
+        teamManager.getPlayerTeam(player).getPlayers().forEach(uuid -> {
+            Titles.sendTitle(Bukkit.getPlayer(uuid), 0, 20, 10, "", "§e" + player.getName() + " §6探查了敵方位置");
+        });
 
         // show target position
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
@@ -138,6 +142,7 @@ public class SpecialKit implements SiegeWarsKit {
                 target.getWorld().spigot().playEffect(target.getLocation().add(0, 1, 0), Effect.FLAME, 1, 0, 0, 0, 0, 0.25f, 25, 32);
                 target.getWorld().playSound(target.getLocation(), Sound.FIRE_IGNITE, 1, 0.3f);
                 target.getWorld().playSound(target.getLocation(), Sound.FIZZ, 1, 1.25f);
+                Titles.sendTitle(target, 5, 10, 5, "", "§c你的位置已暴露");
             });
         }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(7))).getFuture();
         future.thenRun(() -> {

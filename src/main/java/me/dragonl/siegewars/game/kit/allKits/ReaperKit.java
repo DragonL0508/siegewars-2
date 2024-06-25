@@ -2,6 +2,7 @@ package me.dragonl.siegewars.game.kit.allKits;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.mc.scheduler.MCSchedulers;
@@ -156,6 +157,7 @@ public class ReaperKit implements SiegeWarsKit {
                         target.addPotionEffect(blind);
                         target.addPotionEffect(slowness);
                         target.addPotionEffect(wither);
+                        Titles.sendTitle(target, 0, 10, 0, "", "§7你受到了 §c" + player.getName() + " §7的詛咒");
                     }
                 }
             });
@@ -166,6 +168,7 @@ public class ReaperKit implements SiegeWarsKit {
         future.thenRun(() -> {
             player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0.5f);
             player.getWorld().spigot().playEffect(player.getLocation().add(0, 1, 0), Effect.LARGE_SMOKE, 1, 0, 0.15f, 0.4f, 0.15f, 0.5f, 50, 32);
+            Titles.sendTitle(player, 0, 20, 10, "", "§8死神效果已結束");
         });
 
         player.getWorld().playSound(player.getLocation(), Sound.ENDERMAN_SCREAM, 1, 0.35f);

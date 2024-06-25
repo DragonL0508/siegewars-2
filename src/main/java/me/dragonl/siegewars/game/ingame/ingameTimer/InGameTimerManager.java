@@ -18,6 +18,7 @@ public class InGameTimerManager {
     public InGameTimerManager(InGameRunTime inGameRunTime) {
         registerTimer(new PreparingTimer(35, inGameRunTime));
         registerTimer(new PositionChoosingTimer(30, inGameRunTime));
+        registerTimer(new FightingTimer(90, inGameRunTime));
     }
 
     public void registerTimer(Timer timer) {
@@ -35,7 +36,7 @@ public class InGameTimerManager {
             if (timer.isStop())
                 return TaskResponse.failure("");
 
-            if(timer.getTime() == 0){
+            if (timer.getTime() == 0) {
                 return TaskResponse.success("");
             }
 
@@ -68,7 +69,7 @@ public class InGameTimerManager {
         });
 
         int i = timers.indexOf(timerMap.get());
-        if(i == timers.size() - 1)
+        if (i == timers.size() - 1)
             return timers.get(timers.size() - 1).getValue();
 
         return timers.get(i + 1).getValue();
