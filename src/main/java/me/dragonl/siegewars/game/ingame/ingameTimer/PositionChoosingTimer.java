@@ -48,6 +48,11 @@ public class PositionChoosingTimer implements Timer{
     }
 
     @Override
+    public Boolean thenUnregister() {
+        return false;
+    }
+
+    @Override
     public void setIsStop(Boolean bool) {
         this.isStop = bool;
     }

@@ -19,6 +19,7 @@ import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -27,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -35,6 +37,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @InjectableComponent
@@ -75,6 +79,70 @@ public class InGameListener implements Listener {
     }
 
     @EventHandler
+    void onPlacedBlock(BlockPlaceEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    void onBreakBlock(BlockBreakEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    void onInteract(PlayerInteractEvent event) {
+        if(event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+            if (gameStateManager.isCurrentGameState(GameState.IN_GAME)
+                    && isNotAllowed(event.getClickedBlock())) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    private Boolean isNotAllowed(Block block) {
+        List<Material> blocks = Arrays.asList(
+                Material.CHEST,
+                Material.ENDER_CHEST,
+                Material.ENCHANTMENT_TABLE,
+                Material.ANVIL,
+                Material.WORKBENCH,
+                Material.FURNACE,
+                Material.BURNING_FURNACE,
+                Material.FENCE_GATE,
+                Material.BED,
+                Material.ACACIA_DOOR,
+                Material.DARK_OAK_DOOR,
+                Material.BIRCH_DOOR,
+                Material.JUNGLE_DOOR,
+                Material.WOODEN_DOOR,
+                Material.SPRUCE_DOOR,
+                Material.FENCE_GATE,
+                Material.ACACIA_FENCE_GATE,
+                Material.BIRCH_FENCE_GATE,
+                Material.JUNGLE_FENCE_GATE,
+                Material.SPRUCE_FENCE_GATE,
+                Material.DARK_OAK_FENCE_GATE,
+                Material.TRAP_DOOR,
+                Material.TRAPPED_CHEST,
+                Material.WOOD_BUTTON,
+                Material.STONE_BUTTON,
+                Material.DISPENSER,
+                Material.HOPPER,
+                Material.LEVER
+        );
+
+        for (Material m : blocks) {
+            if (block.getType() == m)
+                return true;
+        }
+
+        return false;
+    }
+
+    @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
             if (event.getEntity().getKiller() != null) {
@@ -90,7 +158,7 @@ public class InGameListener implements Listener {
                 victim.getWorld().spigot().playEffect(victim.getLocation().add(0, 1, 0), Effect.STEP_SOUND, Material.REDSTONE_BLOCK.getId(), 0, 0.2F, 0.25F, 0.2F, 1, 30, 32);
                 victim.setHealth(20);
                 victim.setGameMode(GameMode.SPECTATOR);
-                Titles.sendTitle(victim,0,30,10,"§c死亡","§7你被擊殺了");
+                Titles.sendTitle(victim, 0, 30, 10, "§c死亡", "§7你被擊殺了");
 
                 soundPlayer.playSound(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList()), Sound.IRONGOLEM_DEATH, 1, 1 + (float) Math.random());
             }
@@ -129,7 +197,7 @@ public class InGameListener implements Listener {
             Location from = event.getFrom(), to = event.getTo();
             if (!(from.getBlockX() == to.getBlockX()
                     && from.getBlockY() == to.getBlockY()
-                    && from.getBlockZ() == to.getBlockZ())){
+                    && from.getBlockZ() == to.getBlockZ())) {
                 event.setCancelled(true);
                 player.teleport(new Location(from.getWorld(), from.getBlockX() + 0.5, from.getBlockY() + 0.5, from.getBlockZ() + 0.5));
             }

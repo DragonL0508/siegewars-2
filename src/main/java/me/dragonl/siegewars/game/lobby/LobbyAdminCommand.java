@@ -13,6 +13,7 @@ import me.dragonl.siegewars.game.kit.SiegeWarsKit;
 import me.dragonl.siegewars.game.shop.ShopMenu;
 import me.dragonl.siegewars.itemStack.items.gameplay.AxeItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.BaffleItem;
+import me.dragonl.siegewars.itemStack.items.gameplay.BombItem;
 import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
@@ -31,18 +32,20 @@ public class LobbyAdminCommand extends BaseCommand {
     private final BaffleItem baffleItem;
     private final MapObjectCatcher mapObjectCatcher;
     private final AxeItem axeItem;
+    private final BombItem bombItem;
     private final LobbyAdminMenu lobbyAdminMenu;
     private final PlayerKitManager playerKitManager;
     private final ShopMenu shopMenu;
     private final InGamePreparingExecuter inGamePreparingExecuter;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu, InGamePreparingExecuter inGamePreparingExecuter) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, BombItem bombItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu, InGamePreparingExecuter inGamePreparingExecuter) {
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.tntItem = tntItem;
         this.baffleItem = baffleItem;
         this.mapObjectCatcher = mapObjectCatcher;
         this.axeItem = axeItem;
+        this.bombItem = bombItem;
         this.lobbyAdminMenu = lobbyAdminMenu;
         this.playerKitManager = playerKitManager;
         this.shopMenu = shopMenu;
@@ -88,8 +91,12 @@ public class LobbyAdminCommand extends BaseCommand {
             }
             case axe: {
                 inv.addItem(axeItem.get(player));
+                break;
             }
-
+            case Bomb:{
+                inv.addItem(bombItem.get(player));
+                break;
+            }
         }
     }
 

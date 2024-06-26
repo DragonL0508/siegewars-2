@@ -89,10 +89,11 @@ public class PlayerPreparingChecker extends BukkitRunnable {
 
     private void gameStartLogic() {
         //choose attack or defend
-        if (Math.random() < 0.5)
-            gameStateManager.setAttackTeam(teamManager.getTeam("A"));
-        else
-            gameStateManager.setAttackTeam(teamManager.getTeam("B"));
+//        if (Math.random() < 0.5)
+//            gameStateManager.setAttackTeam(teamManager.getTeam("A"));
+//        else
+//            gameStateManager.setAttackTeam(teamManager.getTeam("B"));
+        gameStateManager.setAttackTeam(teamManager.getTeam("A"));
 
         //players loop
         //send players to map

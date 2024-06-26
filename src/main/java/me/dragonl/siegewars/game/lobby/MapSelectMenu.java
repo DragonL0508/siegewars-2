@@ -65,6 +65,8 @@ public class MapSelectMenu {
                     Bukkit.broadcastMessage("§a地圖已更換為: §e" + e.getMapName());
                     gui.update(player);
                 }));
+
+                i.set(i.get() + 1);
             });
 
             //show selected map

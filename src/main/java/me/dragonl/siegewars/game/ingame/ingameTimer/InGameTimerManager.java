@@ -25,6 +25,26 @@ public class InGameTimerManager {
         timers.add(new TimerMap(timer.getID(), timer));
     }
 
+    public Timer registerTimer(Timer timer, int index) {
+        timers.add(index, new TimerMap(timer.getID(), timer));
+        return timer;
+    }
+
+    public void stopAndUnregisterTimer(Timer timer) {
+        stopTimer(timer);
+        timers.remove(getTimerMap(timer.getID()));
+    }
+
+    public TimerMap getTimerMap(String id) {
+        AtomicReference<TimerMap> map = new AtomicReference<>();
+        timers.forEach(timerMap -> {
+            if (Objects.equals(timerMap.getKey(), id)) {
+                map.set(timerMap);
+            }
+        });
+        return map.get();
+    }
+
     public List<TimerMap> getTimers() {
         return timers;
     }
@@ -46,9 +66,14 @@ public class InGameTimerManager {
             return TaskResponse.continueTask();
         }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
         future.thenRun(() -> {
-
-            stopTimer(timer);
-            startTimer(getNextTimer(timer));
+            MCSchedulers.getGlobalScheduler().schedule(() -> {
+                if (timer.thenUnregister()) {
+                    stopAndUnregisterTimer(timer);
+                } else {
+                    stopTimer(timer);
+                    startTimer(getNextTimer(timer));
+                }
+            },1);
         });
     }
 

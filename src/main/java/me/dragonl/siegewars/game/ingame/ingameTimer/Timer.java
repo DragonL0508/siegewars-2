@@ -10,6 +10,7 @@ public interface Timer {
     Integer getInitialTime();
     void reset();
     Boolean isStop();
+    Boolean thenUnregister();
     void setIsStop(Boolean bool);
     void runTime();
 }

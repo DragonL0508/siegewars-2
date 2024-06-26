@@ -78,22 +78,22 @@ public class InGameItemRunTime extends BukkitRunnable {
         for (double x = xArr[0]; x < xArr[1]; x += step)
             for (double y : yArr)
                 for (double z : zArr) {
-                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
+                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 10);
                 }
         for (double y = yArr[0]; y < yArr[1]; y += step)
             for (double x : xArr)
                 for (double z : zArr) {
-                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
+                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 10);
                 }
         for (double z = zArr[0]; z < zArr[1]; z += step)
             for (double y : yArr)
                 for (double x : xArr) {
-                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 32);
+                    p.spigot().playEffect(new Location(world, x, y, z), Effect.COLOURED_DUST, 0, 1, 1, 0, 0, 0, 0, 10);
                 }
     }
 
     @PostInitialize
     public void init() {
-        this.runTaskTimer(BukkitPlugin.INSTANCE, 0, 5);
+        this.runTaskTimer(BukkitPlugin.INSTANCE, 0, 10);
     }
 }

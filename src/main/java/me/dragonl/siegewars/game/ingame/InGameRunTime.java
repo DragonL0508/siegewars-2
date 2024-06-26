@@ -31,6 +31,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -161,6 +162,12 @@ public class InGameRunTime {
 
         MCSchedulers.getGlobalScheduler().schedule(() -> {
             Bukkit.broadcastMessage("fighting end!");
+        }, timer.getTime() * 20);
+    }
+
+    public void bombPlantedRunTime(Timer timer){
+        MCSchedulers.getGlobalScheduler().schedule(() -> {
+            Bukkit.broadcastMessage("BOOOOOM!");
         }, timer.getTime() * 20);
     }
 }

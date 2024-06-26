@@ -2,24 +2,24 @@ package me.dragonl.siegewars.game.ingame.ingameTimer;
 
 import me.dragonl.siegewars.game.ingame.InGameRunTime;
 
-public class FightingTimer implements Timer{
+public class BombTimer implements Timer{
     private Integer time;
     private final Integer initialTime;
     private Boolean isStop = true;
     private final InGameRunTime inGameRunTime;
-    public FightingTimer(Integer time, InGameRunTime inGameRunTime){
+    public BombTimer(Integer time, InGameRunTime inGameRunTime){
         this.time = time;
         this.initialTime = time;
         this.inGameRunTime = inGameRunTime;
     }
     @Override
     public String getID() {
-        return "fighting";
+        return "bombPlanted";
     }
 
     @Override
     public String getName() {
-        return "戰鬥階段";
+        return "炸藥已安裝";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FightingTimer implements Timer{
 
     @Override
     public Boolean thenUnregister() {
-        return false;
+        return true;
     }
 
     @Override
@@ -59,6 +59,6 @@ public class FightingTimer implements Timer{
 
     @Override
     public void runTime() {
-        inGameRunTime.fightingRunTime(this);
+        inGameRunTime.bombPlantedRunTime(this);
     }
 }
