@@ -4,9 +4,7 @@ import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.BukkitPos;
-import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.mc.util.Position;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
@@ -17,31 +15,23 @@ import me.dragonl.siegewars.game.ingame.ingameTimer.Timer;
 import me.dragonl.siegewars.team.Team;
 import me.dragonl.siegewars.team.TeamManager;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Pig;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.*;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @InjectableComponent
 public class InGameRunTime {
     private final TeamManager teamManager;
     private final GameStateManager gameStateManager;
-    Map<UUID, Boolean> preparingPlayers = new HashMap<>();
+    private Map<UUID, Boolean> preparingPlayers = new HashMap<>();
+    private Location bomblocation = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
+
+    public void setBomblocation(Location bomblocation) {
+        this.bomblocation = bomblocation;
+    }
 
     public InGameRunTime(TeamManager teamManager, GameStateManager gameStateManager) {
         this.teamManager = teamManager;
@@ -61,6 +51,9 @@ public class InGameRunTime {
         bPlayers.forEach(uuid -> preparingPlayers.put(uuid, false));
 
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            if (timer.isStop())
+                return TaskResponse.failure("");
+
             long teamAPrepared = aPlayers.stream()
                     .filter(preparingPlayers::get)
                     .count();
@@ -118,6 +111,7 @@ public class InGameRunTime {
             if (teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam()) {
                 p.teleport(BukkitPos.toBukkitLocation(defendSpawn.get(r.nextInt(defendSpawn.size()) - 1)));
                 p.setGameMode(GameMode.SURVIVAL);
+                p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
                 Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e請做好防守準備");
                 gameStateManager.getAttackTeam().getPlayers().forEach(uuid -> {
                     p.hidePlayer(Bukkit.getPlayer(uuid));
@@ -136,10 +130,15 @@ public class InGameRunTime {
         });
 
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            if (timer.isStop())
+                return TaskResponse.failure("");
+
             Bukkit.getOnlinePlayers().forEach(p -> {
                 if (timer.getTime() <= 5)
                     p.playSound(p.getLocation(), Sound.CLICK, 1, 0.75f);
             });
+
+            return TaskResponse.continueTask();
         }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
 
         future.thenRun(() -> {
@@ -160,14 +159,49 @@ public class InGameRunTime {
 
         gameStateManager.setCurrentRoundState(RoundState.FIGHTING);
 
-        MCSchedulers.getGlobalScheduler().schedule(() -> {
+        CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            if (timer.isStop())
+                return TaskResponse.failure("");
+
+            return TaskResponse.continueTask();
+        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
+
+        future.thenRun(() -> {
             Bukkit.broadcastMessage("fighting end!");
-        }, timer.getTime() * 20);
+        });
     }
 
-    public void bombPlantedRunTime(Timer timer){
-        MCSchedulers.getGlobalScheduler().schedule(() -> {
-            Bukkit.broadcastMessage("BOOOOOM!");
-        }, timer.getTime() * 20);
+    public void bombPlantedRunTime(Timer timer) {
+
+        AtomicInteger o = new AtomicInteger();
+        CompletableFuture<?> futureTick = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            if (timer.isStop())
+                return TaskResponse.failure("");
+
+            int i;
+
+            if (timer.getTime() > 20)
+                i = 30;
+            else if (timer.getTime() > 10)
+                i = 20;
+            else if (timer.getTime() > 5)
+                i = 10;
+            else
+                i = 5;
+
+            if (o.get() >= i) {
+                World world = this.bomblocation.getWorld();
+                world.playSound(this.bomblocation, Sound.NOTE_PLING, 2.5f, 1.5f);
+                world.playSound(this.bomblocation, Sound.NOTE_BASS_DRUM, 2.5f, 0.5f);
+                o.set(0);
+            }
+
+            o.getAndIncrement();
+            return TaskResponse.continueTask();
+        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
+
+        futureTick.thenRun(() -> {
+            Bukkit.broadcastMessage("Booom!");
+        });
     }
 }

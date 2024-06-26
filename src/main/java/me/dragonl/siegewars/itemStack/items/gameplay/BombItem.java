@@ -13,19 +13,16 @@ import me.dragonl.siegewars.game.ingame.BombManager;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
-import me.dragonl.siegewars.player.PlayerKitManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @InjectableComponent
 public class BombItem extends CustomItemFairy {
@@ -57,25 +54,30 @@ public class BombItem extends CustomItemFairy {
 
         @EventHandler
         public void onPlaced(BlockPlaceEvent event) {
-            if (isItem(event.getItemInHand()))
+            if (isItem(event.getItemInHand()) )
                 startPlanting(event.getPlayer(), event.getBlockPlaced().getLocation());
         }
 
         private void startPlanting(Player player, Location location) {
             Location playerLoc = player.getLocation();
-            Titles.sendTitle(player, 0, 1000, 0, "", "§e開始安裝炸藥包");
             playerLoc.getWorld().playSound(playerLoc, Sound.ORB_PICKUP, 3, 1.7f);
             playerLoc.getWorld().playSound(playerLoc, Sound.NOTE_PLING, 3, 1.7f);
             MCSchedulers.getGlobalScheduler().schedule(() -> {
                 playerLoc.getWorld().playSound(playerLoc, Sound.ORB_PICKUP, 3, 1.7f);
             }, 4);
 
+            AtomicInteger i = new AtomicInteger();
             CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+                i.getAndIncrement();
+                double progress = (double) i.get() / 80;
+                Titles.sendTitle(player, 0, 1000, 0, "§e正在安裝炸藥包", createProgressBar(progress));
+
                 if (!isItem(player.getItemInHand())) {
-                    Titles.sendTitle(player, 0, 30, 10, "", "§c炸藥已取消安裝");
+                    MCSchedulers.getGlobalScheduler().schedule(() -> {
+                        Titles.sendTitle(player, 0, 30, 10, "", "§c炸藥已取消安裝");
+                    },1);
                     return TaskResponse.failure("");
                 }
-
                 player.teleport(playerLoc);
 
                 return TaskResponse.continueTask();
@@ -85,6 +87,24 @@ public class BombItem extends CustomItemFairy {
                 removeCustomItem.removeCustomItem(player, Arrays.asList(bombItem));
                 bombManager.plant(player, location);
             });
+        }
+
+        private String createProgressBar(double progress) {
+            int totalBars = 20; // 进度条总长度
+            int filledBars = (int) (progress * totalBars);
+            int emptyBars = totalBars - filledBars;
+
+            StringBuilder progressBar = new StringBuilder();
+            progressBar.append("§a"); // 已填充部分的颜色
+            for (int i = 0; i < filledBars; i++) {
+                progressBar.append("|");
+            }
+            progressBar.append("§7"); // 未填充部分的颜色
+            for (int i = 0; i < emptyBars; i++) {
+                progressBar.append("|");
+            }
+
+            return progressBar.toString();
         }
 
         //        @EventHandler

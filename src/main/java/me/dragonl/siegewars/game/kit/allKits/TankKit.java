@@ -168,7 +168,7 @@ public class TankKit implements SiegeWarsKit {
             }
 
             return TaskResponse.continueTask();
-        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(2))).getFuture();
+        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(1))).getFuture();
         future.thenRun(() -> onSprintEnded(player));
     }
 
@@ -178,7 +178,7 @@ public class TankKit implements SiegeWarsKit {
 
         player.teleport(to);
 
-        Vector dir = location.getDirection().normalize().multiply(0.65);
+        Vector dir = location.getDirection().normalize().multiply(0.75);
         player.setVelocity(new Vector(dir.getX(), -1, dir.getZ()));
         player.getWorld().spigot().playEffect(location.clone().add(0, 1.8, 0), Effect.VILLAGER_THUNDERCLOUD, 1, 0, 0.1f, 0.1f, 0.1f, 0, 1, 32);
     }
