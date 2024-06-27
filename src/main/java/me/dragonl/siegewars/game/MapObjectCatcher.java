@@ -2,6 +2,7 @@ package me.dragonl.siegewars.game;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.util.Position;
+import javafx.geometry.Pos;
 import me.dragonl.siegewars.yaml.MapConfig;
 import me.dragonl.siegewars.yaml.element.DestroyableWallElement;
 import me.dragonl.siegewars.yaml.element.DestroyableWindowElement;
@@ -98,6 +99,26 @@ public class MapObjectCatcher {
             int maxY = window.getPosition1().getBlockY();
             int minZ = window.getPosition2().getBlockZ();
             int maxZ = window.getPosition1().getBlockZ();
+
+            if (position.getBlockX() >= minX && position.getBlockX() <= maxX
+                    && position.getBlockY() >= minY && position.getBlockY() <= maxY
+                    && position.getBlockZ() >= minZ && position.getBlockZ() <= maxZ)
+                bool.set(true);
+        });
+        return bool.get();
+    }
+
+    public boolean isBombSite(Position position) {
+        AtomicReference<Boolean> bool = new AtomicReference<>(false);
+        MapConfigElement element = mapConfig.getMaps().get(position.getWorld());
+
+        element.getBombSiteList().forEach(bombSite -> {
+            int minX = bombSite.getPosition2().getBlockX();
+            int maxX = bombSite.getPosition1().getBlockX();
+            int minY = bombSite.getPosition2().getBlockY();
+            int maxY = bombSite.getPosition1().getBlockY();
+            int minZ = bombSite.getPosition2().getBlockZ();
+            int maxZ = bombSite.getPosition1().getBlockZ();
 
             if (position.getBlockX() >= minX && position.getBlockX() <= maxX
                     && position.getBlockY() >= minY && position.getBlockY() <= maxY

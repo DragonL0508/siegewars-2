@@ -19,14 +19,23 @@ public class GameStateManager {
     private RoundState currentRoundState = RoundState.PREPARING;
     private MapConfigElement selectedMap;
     private Team attackTeam;
+    private UUID bombClaimer;
 
     public GameStateManager(TeamManager teamManager, MapConfig mapConfig) {
         this.teamManager = teamManager;
         this.mapConfig = mapConfig;
     }
 
+    public UUID getBombClaimer() {
+        return bombClaimer;
+    }
+
+    public void setBombClaimer(UUID bombClaimer) {
+        this.bombClaimer = bombClaimer;
+    }
+
     public Team getAttackTeam() {
-        if(attackTeam == null)
+        if (attackTeam == null)
             return teamManager.getTeam("A");
         return attackTeam;
     }
@@ -36,9 +45,9 @@ public class GameStateManager {
     }
 
     public MapConfigElement getSelectedMap() {
-        if(mapConfig.getMaps().isEmpty())
+        if (mapConfig.getMaps().isEmpty())
             return new MapConfigElement("&c未選擇");
-        if(selectedMap == null){
+        if (selectedMap == null) {
             List<String> list = new ArrayList<>(mapConfig.getMaps().keySet());
             return mapConfig.getMaps().get(list.get(0));
         }
@@ -108,8 +117,9 @@ public class GameStateManager {
     public boolean isCurrentGameState(GameState state) {
         return this.currentGameState == state;
     }
-    public String getRoundStateName(){
-        switch (currentRoundState){
+
+    public String getRoundStateName() {
+        switch (currentRoundState) {
             case PREPARING:
                 return "雙方備戰";
             case POSITION_CHOOSING:

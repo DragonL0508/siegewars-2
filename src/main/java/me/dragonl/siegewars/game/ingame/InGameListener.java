@@ -3,6 +3,7 @@ package me.dragonl.siegewars.game.ingame;
 import com.cryptomorin.xseries.messages.ActionBar;
 import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
+import io.fairyproject.bukkit.events.player.EntityDamageByPlayerEvent;
 import io.fairyproject.bukkit.events.player.PlayerDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
@@ -31,10 +32,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
 import java.util.Arrays;
@@ -50,14 +50,16 @@ public class InGameListener implements Listener {
     private final SoundPlayer soundPlayer;
     private final NameGetter nameGetter;
     private final MapObjectDestroyer mapObjectDestroyer;
+    private final BombManager bombManager;
 
-    public InGameListener(PlayerDataManager playerDataManager, GameStateManager gameStateManager, TeamManager teamManager, SoundPlayer soundPlayer, NameGetter nameGetter, MapObjectDestroyer mapObjectDestroyer) {
+    public InGameListener(PlayerDataManager playerDataManager, GameStateManager gameStateManager, TeamManager teamManager, SoundPlayer soundPlayer, NameGetter nameGetter, MapObjectDestroyer mapObjectDestroyer, BombManager bombManager) {
         this.playerDataManager = playerDataManager;
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.soundPlayer = soundPlayer;
         this.nameGetter = nameGetter;
         this.mapObjectDestroyer = mapObjectDestroyer;
+        this.bombManager = bombManager;
     }
 
     @EventHandler
@@ -93,8 +95,22 @@ public class InGameListener implements Listener {
     }
 
     @EventHandler
+    void onHangingBreak(HangingBreakEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    void onHangingPlace(HangingPlaceEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     void onInteract(PlayerInteractEvent event) {
-        if(event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (gameStateManager.isCurrentGameState(GameState.IN_GAME)
                     && isNotAllowed(event.getClickedBlock())) {
                 event.setCancelled(true);
@@ -172,17 +188,44 @@ public class InGameListener implements Listener {
     }
 
     @EventHandler
-    public void onLocChoosingClick(PlayerInteractEvent event) {
+    public void onLocChoosingInteract(PlayerInteractEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME) && gameStateManager.isCurrentRoundState(RoundState.POSITION_CHOOSING)
+                && teamManager.isInTeam(event.getPlayer(), gameStateManager.getAttackTeam())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        //cancel vehicle interaction in game
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            Entity entity = event.getRightClicked();
+            if (entity.getType() == EntityType.MINECART || entity.getType() == EntityType.BOAT) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerAttackEntity(EntityDamageByPlayerEvent event) {
+        if (gameStateManager.isCurrentGameState(GameState.IN_GAME)
+                && event.getEntity().getType() != EntityType.PLAYER)
+            event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onLocChoosingJump(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         MapConfigElement map = gameStateManager.getSelectedMap();
 
         if (gameStateManager.isCurrentGameState(GameState.IN_GAME) && gameStateManager.isCurrentRoundState(RoundState.POSITION_CHOOSING)
                 && teamManager.isInTeam(player, gameStateManager.getAttackTeam())) {
-            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            Location from = event.getFrom(), to = event.getTo();
+            if (from.getBlockY() < to.getBlockY()) {
                 //next position
                 Location nextAttackSpawn = map.getNextAttackSpawn(player.getLocation());
                 ActionBar.clearActionBar(player);
-                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, player, "§a進攻點 §e" + (map.getAttackSpawn().indexOf(BukkitPos.toMCPos(nextAttackSpawn)) + 1) + " §7| §a左鍵§7前往下一個");
+                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, player, "§a進攻點 §e" + (map.getAttackSpawn().indexOf(BukkitPos.toMCPos(nextAttackSpawn)) + 1) + " §7| §a跳躍前往下一個");
                 player.teleport(nextAttackSpawn);
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 0.7f);
             }
@@ -196,9 +239,7 @@ public class InGameListener implements Listener {
                 && teamManager.isInTeam(player, gameStateManager.getAttackTeam())) {
             Location from = event.getFrom(), to = event.getTo();
             if (!(from.getBlockX() == to.getBlockX()
-                    && from.getBlockY() == to.getBlockY()
                     && from.getBlockZ() == to.getBlockZ())) {
-                event.setCancelled(true);
                 player.teleport(new Location(from.getWorld(), from.getBlockX() + 0.5, from.getBlockY() + 0.5, from.getBlockZ() + 0.5));
             }
         }

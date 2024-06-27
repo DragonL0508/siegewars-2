@@ -19,6 +19,7 @@ public class InGameTimerManager {
         registerTimer(new PreparingTimer(35, inGameRunTime));
         registerTimer(new PositionChoosingTimer(30, inGameRunTime));
         registerTimer(new FightingTimer(90, inGameRunTime));
+        registerTimer(new RoundEndTimer(5, inGameRunTime));
     }
 
     public void registerTimer(Timer timer) {
@@ -71,9 +72,11 @@ public class InGameTimerManager {
                     stopAndUnregisterTimer(timer);
                 } else {
                     stopTimer(timer);
-                    startTimer(getNextTimer(timer));
+
+                    if (!timer.thenStop())
+                        startTimer(getNextTimer(timer));
                 }
-            },1);
+            }, 20);
         });
     }
 

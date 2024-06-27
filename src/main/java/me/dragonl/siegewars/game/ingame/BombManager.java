@@ -8,7 +8,9 @@ import com.github.retrooper.packetevents.protocol.world.chunk.TileEntity;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCGameProfile;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.mc.util.Property;
+import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import me.dragonl.siegewars.game.GameStateManager;
 import me.dragonl.siegewars.game.ingame.ingameTimer.BombTimer;
 import me.dragonl.siegewars.game.ingame.ingameTimer.InGameTimerManager;
@@ -24,14 +26,34 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @InjectableComponent
 public class BombManager {
     private final InGameTimerManager timerManager;
     private final InGameRunTime inGameRunTime;
-    private Location bombLocation;
+    private Location bombLocation = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
+    private Boolean isPlanting = false;
+    private Boolean isDefusing = false;
+
+    public Boolean getDefusing() {
+        return isDefusing;
+    }
+
+    public void setDefusing(Boolean defusing) {
+        isDefusing = defusing;
+    }
+
+    public Boolean getPlanting() {
+        return isPlanting;
+    }
+
+    public void setPlanting(Boolean planting) {
+        isPlanting = planting;
+    }
 
     public Location getBombLocation() {
         return bombLocation;
@@ -43,6 +65,8 @@ public class BombManager {
     }
 
     public void plant(Player player, Location location) {
+        isPlanting = false;
+
         Bukkit.getOnlinePlayers().forEach(p -> {
             Titles.sendTitle(p, 0, 50, 10, "", "§c炸藥包已被放置");
             p.playSound(p.getLocation(), Sound.ANVIL_LAND, 1, 1.25f);
@@ -51,7 +75,7 @@ public class BombManager {
         this.bombLocation = location;
         Block bomb = location.getBlock();
         bomb.setType(Material.SKULL);
-        Skull skullData = (Skull)bomb.getState();
+        Skull skullData = (Skull) bomb.getState();
         skullData.setSkullType(SkullType.PLAYER);
         skullData.setRawData((byte) 1);
         skullData.update(true);
@@ -68,5 +92,25 @@ public class BombManager {
 
         timerManager.stopTimer(timerManager.getTimerRunningNow());
         timerManager.startTimer(bombTimer);
+    }
+
+    public void defuse(Player player) {
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            Titles.sendTitle(p, 0, 50, 10, "§a炸藥包已被拆除", "§e拆除者: " + player.getName());
+            p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1.25f);
+        });
+
+        Block bomb = bombLocation.getBlock();
+        bomb.getWorld().spigot().playEffect(bomb.getLocation().add(0.5, 0, 0.5), Effect.LAVA_POP, 1, 0, 0, 0, 0, 0.05f, 10, 16);
+        bomb.setType(Material.AIR);
+
+        bombLocation = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
+        isDefusing = false;
+
+        //timer
+        Timer running = timerManager.getTimerRunningNow();
+        timerManager.stopAndUnregisterTimer(running);
+        timerManager.startTimer(timerManager.getTimerMap("roundEnd").getValue());
+
     }
 }

@@ -4,6 +4,9 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.dragonl.siegewars.game.GameState;
+import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.RoundState;
 import me.dragonl.siegewars.itemStack.CustomItemFairy;
 import me.dragonl.siegewars.itemStack.ItemListenerTemplate;
 import me.dragonl.siegewars.itemStack.RemoveCustomItem;
@@ -32,16 +35,22 @@ public class AttackerAbilityItem extends CustomItemFairy {
         private final PlayerKitManager kitManager;
         private final RemoveCustomItem removeCustomItem;
         private final AttackerAbilityItem attackerAbilityItem;
+        private final GameStateManager gameStateManager;
 
-        public AttackAbilityListener(AttackerAbilityItem customItem, PlayerKitManager kitManager, RemoveCustomItem removeCustomItem, AttackerAbilityItem attackerAbilityItem) {
+        public AttackAbilityListener(AttackerAbilityItem customItem, PlayerKitManager kitManager, RemoveCustomItem removeCustomItem, AttackerAbilityItem attackerAbilityItem, GameStateManager gameStateManager) {
             super(customItem);
             this.kitManager = kitManager;
             this.removeCustomItem = removeCustomItem;
             this.attackerAbilityItem = attackerAbilityItem;
+            this.gameStateManager = gameStateManager;
         }
 
         @Override
         protected void onRightClickItem(PlayerInteractEvent event) {
+            if (gameStateManager.isCurrentGameState(GameState.IN_GAME))
+                if (gameStateManager.isCurrentRoundState(RoundState.PREPARING) || gameStateManager.isCurrentRoundState(RoundState.POSITION_CHOOSING))
+                    return;
+
             Player player = event.getPlayer();
             kitManager.getPlayerKit(player).useAbility(player);
             removeCustomItem.removeCustomItem(player, Arrays.asList(attackerAbilityItem));

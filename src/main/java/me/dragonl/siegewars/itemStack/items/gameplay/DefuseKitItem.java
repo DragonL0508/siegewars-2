@@ -20,7 +20,9 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -28,15 +30,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @InjectableComponent
-public class BombItem extends CustomItemFairy {
+public class DefuseKitItem extends CustomItemFairy {
 
     @Override
     protected FairyItem register() {
-        return FairyItem.builder("sw:bomb")
-                .item(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                        .name("§e炸藥包")
+        return FairyItem.builder("sw:defuse_kit")
+                .item(ItemBuilder.of(XMaterial.SHEARS)
+                        .name("§e拆彈器")
                         .lore()
-                        .skull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGY4NzRiYjViNmVmN2IzNDM0YTU4YjMxNDk2MjUyMTg2Mjk1YzM3OWJlOTk2OTM0ZDEwM2QxNWVhMjI1Y2JhMyJ9fX0=")
                         .build())
                 .build();
     }
@@ -44,63 +45,61 @@ public class BombItem extends CustomItemFairy {
     @RegisterAsListener
     @InjectableComponent
     class BombItemListener extends ItemListenerTemplate {
-        private final RemoveCustomItem removeCustomItem;
-        private final BombItem bombItem;
         private final BombManager bombManager;
-        private final MapObjectCatcher mapObjectCatcher;
 
-        public BombItemListener(BombItem customItem, RemoveCustomItem removeCustomItem, BombItem bombItem, BombManager bombManager, MapObjectCatcher mapObjectCatcher) {
+        public BombItemListener(DefuseKitItem customItem, BombManager bombManager) {
             super(customItem);
-            this.removeCustomItem = removeCustomItem;
-            this.bombItem = bombItem;
             this.bombManager = bombManager;
-            this.mapObjectCatcher = mapObjectCatcher;
         }
 
-        @EventHandler
-        public void onPlaced(BlockPlaceEvent event) {
-            Position position = BukkitPos.toMCPos(event.getBlockAgainst().getLocation());
-            if (isItem(event.getItemInHand()) && mapObjectCatcher.isBombSite(position) && !bombManager.getPlanting()) {
-                if (event.getPlayer().isOnGround())
-                    startPlanting(event.getPlayer(), event.getBlockPlaced().getLocation());
+        @Override
+        protected void onRightClickBlock(PlayerInteractEvent event) {
+            if (event.getClickedBlock().getX() == bombManager.getBombLocation().getBlockX()
+                    && event.getClickedBlock().getY() == bombManager.getBombLocation().getBlockY()
+                    && event.getClickedBlock().getZ() == bombManager.getBombLocation().getBlockZ()
+                    && !bombManager.getDefusing()) {
+                Player player = event.getPlayer();
+                if (player.isOnGround())
+                    startDefusing(player);
                 else {
-                    event.setCancelled(true);
-                    Titles.sendTitle(event.getPlayer(), 0, 30, 10, "", "§c炸藥包只能在地面上放置");
+                    player.sendMessage("§e[系統] §c站在地面上才能拆除炸彈");
+                    player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
                 }
             }
         }
 
-        private void startPlanting(Player player, Location location) {
-            bombManager.setPlanting(true);
+        private void startDefusing(Player player) {
+            bombManager.setDefusing(true);
+            Location playerLocation = player.getLocation();
 
-            Location playerLoc = player.getLocation();
-            playerLoc.getWorld().playSound(playerLoc, Sound.ORB_PICKUP, 3, 1.7f);
-            playerLoc.getWorld().playSound(playerLoc, Sound.NOTE_PLING, 3, 1.7f);
+            playerLocation.getWorld().playSound(playerLocation, Sound.NOTE_PLING, 2.0f, 0.75f);
+            playerLocation.getWorld().playSound(playerLocation, Sound.NOTE_PLING, 2.0f, 1.25f);
+
             MCSchedulers.getGlobalScheduler().schedule(() -> {
-                playerLoc.getWorld().playSound(playerLoc, Sound.ORB_PICKUP, 3, 1.7f);
+                playerLocation.getWorld().playSound(playerLocation, Sound.NOTE_PLING, 2.0f, 0.75f);
             }, 4);
 
             AtomicInteger i = new AtomicInteger();
             CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+                player.teleport(playerLocation);
+
                 i.getAndIncrement();
-                double progress = (double) i.get() / 80;
-                Titles.sendTitle(player, 0, 1000, 0, "§e正在安裝炸藥包", createProgressBar(progress));
+                double progress = (double) i.get() / 160;
+                Titles.sendTitle(player, 0, 1000, 0, "§e正在拆除炸藥包", createProgressBar(progress));
 
                 if (!isItem(player.getItemInHand())) {
                     MCSchedulers.getGlobalScheduler().schedule(() -> {
-                        Titles.sendTitle(player, 0, 30, 10, "", "§c炸藥已取消安裝");
-                        bombManager.setPlanting(false);
+                        Titles.sendTitle(player, 0, 30, 10, "", "§c拆彈已取消");
+                        bombManager.setDefusing(false);
                     }, 1);
                     return TaskResponse.failure("");
                 }
-                player.teleport(playerLoc);
 
                 return TaskResponse.continueTask();
-            }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(4))).getFuture();
+            }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(8))).getFuture();
 
             future.thenRun(() -> {
-                removeCustomItem.removeCustomItem(player, Arrays.asList(bombItem));
-                bombManager.plant(player, location);
+                bombManager.defuse(player);
             });
         }
 

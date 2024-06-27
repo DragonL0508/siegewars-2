@@ -34,7 +34,7 @@ public class PlayerNameTag extends NameTagAdapter {
         Player bukkitTarget = target.as(Player.class);
         Player bukkitPlayer = player.as(Player.class);
 
-        if(teamManager.getPlayerTeam(bukkitPlayer) == null)
+        if (teamManager.getPlayerTeam(bukkitPlayer) == null)
             return new NameTag(LegacyAdventureUtil.decode("NoTeam "), Component.empty(), TextColor.color(255, 255, 255), WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
 
         WrapperPlayServerTeams.NameTagVisibility nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.ALWAYS;
@@ -52,10 +52,12 @@ public class PlayerNameTag extends NameTagAdapter {
         //check if force display
         if (nameTagTemporaryManager.getPlayerSetMap().containsKey(bukkitTarget.getUniqueId())) {
             if (nameTagTemporaryManager.getPlayerSetMap().get(bukkitTarget.getUniqueId()).contains(bukkitPlayer.getUniqueId())) {
-                return new NameTag(Component.text("§c")
-                        , Component.text(" §4-" + format.format(new Double(bukkitTarget.getLastDamageCause().getFinalDamage())))
-                        , TextColor.color(0xFFFFFF)
-                        , WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
+                if (bukkitTarget.getLastDamageCause() != null) {
+                    return new NameTag(Component.text("§c")
+                            , Component.text(" §4-" + format.format(new Double(bukkitTarget.getLastDamageCause().getFinalDamage())))
+                            , TextColor.color(0xFFFFFF)
+                            , WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
+                }
             }
         }
 

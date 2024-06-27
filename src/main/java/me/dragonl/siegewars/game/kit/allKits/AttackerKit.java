@@ -115,8 +115,8 @@ public class AttackerKit implements SiegeWarsKit {
     @Override
     public Boolean useAbility(Player player) {
         World world = player.getWorld();
-        PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 60, 4, false, false);
-        PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 50, 0, false, false);
+        PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 60, 3, false, false);
+        PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 70, 0, false, false);
         player.addPotionEffect(speed);
         player.addPotionEffect(blind);
         world.playSound(player.getLocation(), Sound.WITHER_SHOOT, 1, 1.35f);

@@ -1,5 +1,5 @@
 package me.dragonl.siegewars.game.lobby;
 
 public enum GetItemArgs {
-    TNT, baffle, axe, Bomb;
+    TNT, baffle, axe, bomb, defuseKit;
 }

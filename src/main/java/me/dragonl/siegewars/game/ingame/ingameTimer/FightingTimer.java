@@ -53,6 +53,11 @@ public class FightingTimer implements Timer{
     }
 
     @Override
+    public Boolean thenStop() {
+        return false;
+    }
+
+    @Override
     public void setIsStop(Boolean bool) {
         this.isStop = bool;
     }

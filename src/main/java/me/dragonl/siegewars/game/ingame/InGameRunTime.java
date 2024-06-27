@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bootstrap.bukkit.BukkitPlugin;
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.mc.util.Position;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
@@ -15,8 +16,12 @@ import me.dragonl.siegewars.game.ingame.ingameTimer.Timer;
 import me.dragonl.siegewars.team.Team;
 import me.dragonl.siegewars.team.TeamManager;
 import me.dragonl.siegewars.yaml.element.MapConfigElement;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
 import org.bukkit.*;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -106,27 +111,44 @@ public class InGameRunTime {
         List<Position> defendSpawn = map.getDefendSpawn();
         List<Position> attackSpawn = map.getAttackSpawn();
 
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bomb clearBombKeeper");
+
         Bukkit.getOnlinePlayers().forEach(p -> {
+            p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
+
             Random r = new Random();
             if (teamManager.swGetAnotherTeam(p) == gameStateManager.getAttackTeam()) {
-                p.teleport(BukkitPos.toBukkitLocation(defendSpawn.get(r.nextInt(defendSpawn.size()) - 1)));
+                p.teleport(BukkitPos.toBukkitLocation(defendSpawn.get(r.nextInt(defendSpawn.size() - 1))));
                 p.setGameMode(GameMode.SURVIVAL);
                 p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
                 Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e請做好防守準備");
-                gameStateManager.getAttackTeam().getPlayers().forEach(uuid -> {
-                    p.hidePlayer(Bukkit.getPlayer(uuid));
-                });
 
             } else if (teamManager.getPlayerTeam(p) == gameStateManager.getAttackTeam()) {
+                MCPlayer player = MCPlayer.from(p);
+                //create adventure component for clickable message
+                player.sendMessage("§7-----------------------------",
+                        "§e你可以選擇拿取炸藥包");
+                Component component = Component.text("§a[點我拿取]")
+                        .hoverEvent(HoverEventSource.unbox(Component.text("§7點擊拿取炸藥包")))
+                        .clickEvent(ClickEvent.runCommand("/bomb claim"));
+                player.sendMessage(component);
+                player.sendMessage("§7-----------------------------");
+
                 p.teleport(BukkitPos.toBukkitLocation(attackSpawn.get(0)));
                 ActionBar.clearActionBar(p);
-                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, p, "§a進攻點 §e1 §7| §a左鍵§7前往下一個");
+                ActionBar.sendActionBar(BukkitPlugin.INSTANCE, p, "§a進攻點 §e1 §7| §a跳躍前往下一個");
                 p.setGameMode(GameMode.SURVIVAL);
                 Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e請選擇進攻位置");
 
             } else {
                 Titles.sendTitle(p, 10, 40, 20, "§a人員部屬階段", "§e遊戲即將開始");
             }
+
+            if (!teamManager.isInTeam(p, teamManager.getTeam("spectator")))
+                gameStateManager.getAttackTeam().getPlayers().forEach(uuid -> {
+                    if (p != Bukkit.getPlayer(uuid))
+                        p.hidePlayer(Bukkit.getPlayer(uuid));
+                });
         });
 
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
@@ -151,6 +173,19 @@ public class InGameRunTime {
     }
 
     public void fightingRunTime(Timer timer) {
+        //make random player in attack team to be bomb keeper if no one claim the bomb
+        if (!gameStateManager.getAttackTeam().getPlayers().isEmpty()) {
+            List<UUID> attackPlayers = gameStateManager.getAttackTeam().getPlayers();
+            if (gameStateManager.getBombClaimer() == null) {
+                Random r = new Random();
+                if (attackPlayers.size() == 1) {
+                    Bukkit.dispatchCommand(Bukkit.getPlayer(attackPlayers.get(0)), "bomb claim");
+                } else {
+                    Bukkit.dispatchCommand(Bukkit.getPlayer(attackPlayers.get(r.nextInt(attackPlayers.size()))), "bomb claim");
+                }
+            }
+        }
+
         Bukkit.getOnlinePlayers().forEach(p -> {
             ActionBar.clearActionBar(p);
             Titles.sendTitle(p, 10, 40, 20, "§a戰鬥開始", "§e部屬階段結束");
@@ -174,7 +209,7 @@ public class InGameRunTime {
     public void bombPlantedRunTime(Timer timer) {
 
         AtomicInteger o = new AtomicInteger();
-        CompletableFuture<?> futureTick = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+        CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             if (timer.isStop())
                 return TaskResponse.failure("");
 
@@ -200,8 +235,21 @@ public class InGameRunTime {
             return TaskResponse.continueTask();
         }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
 
-        futureTick.thenRun(() -> {
+        future.thenRun(() -> {
             Bukkit.broadcastMessage("Booom!");
+        });
+    }
+
+    public void roundEndRunTime(Timer timer) {
+        CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+            if (timer.isStop())
+                return TaskResponse.failure("");
+
+            return TaskResponse.continueTask();
+        }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(timer.getTime()))).getFuture();
+
+        future.thenRun(() -> {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "admin nextRound");
         });
     }
 }

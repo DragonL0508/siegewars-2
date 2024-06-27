@@ -11,10 +11,7 @@ import me.dragonl.siegewars.game.MapObjectCatcher;
 import me.dragonl.siegewars.game.ingame.InGamePreparingExecuter;
 import me.dragonl.siegewars.game.kit.SiegeWarsKit;
 import me.dragonl.siegewars.game.shop.ShopMenu;
-import me.dragonl.siegewars.itemStack.items.gameplay.AxeItem;
-import me.dragonl.siegewars.itemStack.items.gameplay.BaffleItem;
-import me.dragonl.siegewars.itemStack.items.gameplay.BombItem;
-import me.dragonl.siegewars.itemStack.items.gameplay.TNTItem;
+import me.dragonl.siegewars.itemStack.items.gameplay.*;
 import me.dragonl.siegewars.player.PlayerKitManager;
 import me.dragonl.siegewars.team.SiegeWarsTeam;
 import me.dragonl.siegewars.team.TeamManager;
@@ -33,12 +30,13 @@ public class LobbyAdminCommand extends BaseCommand {
     private final MapObjectCatcher mapObjectCatcher;
     private final AxeItem axeItem;
     private final BombItem bombItem;
+    private final DefuseKitItem defuseKitItem;
     private final LobbyAdminMenu lobbyAdminMenu;
     private final PlayerKitManager playerKitManager;
     private final ShopMenu shopMenu;
     private final InGamePreparingExecuter inGamePreparingExecuter;
 
-    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, BombItem bombItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu, InGamePreparingExecuter inGamePreparingExecuter) {
+    public LobbyAdminCommand(GameStateManager gameStateManager, TeamManager teamManager, TNTItem tntItem, BaffleItem baffleItem, MapObjectCatcher mapObjectCatcher, AxeItem axeItem, BombItem bombItem, DefuseKitItem defuseKitItem, LobbyAdminMenu lobbyAdminMenu, PlayerKitManager playerKitManager, ShopMenu shopMenu, InGamePreparingExecuter inGamePreparingExecuter) {
         this.gameStateManager = gameStateManager;
         this.teamManager = teamManager;
         this.tntItem = tntItem;
@@ -46,6 +44,7 @@ public class LobbyAdminCommand extends BaseCommand {
         this.mapObjectCatcher = mapObjectCatcher;
         this.axeItem = axeItem;
         this.bombItem = bombItem;
+        this.defuseKitItem = defuseKitItem;
         this.lobbyAdminMenu = lobbyAdminMenu;
         this.playerKitManager = playerKitManager;
         this.shopMenu = shopMenu;
@@ -93,8 +92,12 @@ public class LobbyAdminCommand extends BaseCommand {
                 inv.addItem(axeItem.get(player));
                 break;
             }
-            case Bomb:{
+            case bomb:{
                 inv.addItem(bombItem.get(player));
+                break;
+            }
+            case defuseKit:{
+                inv.addItem(defuseKitItem.get(player));
                 break;
             }
         }
@@ -134,5 +137,10 @@ public class LobbyAdminCommand extends BaseCommand {
     @Command("transformInvToBuyCounts")
     public void transformInvToBuyCounts(BukkitCommandContext ctx) {
         inGamePreparingExecuter.transformInvToBuyCounts(ctx.getPlayer());
+    }
+
+    @Command("nextRound")
+    public void nextRound(BukkitCommandContext ctx) {
+        inGamePreparingExecuter.start();
     }
 }

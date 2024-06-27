@@ -6,6 +6,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.dragonl.siegewars.game.GameState;
 import me.dragonl.siegewars.game.GameStateManager;
+import me.dragonl.siegewars.game.RoundState;
 import me.dragonl.siegewars.player.data.PlayerData;
 import me.dragonl.siegewars.player.data.PlayerDataManager;
 import me.dragonl.siegewars.team.Team;
@@ -33,21 +34,21 @@ public class PlayerFightListener implements Listener {
 
     @EventHandler
     public void onPvp(PlayerDamageByPlayerEvent event) {
-        Team playerTeam = teamManager.getPlayerTeam(event.getPlayer());
-        Team damagerTeam = teamManager.getPlayerTeam(event.getDamager());
-
-        Player target = event.getPlayer();
-        Player player = event.getDamager();
-
         if (gameStateManager.isCurrentGameState(GameState.IN_GAME)) {
+            if (gameStateManager.isCurrentRoundState(RoundState.FIGHTING) || gameStateManager.isCurrentRoundState(RoundState.ENDING)) {
+                Team playerTeam = teamManager.getPlayerTeam(event.getPlayer());
 
-            if (teamManager.getPlayerTeam(event.getPlayer()).isShowNameTagToClicker() && event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
+                Player target = event.getPlayer();
+                Player player = event.getDamager();
 
-                nameTagTemporaryManager.startDisplayToPlayer(target, player);
-            }
+                if (playerTeam.isShowNameTagToClicker()) {
+                    nameTagTemporaryManager.startDisplayToPlayer(target, player);
+                }
 
-            PlayerData damagerData = playerDataManager.getPlayerData(player);
-            damagerData.setTotalDamage(damagerData.getTotalDamage() + event.getFinalDamage());
+                PlayerData damagerData = playerDataManager.getPlayerData(player);
+                damagerData.setTotalDamage(damagerData.getTotalDamage() + event.getFinalDamage());
+            } else
+                event.setCancelled(true);
         }
     }
 }
